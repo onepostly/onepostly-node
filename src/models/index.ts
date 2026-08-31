@@ -1,5 +1,5 @@
 /* tslint:disable */
-
+/* eslint-disable */
 export * from './Actor.js';
 export * from './Bookmark201Response.js';
 export * from './Comment.js';
