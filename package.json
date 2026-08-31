@@ -1,0 +1,66 @@
+{
+  "name": "@onepostly/sdk",
+  "version": "0.2.0",
+  "description": "The official TypeScript SDK for the Onepostly API",
+  "license": "Apache-2.0",
+  "type": "module",
+  "author": "Onepostly <support@onepostly.com>",
+  "homepage": "https://onepostly.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onepostly/onepostly-node.git"
+  },
+  "bugs": {
+    "url": "https://github.com/onepostly/onepostly-node/issues"
+  },
+  "keywords": [
+    "onepostly",
+    "social-media",
+    "api",
+    "sdk",
+    "client",
+    "x",
+    "twitter",
+    "instagram",
+    "linkedin",
+    "tiktok",
+    "youtube",
+    "facebook",
+    "threads",
+    "pinterest",
+    "bluesky",
+    "publishing",
+    "scheduling"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/esm/index.js",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc && tsc -p tsconfig.esm.json",
+    "generate": "openapi-generator-cli generate -i https://api.onepostly.com/openapi.json -g typescript-fetch -o . --additional-properties=npmName=@onepostly/sdk,npmVersion=0.2.0,supportsES6=true,importFileExtension=.js",
+    "prepare": "npm run build",
+    "lint": "eslint src --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@openapitools/openapi-generator-cli": "^2.22.0",
+    "@types/node": "^22.15.3",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.1",
+    "typescript": "5.9.2",
+    "typescript-eslint": "^8.50.0",
+    "vitest": "^3.2.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

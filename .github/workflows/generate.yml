@@ -1,0 +1,155 @@
+name: Regenerate
+
+on:
+  repository_dispatch:
+    types: [openapi-updated]
+
+  # Fallback: reconcile the committed SDK against the live spec twice a day,
+  # even if no dispatch arrives.
+  schedule:
+    - cron: "37 5,17 * * *"
+
+  workflow_dispatch:
+
+concurrency:
+  group: regenerate-sdk
+  cancel-in-progress: false
+
+jobs:
+  regenerate:
+    name: Regenerate, release, and publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write # npm trusted publishing (OIDC)
+    environment: npm
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      # Node 22 bundles npm 10.x; Trusted Publishing needs npm >= 11.5.
+      - name: Upgrade npm for Trusted Publishing
+        run: |
+          npm install -g npm@^11.5.1
+          npm --version
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: microsoft
+          java-version: 21
+
+      - run: npm ci
+
+      - name: Regenerate from the live production spec
+        run: npm run generate
+
+      # Idempotency gate: a deploy with no API change produces an empty diff
+      # and the run exits here without committing or publishing anything.
+      - name: Check for changes
+        id: changes
+        run: |
+          if [ -z "$(git status --porcelain -- src/ package.json)" ]; then
+            echo "No generated-code changes; SDK already matches the live spec."
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          else
+            git diff --stat
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Lint
+        if: steps.changes.outputs.has_changes == 'true'
+        run: npm run lint
+
+      - name: Type check
+        if: steps.changes.outputs.has_changes == 'true'
+        run: npm run check-types
+
+      - name: Test
+        if: steps.changes.outputs.has_changes == 'true'
+        run: npm test
+
+      - name: Build
+        if: steps.changes.outputs.has_changes == 'true'
+        run: npm run build
+
+      - name: Bump version and commit
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          NEW_VERSION=$(npm version patch --no-git-tag-version)
+          echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+          git add src/ package.json package-lock.json
+          git commit -m "chore: regenerate from OpenAPI spec
+
+          - Auto-generated SDK updates
+          - Version: $NEW_VERSION"
+          git show --stat HEAD
+
+      # Back-to-back dispatches race for main; rebase with the regenerated
+      # content winning (it was produced from a fresher spec fetch).
+      - name: Push
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          for attempt in 1 2 3; do
+            if git push; then
+              exit 0
+            fi
+            echo "Push attempt $attempt failed; rebasing and retrying..."
+            git pull --rebase -X theirs origin main
+            sleep $((attempt * 5))
+          done
+          echo "::error::Could not push after 3 attempts."
+          exit 1
+
+      # Guard against re-publishing a version that already shipped (the push
+      # above can succeed while a concurrent run published the same version).
+      - name: Check if version already published
+        if: steps.changes.outputs.has_changes == 'true'
+        id: check_published
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          if npm view "@onepostly/sdk@$CURRENT_VERSION" version 2>/dev/null; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Version $CURRENT_VERSION is already on npm; skipping publish."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish to npm
+        if: steps.changes.outputs.has_changes == 'true' && steps.check_published.outputs.skip != 'true'
+        run: npm publish
+
+      # Tag comes from package.json, not the bump step: if the push step
+      # rebased onto a concurrent bump, the committed version is what ships.
+      - name: Resolve release tag
+        if: steps.changes.outputs.has_changes == 'true' && steps.check_published.outputs.skip != 'true'
+        id: tag
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "tag=v$CURRENT_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        if: steps.changes.outputs.has_changes == 'true' && steps.check_published.outputs.skip != 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: ${{ steps.tag.outputs.tag }}
+          generate_release_notes: true
+          body: |
+            ## Auto-generated SDK update
+
+            Regenerated from the latest OpenAPI spec.
+
+            ```bash
+            npm install @onepostly/sdk@${{ steps.tag.outputs.tag }}
+            ```
