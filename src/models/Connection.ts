@@ -30,15 +30,15 @@ export interface Connection {
     /**
      * 
      */
-    displayName?: string;
+    displayName: string;
     /**
      * 
      */
-    handle?: string;
+    handle: string;
     /**
      * 
      */
-    avatarUrl?: string | null;
+    avatarUrl: string | null;
     /**
      * 
      */
@@ -46,15 +46,23 @@ export interface Connection {
     /**
      * 
      */
+    tokenExpiresAt: Date | null;
+    /**
+     * 
+     */
+    canAutoRenew: boolean;
+    /**
+     * 
+     */
     authHealth: ConnectionAuthHealthEnum;
     /**
      * 
      */
-    createdAt?: Date;
+    createdAt: Date;
     /**
      * 
      */
-    updatedAt?: Date;
+    updatedAt: Date;
 }
 
 
@@ -74,8 +82,15 @@ export type ConnectionAuthHealthEnum = typeof ConnectionAuthHealthEnum[keyof typ
 export function instanceOfConnection(value: object): value is Connection {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('platform' in value) || value['platform'] === undefined) return false;
+    if (!('displayName' in value) || value['displayName'] === undefined) return false;
+    if (!('handle' in value) || value['handle'] === undefined) return false;
+    if (!('avatarUrl' in value) || value['avatarUrl'] === undefined) return false;
     if (!('status' in value) || value['status'] === undefined) return false;
+    if (!('tokenExpiresAt' in value) || value['tokenExpiresAt'] === undefined) return false;
+    if (!('canAutoRenew' in value) || value['canAutoRenew'] === undefined) return false;
     if (!('authHealth' in value) || value['authHealth'] === undefined) return false;
+    if (!('createdAt' in value) || value['createdAt'] === undefined) return false;
+    if (!('updatedAt' in value) || value['updatedAt'] === undefined) return false;
     return true;
 }
 
@@ -91,13 +106,15 @@ export function ConnectionFromJSONTyped(json: any, ignoreDiscriminator: boolean)
         
         'id': json['id'],
         'platform': json['platform'],
-        'displayName': json['displayName'] == null ? undefined : json['displayName'],
-        'handle': json['handle'] == null ? undefined : json['handle'],
-        'avatarUrl': json['avatarUrl'] === undefined ? undefined : json['avatarUrl'] === null ? null : json['avatarUrl'],
+        'displayName': json['displayName'],
+        'handle': json['handle'],
+        'avatarUrl': json['avatarUrl'],
         'status': json['status'],
+        'tokenExpiresAt': (json['tokenExpiresAt'] == null ? null : parseDateTime(json['tokenExpiresAt'])),
+        'canAutoRenew': json['canAutoRenew'],
         'authHealth': json['authHealth'],
-        'createdAt': json['createdAt'] == null ? undefined : (parseDateTime(json['createdAt'])),
-        'updatedAt': json['updatedAt'] == null ? undefined : (parseDateTime(json['updatedAt'])),
+        'createdAt': (json['createdAt'] == null ? json['createdAt'] : parseDateTime(json['createdAt'])),
+        'updatedAt': (json['updatedAt'] == null ? json['updatedAt'] : parseDateTime(json['updatedAt'])),
     };
 }
 
@@ -118,6 +135,8 @@ export function ConnectionToJSONTyped(value?: Connection | null, ignoreDiscrimin
         'handle': value['handle'],
         'avatarUrl': value['avatarUrl'],
         'status': value['status'],
+        'tokenExpiresAt': value['tokenExpiresAt'] == null ? value['tokenExpiresAt'] : serializeDateTime(value['tokenExpiresAt']),
+        'canAutoRenew': value['canAutoRenew'],
         'authHealth': value['authHealth'],
         'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
