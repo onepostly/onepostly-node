@@ -156,7 +156,7 @@ All methods take a single request-parameters object; required fields are listed 
 | Method | Description |
 | --- | --- |
 | `posts.listPosts()` | List posts |
-| `posts.createPost()` | Create post |
+| `posts.createPost()` | Create post. |
 | `posts.getPost()` | Get post |
 | `posts.cancelPost()` | Cancel post |
 | `posts.deletePostDestination()` | Remote-delete destination |

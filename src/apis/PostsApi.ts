@@ -179,7 +179,7 @@ export class PostsApi extends runtime.BaseAPI {
 
     /**
      * Creates a post for one or more destinations. Returns `202` for immediate publish, or `201` when scheduled. X billable actions debit the workspace wallet.
-     * Create post
+     * Create post.
      */
     async createPostRaw(requestParameters: CreatePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PostResponse>> {
         const requestOptions = await this.createPostRequestOpts(requestParameters);
@@ -190,7 +190,7 @@ export class PostsApi extends runtime.BaseAPI {
 
     /**
      * Creates a post for one or more destinations. Returns `202` for immediate publish, or `201` when scheduled. X billable actions debit the workspace wallet.
-     * Create post
+     * Create post.
      */
     async createPost(requestParameters: CreatePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PostResponse> {
         const response = await this.createPostRaw(requestParameters, initOverrides);
