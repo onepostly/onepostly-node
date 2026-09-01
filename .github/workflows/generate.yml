@@ -52,6 +52,15 @@ jobs:
       - name: Regenerate from the live production spec
         run: npm run generate
 
+      # Keep the README method tables and the endpoint-existence tests in sync
+      # with the spec that was just consumed, so every bot commit ships correct
+      # docs and coverage alongside the code.
+      - name: Regenerate README API reference
+        run: npm run generate:reference
+
+      - name: Regenerate endpoint tests
+        run: npm run generate:endpoint-tests
+
       # Idempotency gate: a deploy with no API change produces an empty diff
       # and the run exits here without committing or publishing anything.
       - name: Check for changes
@@ -88,7 +97,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           NEW_VERSION=$(npm version patch --no-git-tag-version)
           echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
-          git add src/ package.json package-lock.json
+          git add src/ package.json package-lock.json README.md tests/
           git commit -m "chore: regenerate from OpenAPI spec
 
           - Auto-generated SDK updates

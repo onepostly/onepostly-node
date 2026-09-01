@@ -42,6 +42,8 @@
   "scripts": {
     "build": "tsc && tsc -p tsconfig.esm.json",
     "generate": "openapi-generator-cli generate -i https://api.onepostly.com/openapi.json -g typescript-fetch -o . --additional-properties=npmName=@onepostly/sdk,npmVersion=0.2.0,supportsES6=true,importFileExtension=.js",
+    "generate:reference": "tsx scripts/generate-api-reference.ts",
+    "generate:endpoint-tests": "tsx scripts/generate-endpoint-tests.ts",
     "prepare": "npm run build",
     "lint": "eslint src --max-warnings 0",
     "check-types": "tsc --noEmit",
@@ -56,6 +58,7 @@
     "@types/node": "^22.15.3",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.1",
+    "tsx": "^4.23.13",
     "typescript": "5.9.2",
     "typescript-eslint": "^8.50.0",
     "vitest": "^3.2.4"
