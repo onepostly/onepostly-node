@@ -45,7 +45,7 @@ describe("generated client smoke", () => {
       createPostBody: {
         text: "Hello",
         mediaKind: "text",
-        destinations: [{ connectionId: "c1" }],
+        destinations: [{ accountId: "c1" }],
       },
     });
     expect(result.post.id).toBe("p1");
@@ -54,19 +54,19 @@ describe("generated client smoke", () => {
     expect(JSON.parse(String(calls[0].init.body))).toEqual({
       text: "Hello",
       mediaKind: "text",
-      destinations: [{ connectionId: "c1" }],
+      destinations: [{ accountId: "c1" }],
     });
   });
 
-  it("undoRetweet sends destinationId as a query parameter", async () => {
+  it("undoRetweet sends post as a query parameter", async () => {
     const { calls, fetchMock } = withFetch({ body: { retweet: {} } });
     const api = new WebhooksApi(new Configuration({ apiKey: "op_test", fetchApi: fetchMock }));
     void api;
     const { EngagementApi } = await import("../src/index.js");
     const engagement = new EngagementApi(new Configuration({ apiKey: "op_test", fetchApi: fetchMock }));
-    await engagement.undoRetweet({ id: "p1", destinationId: "d1" });
-    expect(calls[0].url).toContain("/v1/posts/p1/retweets");
-    expect(calls[0].url).toContain("destinationId=d1");
+    await engagement.undoRetweet({ post: "p1" });
+    expect(calls[0].url).toContain("/v1/retweets");
+    expect(calls[0].url).toContain("post=p1");
     expect(calls[0].init.method).toBe("DELETE");
   });
 

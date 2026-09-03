@@ -41,7 +41,7 @@ const response = await posts.createPost({
   createPostBody: {
     text: "Hello from Onepostly",
     mediaKind: "text",
-    destinations: [{ connectionId: "…" }],
+    destinations: [{ accountId: "…" }],
   },
 });
 
@@ -59,7 +59,7 @@ await posts.createPost({
     text: "Tomorrow morning",
     scheduledFor: "2026-09-01T09:00:00", // timezone-naive local time
     timezone: "Europe/Istanbul",
-    destinations: [{ connectionId: "…" }],
+    destinations: [{ accountId: "…" }],
   },
 });
 // 201 Created, status "scheduled"
@@ -81,25 +81,25 @@ await posts.createPost({
     text: "With an image",
     mediaKind: "image",
     mediaUrls: [mediaUrl],
-    destinations: [{ connectionId: "…" }],
+    destinations: [{ accountId: "…" }],
   },
 });
 ```
 
-### Insights
+### Analytics
 
 ```ts
-import { Configuration, InsightsApi } from "@onepostly/sdk";
+import { AnalyticsApi, Configuration } from "@onepostly/sdk";
 
-const insights = new InsightsApi(config);
+const analytics = new AnalyticsApi(config);
 
-const { insights: postInsights } = await insights.getPostInsights({ id: postId });
-for (const destination of postInsights.destinations ?? []) {
-  console.log(destination.platform, destination.metrics);
+const { analytics: postAnalytics } = await analytics.getAnalytics({ post: postId });
+for (const subject of postAnalytics.subjects ?? []) {
+  console.log(subject.platform, subject.metrics);
 }
 
-const { timeline } = await insights.getPostInsightsTimeline({
-  id: postId,
+const { timeline } = await analytics.getAnalyticsTimeline({
+  post: postId,
   from: "2026-08-01", // inclusive, YYYY-MM-DD
   to: "2026-08-28",   // inclusive, YYYY-MM-DD
 });

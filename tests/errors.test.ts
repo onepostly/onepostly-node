@@ -30,7 +30,7 @@ describe("ResponseError", () => {
         createPostBody: {
           text: "Hello",
           mediaKind: "text",
-          destinations: [{ connectionId: "c1" }],
+          destinations: [{ accountId: "c1" }],
         },
       })
       .catch((e: unknown) => e);
