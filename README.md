@@ -160,13 +160,14 @@ All methods take a single request-parameters object; required fields are listed 
 | `posts.getPost()` | Get post |
 | `posts.cancelPost()` | Cancel post |
 | `posts.deletePostDestination()` | Remote-delete destination |
+| `posts.syncExternal()` | Sync external posts |
 
-### InsightsApi
+### AnalyticsApi
 
 | Method | Description |
 | --- | --- |
-| `insights.getPostInsights()` | Get insights |
-| `insights.getPostInsightsTimeline()` | Get daily insights timeline |
+| `analytics.getAnalytics()` | Get analytics |
+| `analytics.getAnalyticsTimeline()` | Get daily analytics timeline |
 
 ### CommentsApi
 

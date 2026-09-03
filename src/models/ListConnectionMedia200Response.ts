@@ -22,7 +22,7 @@ export interface ListConnectionMedia200Response {
     /**
      * 
      */
-    connectionId: string;
+    accountId: string;
     /**
      * 
      */
@@ -41,7 +41,7 @@ export interface ListConnectionMedia200Response {
  * Check if a given object implements the ListConnectionMedia200Response interface.
  */
 export function instanceOfListConnectionMedia200Response(value: object): value is ListConnectionMedia200Response {
-    if (!('connectionId' in value) || value['connectionId'] === undefined) return false;
+    if (!('accountId' in value) || value['accountId'] === undefined) return false;
     if (!('platform' in value) || value['platform'] === undefined) return false;
     if (!('items' in value) || value['items'] === undefined) return false;
     if (!('nextCursor' in value) || value['nextCursor'] === undefined) return false;
@@ -58,7 +58,7 @@ export function ListConnectionMedia200ResponseFromJSONTyped(json: any, ignoreDis
     }
     return {
         
-        'connectionId': json['connectionId'],
+        'accountId': json['accountId'],
         'platform': json['platform'],
         'items': json['items'],
         'nextCursor': json['nextCursor'],
@@ -76,7 +76,7 @@ export function ListConnectionMedia200ResponseToJSONTyped(value?: ListConnection
 
     return {
         
-        'connectionId': value['connectionId'],
+        'accountId': value['accountId'],
         'platform': value['platform'],
         'items': value['items'],
         'nextCursor': value['nextCursor'],

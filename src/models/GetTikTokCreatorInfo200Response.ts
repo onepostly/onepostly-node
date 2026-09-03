@@ -30,7 +30,7 @@ export interface GetTikTokCreatorInfo200Response {
     /**
      * 
      */
-    connectionId: string;
+    accountId: string;
     /**
      * 
      */
@@ -59,7 +59,7 @@ export type GetTikTokCreatorInfo200ResponsePlatformEnum = typeof GetTikTokCreato
  * Check if a given object implements the GetTikTokCreatorInfo200Response interface.
  */
 export function instanceOfGetTikTokCreatorInfo200Response(value: object): value is GetTikTokCreatorInfo200Response {
-    if (!('connectionId' in value) || value['connectionId'] === undefined) return false;
+    if (!('accountId' in value) || value['accountId'] === undefined) return false;
     if (!('platform' in value) || value['platform'] === undefined) return false;
     if (value['platform'] !== 'tiktok') return false;
     
@@ -78,7 +78,7 @@ export function GetTikTokCreatorInfo200ResponseFromJSONTyped(json: any, ignoreDi
     }
     return {
         
-        'connectionId': json['connectionId'],
+        'accountId': json['accountId'],
         'platform': json['platform'],
         'creatorInfo': GetTikTokCreatorInfo200ResponseCreatorInfoFromJSON(json['creatorInfo']),
         'fetchedAt': (json['fetchedAt'] == null ? json['fetchedAt'] : parseDateTime(json['fetchedAt'])),
@@ -96,7 +96,7 @@ export function GetTikTokCreatorInfo200ResponseToJSONTyped(value?: GetTikTokCrea
 
     return {
         
-        'connectionId': value['connectionId'],
+        'accountId': value['accountId'],
         'platform': value['platform'],
         'creatorInfo': GetTikTokCreatorInfo200ResponseCreatorInfoToJSON(value['creatorInfo']),
         'fetchedAt': value['fetchedAt'] == null ? value['fetchedAt'] : serializeDateTime(value['fetchedAt']),

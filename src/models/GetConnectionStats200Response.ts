@@ -22,7 +22,7 @@ export interface GetConnectionStats200Response {
     /**
      * 
      */
-    connectionId: string;
+    accountId: string;
     /**
      * 
      */
@@ -45,7 +45,7 @@ export interface GetConnectionStats200Response {
  * Check if a given object implements the GetConnectionStats200Response interface.
  */
 export function instanceOfGetConnectionStats200Response(value: object): value is GetConnectionStats200Response {
-    if (!('connectionId' in value) || value['connectionId'] === undefined) return false;
+    if (!('accountId' in value) || value['accountId'] === undefined) return false;
     if (!('platform' in value) || value['platform'] === undefined) return false;
     if (!('status' in value) || value['status'] === undefined) return false;
     if (!('fetchedAt' in value) || value['fetchedAt'] === undefined) return false;
@@ -62,7 +62,7 @@ export function GetConnectionStats200ResponseFromJSONTyped(json: any, ignoreDisc
     }
     return {
         
-        'connectionId': json['connectionId'],
+        'accountId': json['accountId'],
         'platform': json['platform'],
         'status': json['status'],
         'stats': json['stats'] === undefined ? undefined : json['stats'] === null ? null : json['stats'],
@@ -81,7 +81,7 @@ export function GetConnectionStats200ResponseToJSONTyped(value?: GetConnectionSt
 
     return {
         
-        'connectionId': value['connectionId'],
+        'accountId': value['accountId'],
         'platform': value['platform'],
         'status': value['status'],
         'stats': value['stats'],

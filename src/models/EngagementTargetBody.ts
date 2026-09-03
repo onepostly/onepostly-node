@@ -16,9 +16,9 @@ import { mapValues } from '../runtime.js';
 /**
  * 
  * @export
- * @interface QuoteBody
+ * @interface EngagementTargetBody
  */
-export interface QuoteBody {
+export interface EngagementTargetBody {
     /**
      * Internal post id or platform-native post id. Native ids require accountId.
      */
@@ -31,26 +31,21 @@ export interface QuoteBody {
      * 
      */
     destinationId?: string;
-    /**
-     * 
-     */
-    text: string;
 }
 
 /**
- * Check if a given object implements the QuoteBody interface.
+ * Check if a given object implements the EngagementTargetBody interface.
  */
-export function instanceOfQuoteBody(value: object): value is QuoteBody {
+export function instanceOfEngagementTargetBody(value: object): value is EngagementTargetBody {
     if (!('post' in value) || value['post'] === undefined) return false;
-    if (!('text' in value) || value['text'] === undefined) return false;
     return true;
 }
 
-export function QuoteBodyFromJSON(json: any): QuoteBody {
-    return QuoteBodyFromJSONTyped(json, false);
+export function EngagementTargetBodyFromJSON(json: any): EngagementTargetBody {
+    return EngagementTargetBodyFromJSONTyped(json, false);
 }
 
-export function QuoteBodyFromJSONTyped(json: any, ignoreDiscriminator: boolean): QuoteBody {
+export function EngagementTargetBodyFromJSONTyped(json: any, ignoreDiscriminator: boolean): EngagementTargetBody {
     if (json == null) {
         return json;
     }
@@ -59,15 +54,14 @@ export function QuoteBodyFromJSONTyped(json: any, ignoreDiscriminator: boolean):
         'post': json['post'],
         'accountId': json['accountId'] == null ? undefined : json['accountId'],
         'destinationId': json['destinationId'] == null ? undefined : json['destinationId'],
-        'text': json['text'],
     };
 }
 
-export function QuoteBodyToJSON(json: any): QuoteBody {
-    return QuoteBodyToJSONTyped(json, false);
+export function EngagementTargetBodyToJSON(json: any): EngagementTargetBody {
+    return EngagementTargetBodyToJSONTyped(json, false);
 }
 
-export function QuoteBodyToJSONTyped(value?: QuoteBody | null, ignoreDiscriminator: boolean = false): any {
+export function EngagementTargetBodyToJSONTyped(value?: EngagementTargetBody | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
@@ -77,7 +71,6 @@ export function QuoteBodyToJSONTyped(value?: QuoteBody | null, ignoreDiscriminat
         'post': value['post'],
         'accountId': value['accountId'],
         'destinationId': value['destinationId'],
-        'text': value['text'],
     };
 }
 

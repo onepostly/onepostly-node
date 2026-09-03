@@ -22,7 +22,7 @@ export interface CreatePostBodyDestinationsInner {
     /**
      * 
      */
-    connectionId: string;
+    accountId: string;
     /**
      * 
      */
@@ -59,6 +59,10 @@ export interface CreatePostBodyDestinationsInner {
      * 
      */
     brandContentToggle?: boolean;
+    /**
+     * 
+     */
+    aiGenerated?: boolean;
     /**
      * 
      */
@@ -128,7 +132,7 @@ export type CreatePostBodyDestinationsInnerPrivacyLevelEnum = typeof CreatePostB
  * Check if a given object implements the CreatePostBodyDestinationsInner interface.
  */
 export function instanceOfCreatePostBodyDestinationsInner(value: object): value is CreatePostBodyDestinationsInner {
-    if (!('connectionId' in value) || value['connectionId'] === undefined) return false;
+    if (!('accountId' in value) || value['accountId'] === undefined) return false;
     return true;
 }
 
@@ -142,7 +146,7 @@ export function CreatePostBodyDestinationsInnerFromJSONTyped(json: any, ignoreDi
     }
     return {
         
-        'connectionId': json['connectionId'],
+        'accountId': json['accountId'],
         'text': json['text'] == null ? undefined : json['text'],
         'quoteTweetId': json['quoteTweetId'] == null ? undefined : json['quoteTweetId'],
         'privacyStatus': json['privacyStatus'] == null ? undefined : json['privacyStatus'],
@@ -152,6 +156,7 @@ export function CreatePostBodyDestinationsInnerFromJSONTyped(json: any, ignoreDi
         'disableStitch': json['disableStitch'] == null ? undefined : json['disableStitch'],
         'brandOrganicToggle': json['brandOrganicToggle'] == null ? undefined : json['brandOrganicToggle'],
         'brandContentToggle': json['brandContentToggle'] == null ? undefined : json['brandContentToggle'],
+        'aiGenerated': json['aiGenerated'] == null ? undefined : json['aiGenerated'],
         'description': json['description'] == null ? undefined : json['description'],
         'boardId': json['boardId'] == null ? undefined : json['boardId'],
         'link': json['link'] == null ? undefined : json['link'],
@@ -176,7 +181,7 @@ export function CreatePostBodyDestinationsInnerToJSONTyped(value?: CreatePostBod
 
     return {
         
-        'connectionId': value['connectionId'],
+        'accountId': value['accountId'],
         'text': value['text'],
         'quoteTweetId': value['quoteTweetId'],
         'privacyStatus': value['privacyStatus'],
@@ -186,6 +191,7 @@ export function CreatePostBodyDestinationsInnerToJSONTyped(value?: CreatePostBod
         'disableStitch': value['disableStitch'],
         'brandOrganicToggle': value['brandOrganicToggle'],
         'brandContentToggle': value['brandContentToggle'],
+        'aiGenerated': value['aiGenerated'],
         'description': value['description'],
         'boardId': value['boardId'],
         'link': value['link'],

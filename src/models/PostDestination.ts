@@ -34,7 +34,7 @@ export interface PostDestination {
     /**
      * 
      */
-    connectionId: string;
+    accountId: string;
     /**
      * 
      */
@@ -72,7 +72,7 @@ export interface PostDestination {
  */
 export function instanceOfPostDestination(value: object): value is PostDestination {
     if (!('id' in value) || value['id'] === undefined) return false;
-    if (!('connectionId' in value) || value['connectionId'] === undefined) return false;
+    if (!('accountId' in value) || value['accountId'] === undefined) return false;
     if (!('platform' in value) || value['platform'] === undefined) return false;
     if (!('status' in value) || value['status'] === undefined) return false;
     if (!('externalPostId' in value) || value['externalPostId'] === undefined) return false;
@@ -94,7 +94,7 @@ export function PostDestinationFromJSONTyped(json: any, ignoreDiscriminator: boo
     return {
         
         'id': json['id'],
-        'connectionId': json['connectionId'],
+        'accountId': json['accountId'],
         'platform': json['platform'],
         'status': DestinationStatusFromJSON(json['status']),
         'externalPostId': json['externalPostId'],
@@ -117,7 +117,7 @@ export function PostDestinationToJSONTyped(value?: PostDestination | null, ignor
     return {
         
         'id': value['id'],
-        'connectionId': value['connectionId'],
+        'accountId': value['accountId'],
         'platform': value['platform'],
         'status': DestinationStatusToJSON(value['status']),
         'externalPostId': value['externalPostId'],

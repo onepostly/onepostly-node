@@ -30,7 +30,7 @@ export interface ListPinterestBoards200Response {
     /**
      * 
      */
-    connectionId: string;
+    accountId: string;
     /**
      * 
      */
@@ -67,7 +67,7 @@ export type ListPinterestBoards200ResponsePlatformEnum = typeof ListPinterestBoa
  * Check if a given object implements the ListPinterestBoards200Response interface.
  */
 export function instanceOfListPinterestBoards200Response(value: object): value is ListPinterestBoards200Response {
-    if (!('connectionId' in value) || value['connectionId'] === undefined) return false;
+    if (!('accountId' in value) || value['accountId'] === undefined) return false;
     if (!('platform' in value) || value['platform'] === undefined) return false;
     if (value['platform'] !== 'pinterest') return false;
     
@@ -88,7 +88,7 @@ export function ListPinterestBoards200ResponseFromJSONTyped(json: any, ignoreDis
     }
     return {
         
-        'connectionId': json['connectionId'],
+        'accountId': json['accountId'],
         'platform': json['platform'],
         'boards': ((json['boards'] as Array<any>).map(ListPinterestBoards200ResponseBoardsInnerFromJSON)),
         'defaultBoardId': json['defaultBoardId'],
@@ -108,7 +108,7 @@ export function ListPinterestBoards200ResponseToJSONTyped(value?: ListPinterestB
 
     return {
         
-        'connectionId': value['connectionId'],
+        'accountId': value['accountId'],
         'platform': value['platform'],
         'boards': ((value['boards'] as Array<any>).map(ListPinterestBoards200ResponseBoardsInnerToJSON)),
         'defaultBoardId': value['defaultBoardId'],

@@ -13,13 +13,13 @@
  */
 
 import { mapValues } from '../runtime.js';
-import type { ListRetweeters200ResponseRetweetsDestinationsInner } from './ListRetweeters200ResponseRetweetsDestinationsInner.js';
+import type { ListRetweeters200ResponseRetweetsSubjectsInner } from './ListRetweeters200ResponseRetweetsSubjectsInner.js';
 import {
-    ListRetweeters200ResponseRetweetsDestinationsInnerFromJSON,
-    ListRetweeters200ResponseRetweetsDestinationsInnerFromJSONTyped,
-    ListRetweeters200ResponseRetweetsDestinationsInnerToJSON,
-    ListRetweeters200ResponseRetweetsDestinationsInnerToJSONTyped,
-} from './ListRetweeters200ResponseRetweetsDestinationsInner.js';
+    ListRetweeters200ResponseRetweetsSubjectsInnerFromJSON,
+    ListRetweeters200ResponseRetweetsSubjectsInnerFromJSONTyped,
+    ListRetweeters200ResponseRetweetsSubjectsInnerToJSON,
+    ListRetweeters200ResponseRetweetsSubjectsInnerToJSONTyped,
+} from './ListRetweeters200ResponseRetweetsSubjectsInner.js';
 
 /**
  * 
@@ -30,17 +30,18 @@ export interface ListRetweeters200ResponseRetweets {
     /**
      * 
      */
-    postId?: string;
+    post: string;
     /**
      * 
      */
-    destinations?: Array<ListRetweeters200ResponseRetweetsDestinationsInner>;
+    subjects?: Array<ListRetweeters200ResponseRetweetsSubjectsInner>;
 }
 
 /**
  * Check if a given object implements the ListRetweeters200ResponseRetweets interface.
  */
 export function instanceOfListRetweeters200ResponseRetweets(value: object): value is ListRetweeters200ResponseRetweets {
+    if (!('post' in value) || value['post'] === undefined) return false;
     return true;
 }
 
@@ -54,8 +55,8 @@ export function ListRetweeters200ResponseRetweetsFromJSONTyped(json: any, ignore
     }
     return {
         
-        'postId': json['postId'] == null ? undefined : json['postId'],
-        'destinations': json['destinations'] == null ? undefined : ((json['destinations'] as Array<any>).map(ListRetweeters200ResponseRetweetsDestinationsInnerFromJSON)),
+        'post': json['post'],
+        'subjects': json['subjects'] == null ? undefined : ((json['subjects'] as Array<any>).map(ListRetweeters200ResponseRetweetsSubjectsInnerFromJSON)),
     };
 }
 
@@ -70,8 +71,8 @@ export function ListRetweeters200ResponseRetweetsToJSONTyped(value?: ListRetweet
 
     return {
         
-        'postId': value['postId'],
-        'destinations': value['destinations'] == null ? undefined : ((value['destinations'] as Array<any>).map(ListRetweeters200ResponseRetweetsDestinationsInnerToJSON)),
+        'post': value['post'],
+        'subjects': value['subjects'] == null ? undefined : ((value['subjects'] as Array<any>).map(ListRetweeters200ResponseRetweetsSubjectsInnerToJSON)),
     };
 }
 

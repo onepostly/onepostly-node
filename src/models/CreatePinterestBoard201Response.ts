@@ -30,7 +30,7 @@ export interface CreatePinterestBoard201Response {
     /**
      * 
      */
-    connectionId: string;
+    accountId: string;
     /**
      * 
      */
@@ -63,7 +63,7 @@ export type CreatePinterestBoard201ResponsePlatformEnum = typeof CreatePinterest
  * Check if a given object implements the CreatePinterestBoard201Response interface.
  */
 export function instanceOfCreatePinterestBoard201Response(value: object): value is CreatePinterestBoard201Response {
-    if (!('connectionId' in value) || value['connectionId'] === undefined) return false;
+    if (!('accountId' in value) || value['accountId'] === undefined) return false;
     if (!('platform' in value) || value['platform'] === undefined) return false;
     if (value['platform'] !== 'pinterest') return false;
     
@@ -83,7 +83,7 @@ export function CreatePinterestBoard201ResponseFromJSONTyped(json: any, ignoreDi
     }
     return {
         
-        'connectionId': json['connectionId'],
+        'accountId': json['accountId'],
         'platform': json['platform'],
         'board': ListPinterestBoards200ResponseBoardsInnerFromJSON(json['board']),
         'sandbox': json['sandbox'],
@@ -102,7 +102,7 @@ export function CreatePinterestBoard201ResponseToJSONTyped(value?: CreatePintere
 
     return {
         
-        'connectionId': value['connectionId'],
+        'accountId': value['accountId'],
         'platform': value['platform'],
         'board': ListPinterestBoards200ResponseBoardsInnerToJSON(value['board']),
         'sandbox': value['sandbox'],

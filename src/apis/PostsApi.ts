@@ -28,6 +28,16 @@ import {
     PostResponseFromJSON,
     PostResponseToJSON,
 } from '../models/PostResponse.js';
+import {
+    type SyncExternal200Response,
+    SyncExternal200ResponseFromJSON,
+    SyncExternal200ResponseToJSON,
+} from '../models/SyncExternal200Response.js';
+import {
+    type SyncExternalBody,
+    SyncExternalBodyFromJSON,
+    SyncExternalBodyToJSON,
+} from '../models/SyncExternalBody.js';
 
 export interface CancelPostRequest {
     /**
@@ -70,6 +80,13 @@ export interface ListPostsRequest {
      * Offset for list endpoints.
      */
     offset?: number | null;
+}
+
+export interface SyncExternalRequest {
+    /**
+     * 
+     */
+    syncExternalBody: SyncExternalBody;
 }
 
 /**
@@ -375,6 +392,67 @@ export class PostsApi extends runtime.BaseAPI {
      */
     async listPosts(requestParameters: ListPostsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListPosts200Response> {
         const response = await this.listPostsRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for syncExternal without sending the request
+     */
+    async syncExternalRequestOpts(requestParameters: SyncExternalRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['syncExternalBody'] == null) {
+            throw new runtime.RequiredError(
+                'syncExternalBody',
+                'Required parameter "syncExternalBody" was null or undefined when calling syncExternal().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("ApiKeyBearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/posts/sync-external`;
+
+        return {
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SyncExternalBodyToJSON(requestParameters['syncExternalBody']),
+        };
+    }
+
+    /**
+     * Fetch the account\'s latest external posts (published directly on the platform, not through Onepostly) on demand. Pass accountId plus url or postId to verify one submitted post; omit both to refresh and return the account\'s recent posts. Stored posts return immediately and live fetches are debounced per account (~15s).
+     * Sync external posts
+     */
+    async syncExternalRaw(requestParameters: SyncExternalRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SyncExternal200Response>> {
+        const requestOptions = await this.syncExternalRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SyncExternal200ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Fetch the account\'s latest external posts (published directly on the platform, not through Onepostly) on demand. Pass accountId plus url or postId to verify one submitted post; omit both to refresh and return the account\'s recent posts. Stored posts return immediately and live fetches are debounced per account (~15s).
+     * Sync external posts
+     */
+    async syncExternal(requestParameters: SyncExternalRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SyncExternal200Response> {
+        const response = await this.syncExternalRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

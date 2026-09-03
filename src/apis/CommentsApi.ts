@@ -38,35 +38,39 @@ export interface CreateCommentRequest {
     /**
      * 
      */
-    id: string;
-    /**
-     * 
-     */
     createCommentBody: CreateCommentBody;
 }
 
 export interface DeleteCommentRequest {
     /**
-     * 
+     * Internal post id or platform-native post id. Native ids require accountId.
      */
-    id: string;
+    post: string;
     /**
-     * 
+     * Platform-native comment id.
      */
     commentId: string;
     /**
-     * 
+     * Required for platform-native post ids; disambiguates internal posts with several destinations.
      */
-    destinationId: string;
+    accountId?: string;
+    /**
+     * Internal destinations only. Narrows with accountId.
+     */
+    destinationId?: string;
 }
 
 export interface ListCommentsRequest {
     /**
-     * 
+     * Internal post id or platform-native post id. Native ids require accountId.
      */
-    id: string;
+    post: string;
     /**
-     * 
+     * Required for platform-native post ids; disambiguates internal posts with several destinations.
+     */
+    accountId?: string;
+    /**
+     * Internal destinations only. Narrows with accountId.
      */
     destinationId?: string;
     /**
@@ -74,7 +78,7 @@ export interface ListCommentsRequest {
      */
     limit?: number;
     /**
-     * Requires destinationId
+     * Requires a single resolved target
      */
     cursor?: string;
 }
@@ -88,13 +92,6 @@ export class CommentsApi extends runtime.BaseAPI {
      * Creates request options for createComment without sending the request
      */
     async createCommentRequestOpts(requestParameters: CreateCommentRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling createComment().'
-            );
-        }
-
         if (requestParameters['createCommentBody'] == null) {
             throw new runtime.RequiredError(
                 'createCommentBody',
@@ -121,8 +118,7 @@ export class CommentsApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/posts/{id}/comments`;
-        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        let urlPath = `/v1/comments`;
 
         return {
             path: urlPath,
@@ -134,6 +130,7 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Reply to one published destination or native post.
      * Create reply
      */
     async createCommentRaw(requestParameters: CreateCommentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateComment201Response>> {
@@ -144,6 +141,7 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Reply to one published destination or native post.
      * Create reply
      */
     async createComment(requestParameters: CreateCommentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateComment201Response> {
@@ -155,10 +153,10 @@ export class CommentsApi extends runtime.BaseAPI {
      * Creates request options for deleteComment without sending the request
      */
     async deleteCommentRequestOpts(requestParameters: DeleteCommentRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['id'] == null) {
+        if (requestParameters['post'] == null) {
             throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling deleteComment().'
+                'post',
+                'Required parameter "post" was null or undefined when calling deleteComment().'
             );
         }
 
@@ -169,17 +167,22 @@ export class CommentsApi extends runtime.BaseAPI {
             );
         }
 
-        if (requestParameters['destinationId'] == null) {
-            throw new runtime.RequiredError(
-                'destinationId',
-                'Required parameter "destinationId" was null or undefined when calling deleteComment().'
-            );
+        const queryParameters: any = {};
+
+        if (requestParameters['post'] != null) {
+            queryParameters['post'] = requestParameters['post'];
         }
 
-        const queryParameters: any = {};
+        if (requestParameters['accountId'] != null) {
+            queryParameters['accountId'] = requestParameters['accountId'];
+        }
 
         if (requestParameters['destinationId'] != null) {
             queryParameters['destinationId'] = requestParameters['destinationId'];
+        }
+
+        if (requestParameters['commentId'] != null) {
+            queryParameters['commentId'] = requestParameters['commentId'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -197,9 +200,7 @@ export class CommentsApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/posts/{id}/comments/{commentId}`;
-        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
-        urlPath = urlPath.replace('{commentId}', encodeURIComponent(String(requestParameters['commentId'])));
+        let urlPath = `/v1/comments`;
 
         return {
             path: urlPath,
@@ -210,6 +211,7 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Delete a comment owned by the connected account.
      * Delete own comment
      */
     async deleteCommentRaw(requestParameters: DeleteCommentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DeleteComment200Response>> {
@@ -220,6 +222,7 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Delete a comment owned by the connected account.
      * Delete own comment
      */
     async deleteComment(requestParameters: DeleteCommentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DeleteComment200Response> {
@@ -231,14 +234,22 @@ export class CommentsApi extends runtime.BaseAPI {
      * Creates request options for listComments without sending the request
      */
     async listCommentsRequestOpts(requestParameters: ListCommentsRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['id'] == null) {
+        if (requestParameters['post'] == null) {
             throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling listComments().'
+                'post',
+                'Required parameter "post" was null or undefined when calling listComments().'
             );
         }
 
         const queryParameters: any = {};
+
+        if (requestParameters['post'] != null) {
+            queryParameters['post'] = requestParameters['post'];
+        }
+
+        if (requestParameters['accountId'] != null) {
+            queryParameters['accountId'] = requestParameters['accountId'];
+        }
 
         if (requestParameters['destinationId'] != null) {
             queryParameters['destinationId'] = requestParameters['destinationId'];
@@ -267,8 +278,7 @@ export class CommentsApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/posts/{id}/comments`;
-        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        let urlPath = `/v1/comments`;
 
         return {
             path: urlPath,
@@ -279,6 +289,7 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Comments for every destination of a post, or for one platform-native post id.
      * List comments
      */
     async listCommentsRaw(requestParameters: ListCommentsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListComments200Response>> {
@@ -289,6 +300,7 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Comments for every destination of a post, or for one platform-native post id.
      * List comments
      */
     async listComments(requestParameters: ListCommentsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListComments200Response> {

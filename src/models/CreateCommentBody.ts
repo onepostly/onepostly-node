@@ -20,9 +20,17 @@ import { mapValues } from '../runtime.js';
  */
 export interface CreateCommentBody {
     /**
+     * Internal post id or platform-native post id. Native ids require accountId.
+     */
+    post: string;
+    /**
      * 
      */
-    destinationId: string;
+    accountId?: string;
+    /**
+     * 
+     */
+    destinationId?: string;
     /**
      * 
      */
@@ -37,7 +45,7 @@ export interface CreateCommentBody {
  * Check if a given object implements the CreateCommentBody interface.
  */
 export function instanceOfCreateCommentBody(value: object): value is CreateCommentBody {
-    if (!('destinationId' in value) || value['destinationId'] === undefined) return false;
+    if (!('post' in value) || value['post'] === undefined) return false;
     if (!('text' in value) || value['text'] === undefined) return false;
     return true;
 }
@@ -52,7 +60,9 @@ export function CreateCommentBodyFromJSONTyped(json: any, ignoreDiscriminator: b
     }
     return {
         
-        'destinationId': json['destinationId'],
+        'post': json['post'],
+        'accountId': json['accountId'] == null ? undefined : json['accountId'],
+        'destinationId': json['destinationId'] == null ? undefined : json['destinationId'],
         'text': json['text'],
         'parentCommentId': json['parentCommentId'] == null ? undefined : json['parentCommentId'],
     };
@@ -69,6 +79,8 @@ export function CreateCommentBodyToJSONTyped(value?: CreateCommentBody | null, i
 
     return {
         
+        'post': value['post'],
+        'accountId': value['accountId'],
         'destinationId': value['destinationId'],
         'text': value['text'],
         'parentCommentId': value['parentCommentId'],

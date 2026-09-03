@@ -13,6 +13,14 @@
  */
 
 import { mapValues } from '../runtime.js';
+import type { ListComments200ResponseComments } from './ListComments200ResponseComments.js';
+import {
+    ListComments200ResponseCommentsFromJSON,
+    ListComments200ResponseCommentsFromJSONTyped,
+    ListComments200ResponseCommentsToJSON,
+    ListComments200ResponseCommentsToJSONTyped,
+} from './ListComments200ResponseComments.js';
+
 /**
  * 
  * @export
@@ -22,13 +30,14 @@ export interface ListComments200Response {
     /**
      * 
      */
-    comments?: any | null;
+    comments: ListComments200ResponseComments;
 }
 
 /**
  * Check if a given object implements the ListComments200Response interface.
  */
 export function instanceOfListComments200Response(value: object): value is ListComments200Response {
+    if (!('comments' in value) || value['comments'] === undefined) return false;
     return true;
 }
 
@@ -42,7 +51,7 @@ export function ListComments200ResponseFromJSONTyped(json: any, ignoreDiscrimina
     }
     return {
         
-        'comments': json['comments'] === undefined ? undefined : json['comments'] === null ? null : json['comments'],
+        'comments': ListComments200ResponseCommentsFromJSON(json['comments']),
     };
 }
 
@@ -57,7 +66,7 @@ export function ListComments200ResponseToJSONTyped(value?: ListComments200Respon
 
     return {
         
-        'comments': value['comments'],
+        'comments': ListComments200ResponseCommentsToJSON(value['comments']),
     };
 }
 

@@ -11,7 +11,7 @@ import { Configuration } from "../src/index.js";
 import { ConnectionsApi } from "../src/index.js";
 import { MediaApi } from "../src/index.js";
 import { PostsApi } from "../src/index.js";
-import { InsightsApi } from "../src/index.js";
+import { AnalyticsApi } from "../src/index.js";
 import { CommentsApi } from "../src/index.js";
 import { EngagementApi } from "../src/index.js";
 import { WebhooksApi } from "../src/index.js";
@@ -80,14 +80,17 @@ describe("spec endpoints surface as SDK methods", () => {
     it("exposes listPosts", () => {
       expect(typeof new PostsApi(config)["listPosts"]).toBe("function");
     });
+    it("exposes syncExternal", () => {
+      expect(typeof new PostsApi(config)["syncExternal"]).toBe("function");
+    });
   });
 
-  describe("InsightsApi", () => {
-    it("exposes getPostInsights", () => {
-      expect(typeof new InsightsApi(config)["getPostInsights"]).toBe("function");
+  describe("AnalyticsApi", () => {
+    it("exposes getAnalytics", () => {
+      expect(typeof new AnalyticsApi(config)["getAnalytics"]).toBe("function");
     });
-    it("exposes getPostInsightsTimeline", () => {
-      expect(typeof new InsightsApi(config)["getPostInsightsTimeline"]).toBe("function");
+    it("exposes getAnalyticsTimeline", () => {
+      expect(typeof new AnalyticsApi(config)["getAnalyticsTimeline"]).toBe("function");
     });
   });
 

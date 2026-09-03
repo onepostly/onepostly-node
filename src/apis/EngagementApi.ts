@@ -19,10 +19,10 @@ import {
     Bookmark201ResponseToJSON,
 } from '../models/Bookmark201Response.js';
 import {
-    type DestinationIdBody,
-    DestinationIdBodyFromJSON,
-    DestinationIdBodyToJSON,
-} from '../models/DestinationIdBody.js';
+    type EngagementTargetBody,
+    EngagementTargetBodyFromJSON,
+    EngagementTargetBodyToJSON,
+} from '../models/EngagementTargetBody.js';
 import {
     type Like201Response,
     Like201ResponseFromJSON,
@@ -53,31 +53,27 @@ export interface BookmarkRequest {
     /**
      * 
      */
-    id: string;
-    /**
-     * 
-     */
-    destinationIdBody: DestinationIdBody;
+    engagementTargetBody: EngagementTargetBody;
 }
 
 export interface LikeRequest {
     /**
      * 
      */
-    id: string;
-    /**
-     * 
-     */
-    destinationIdBody: DestinationIdBody;
+    engagementTargetBody: EngagementTargetBody;
 }
 
 export interface ListRetweetersRequest {
     /**
-     * 
+     * Internal post id or platform-native post id. Native ids require accountId.
      */
-    id: string;
+    post: string;
     /**
-     * 
+     * Required for platform-native post ids; disambiguates internal posts with several destinations.
+     */
+    accountId?: string;
+    /**
+     * Internal destinations only. Narrows with accountId.
      */
     destinationId?: string;
     /**
@@ -85,7 +81,7 @@ export interface ListRetweetersRequest {
      */
     limit?: number;
     /**
-     * 
+     * Requires a single resolved target
      */
     cursor?: string;
 }
@@ -94,55 +90,59 @@ export interface QuoteRequest {
     /**
      * 
      */
-    id: string;
-    /**
-     * 
-     */
     quoteBody: QuoteBody;
 }
 
 export interface RemoveBookmarkRequest {
     /**
-     * 
+     * Internal post id or platform-native post id. Native ids require accountId.
      */
-    id: string;
+    post: string;
     /**
-     * 
+     * Required for platform-native post ids; disambiguates internal posts with several destinations.
      */
-    destinationId: string;
+    accountId?: string;
+    /**
+     * Internal destinations only. Narrows with accountId.
+     */
+    destinationId?: string;
 }
 
 export interface RetweetRequest {
     /**
      * 
      */
-    id: string;
-    /**
-     * 
-     */
-    destinationIdBody: DestinationIdBody;
+    engagementTargetBody: EngagementTargetBody;
 }
 
 export interface UndoRetweetRequest {
     /**
-     * 
+     * Internal post id or platform-native post id. Native ids require accountId.
      */
-    id: string;
+    post: string;
     /**
-     * 
+     * Required for platform-native post ids; disambiguates internal posts with several destinations.
      */
-    destinationId: string;
+    accountId?: string;
+    /**
+     * Internal destinations only. Narrows with accountId.
+     */
+    destinationId?: string;
 }
 
 export interface UnlikeRequest {
     /**
-     * 
+     * Internal post id or platform-native post id. Native ids require accountId.
      */
-    id: string;
+    post: string;
     /**
-     * 
+     * Required for platform-native post ids; disambiguates internal posts with several destinations.
      */
-    destinationId: string;
+    accountId?: string;
+    /**
+     * Internal destinations only. Narrows with accountId.
+     */
+    destinationId?: string;
 }
 
 /**
@@ -154,17 +154,10 @@ export class EngagementApi extends runtime.BaseAPI {
      * Creates request options for bookmark without sending the request
      */
     async bookmarkRequestOpts(requestParameters: BookmarkRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['id'] == null) {
+        if (requestParameters['engagementTargetBody'] == null) {
             throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling bookmark().'
-            );
-        }
-
-        if (requestParameters['destinationIdBody'] == null) {
-            throw new runtime.RequiredError(
-                'destinationIdBody',
-                'Required parameter "destinationIdBody" was null or undefined when calling bookmark().'
+                'engagementTargetBody',
+                'Required parameter "engagementTargetBody" was null or undefined when calling bookmark().'
             );
         }
 
@@ -187,19 +180,19 @@ export class EngagementApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/posts/{id}/bookmarks`;
-        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        let urlPath = `/v1/bookmarks`;
 
         return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: DestinationIdBodyToJSON(requestParameters['destinationIdBody']),
+            body: EngagementTargetBodyToJSON(requestParameters['engagementTargetBody']),
         };
     }
 
     /**
+     * Bookmark one published destination or native post.
      * Bookmark
      */
     async bookmarkRaw(requestParameters: BookmarkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Bookmark201Response>> {
@@ -210,6 +203,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
+     * Bookmark one published destination or native post.
      * Bookmark
      */
     async bookmark(requestParameters: BookmarkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Bookmark201Response> {
@@ -221,17 +215,10 @@ export class EngagementApi extends runtime.BaseAPI {
      * Creates request options for like without sending the request
      */
     async likeRequestOpts(requestParameters: LikeRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['id'] == null) {
+        if (requestParameters['engagementTargetBody'] == null) {
             throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling like().'
-            );
-        }
-
-        if (requestParameters['destinationIdBody'] == null) {
-            throw new runtime.RequiredError(
-                'destinationIdBody',
-                'Required parameter "destinationIdBody" was null or undefined when calling like().'
+                'engagementTargetBody',
+                'Required parameter "engagementTargetBody" was null or undefined when calling like().'
             );
         }
 
@@ -254,19 +241,19 @@ export class EngagementApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/posts/{id}/likes`;
-        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        let urlPath = `/v1/likes`;
 
         return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: DestinationIdBodyToJSON(requestParameters['destinationIdBody']),
+            body: EngagementTargetBodyToJSON(requestParameters['engagementTargetBody']),
         };
     }
 
     /**
+     * Like one published destination or native post.
      * Like
      */
     async likeRaw(requestParameters: LikeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Like201Response>> {
@@ -277,6 +264,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
+     * Like one published destination or native post.
      * Like
      */
     async like(requestParameters: LikeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Like201Response> {
@@ -288,14 +276,22 @@ export class EngagementApi extends runtime.BaseAPI {
      * Creates request options for listRetweeters without sending the request
      */
     async listRetweetersRequestOpts(requestParameters: ListRetweetersRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['id'] == null) {
+        if (requestParameters['post'] == null) {
             throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling listRetweeters().'
+                'post',
+                'Required parameter "post" was null or undefined when calling listRetweeters().'
             );
         }
 
         const queryParameters: any = {};
+
+        if (requestParameters['post'] != null) {
+            queryParameters['post'] = requestParameters['post'];
+        }
+
+        if (requestParameters['accountId'] != null) {
+            queryParameters['accountId'] = requestParameters['accountId'];
+        }
 
         if (requestParameters['destinationId'] != null) {
             queryParameters['destinationId'] = requestParameters['destinationId'];
@@ -324,8 +320,7 @@ export class EngagementApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/posts/{id}/retweets`;
-        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        let urlPath = `/v1/retweets`;
 
         return {
             path: urlPath,
@@ -336,6 +331,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
+     * Accounts that reposted a post, grouped per destination or native post.
      * List retweeters
      */
     async listRetweetersRaw(requestParameters: ListRetweetersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListRetweeters200Response>> {
@@ -346,6 +342,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
+     * Accounts that reposted a post, grouped per destination or native post.
      * List retweeters
      */
     async listRetweeters(requestParameters: ListRetweetersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListRetweeters200Response> {
@@ -357,13 +354,6 @@ export class EngagementApi extends runtime.BaseAPI {
      * Creates request options for quote without sending the request
      */
     async quoteRequestOpts(requestParameters: QuoteRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling quote().'
-            );
-        }
-
         if (requestParameters['quoteBody'] == null) {
             throw new runtime.RequiredError(
                 'quoteBody',
@@ -390,8 +380,7 @@ export class EngagementApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/posts/{id}/quotes`;
-        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        let urlPath = `/v1/quotes`;
 
         return {
             path: urlPath,
@@ -403,6 +392,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
+     * Quote one published destination or native post with new text.
      * Quote tweet
      */
     async quoteRaw(requestParameters: QuoteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Quote201Response>> {
@@ -413,6 +403,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
+     * Quote one published destination or native post with new text.
      * Quote tweet
      */
     async quote(requestParameters: QuoteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Quote201Response> {
@@ -424,21 +415,22 @@ export class EngagementApi extends runtime.BaseAPI {
      * Creates request options for removeBookmark without sending the request
      */
     async removeBookmarkRequestOpts(requestParameters: RemoveBookmarkRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['id'] == null) {
+        if (requestParameters['post'] == null) {
             throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling removeBookmark().'
-            );
-        }
-
-        if (requestParameters['destinationId'] == null) {
-            throw new runtime.RequiredError(
-                'destinationId',
-                'Required parameter "destinationId" was null or undefined when calling removeBookmark().'
+                'post',
+                'Required parameter "post" was null or undefined when calling removeBookmark().'
             );
         }
 
         const queryParameters: any = {};
+
+        if (requestParameters['post'] != null) {
+            queryParameters['post'] = requestParameters['post'];
+        }
+
+        if (requestParameters['accountId'] != null) {
+            queryParameters['accountId'] = requestParameters['accountId'];
+        }
 
         if (requestParameters['destinationId'] != null) {
             queryParameters['destinationId'] = requestParameters['destinationId'];
@@ -459,8 +451,7 @@ export class EngagementApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/posts/{id}/bookmarks`;
-        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        let urlPath = `/v1/bookmarks`;
 
         return {
             path: urlPath,
@@ -471,6 +462,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
+     * Remove a bookmark from the connected account.
      * Remove bookmark
      */
     async removeBookmarkRaw(requestParameters: RemoveBookmarkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Bookmark201Response>> {
@@ -481,6 +473,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
+     * Remove a bookmark from the connected account.
      * Remove bookmark
      */
     async removeBookmark(requestParameters: RemoveBookmarkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Bookmark201Response> {
@@ -492,17 +485,10 @@ export class EngagementApi extends runtime.BaseAPI {
      * Creates request options for retweet without sending the request
      */
     async retweetRequestOpts(requestParameters: RetweetRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['id'] == null) {
+        if (requestParameters['engagementTargetBody'] == null) {
             throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling retweet().'
-            );
-        }
-
-        if (requestParameters['destinationIdBody'] == null) {
-            throw new runtime.RequiredError(
-                'destinationIdBody',
-                'Required parameter "destinationIdBody" was null or undefined when calling retweet().'
+                'engagementTargetBody',
+                'Required parameter "engagementTargetBody" was null or undefined when calling retweet().'
             );
         }
 
@@ -525,19 +511,19 @@ export class EngagementApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/posts/{id}/retweets`;
-        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        let urlPath = `/v1/retweets`;
 
         return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: DestinationIdBodyToJSON(requestParameters['destinationIdBody']),
+            body: EngagementTargetBodyToJSON(requestParameters['engagementTargetBody']),
         };
     }
 
     /**
+     * Repost one published destination or native post.
      * Retweet
      */
     async retweetRaw(requestParameters: RetweetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Retweet201Response>> {
@@ -548,6 +534,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
+     * Repost one published destination or native post.
      * Retweet
      */
     async retweet(requestParameters: RetweetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Retweet201Response> {
@@ -559,21 +546,22 @@ export class EngagementApi extends runtime.BaseAPI {
      * Creates request options for undoRetweet without sending the request
      */
     async undoRetweetRequestOpts(requestParameters: UndoRetweetRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['id'] == null) {
+        if (requestParameters['post'] == null) {
             throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling undoRetweet().'
-            );
-        }
-
-        if (requestParameters['destinationId'] == null) {
-            throw new runtime.RequiredError(
-                'destinationId',
-                'Required parameter "destinationId" was null or undefined when calling undoRetweet().'
+                'post',
+                'Required parameter "post" was null or undefined when calling undoRetweet().'
             );
         }
 
         const queryParameters: any = {};
+
+        if (requestParameters['post'] != null) {
+            queryParameters['post'] = requestParameters['post'];
+        }
+
+        if (requestParameters['accountId'] != null) {
+            queryParameters['accountId'] = requestParameters['accountId'];
+        }
 
         if (requestParameters['destinationId'] != null) {
             queryParameters['destinationId'] = requestParameters['destinationId'];
@@ -594,8 +582,7 @@ export class EngagementApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/posts/{id}/retweets`;
-        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        let urlPath = `/v1/retweets`;
 
         return {
             path: urlPath,
@@ -606,6 +593,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
+     * Remove a repost created by the connected account.
      * Undo retweet
      */
     async undoRetweetRaw(requestParameters: UndoRetweetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Retweet201Response>> {
@@ -616,6 +604,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
+     * Remove a repost created by the connected account.
      * Undo retweet
      */
     async undoRetweet(requestParameters: UndoRetweetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Retweet201Response> {
@@ -627,21 +616,22 @@ export class EngagementApi extends runtime.BaseAPI {
      * Creates request options for unlike without sending the request
      */
     async unlikeRequestOpts(requestParameters: UnlikeRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['id'] == null) {
+        if (requestParameters['post'] == null) {
             throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling unlike().'
-            );
-        }
-
-        if (requestParameters['destinationId'] == null) {
-            throw new runtime.RequiredError(
-                'destinationId',
-                'Required parameter "destinationId" was null or undefined when calling unlike().'
+                'post',
+                'Required parameter "post" was null or undefined when calling unlike().'
             );
         }
 
         const queryParameters: any = {};
+
+        if (requestParameters['post'] != null) {
+            queryParameters['post'] = requestParameters['post'];
+        }
+
+        if (requestParameters['accountId'] != null) {
+            queryParameters['accountId'] = requestParameters['accountId'];
+        }
 
         if (requestParameters['destinationId'] != null) {
             queryParameters['destinationId'] = requestParameters['destinationId'];
@@ -662,8 +652,7 @@ export class EngagementApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/posts/{id}/likes`;
-        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        let urlPath = `/v1/likes`;
 
         return {
             path: urlPath,
@@ -674,6 +663,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
+     * Remove a like from the connected account.
      * Unlike
      */
     async unlikeRaw(requestParameters: UnlikeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Like201Response>> {
@@ -684,6 +674,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
+     * Remove a like from the connected account.
      * Unlike
      */
     async unlike(requestParameters: UnlikeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Like201Response> {
