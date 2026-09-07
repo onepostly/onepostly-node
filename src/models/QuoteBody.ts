@@ -20,15 +20,15 @@ import { mapValues } from '../runtime.js';
  */
 export interface QuoteBody {
     /**
-     * Internal post id or platform-native post id. Native ids require accountId.
+     * Internal post id or platform-native post id. Native ids require accountId. Omit only when destinationId is passed on its own.
      */
-    post: string;
+    post?: string;
     /**
      * 
      */
     accountId?: string;
     /**
-     * 
+     * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
      */
     destinationId?: string;
     /**
@@ -41,7 +41,6 @@ export interface QuoteBody {
  * Check if a given object implements the QuoteBody interface.
  */
 export function instanceOfQuoteBody(value: object): value is QuoteBody {
-    if (!('post' in value) || value['post'] === undefined) return false;
     if (!('text' in value) || value['text'] === undefined) return false;
     return true;
 }
@@ -56,7 +55,7 @@ export function QuoteBodyFromJSONTyped(json: any, ignoreDiscriminator: boolean):
     }
     return {
         
-        'post': json['post'],
+        'post': json['post'] == null ? undefined : json['post'],
         'accountId': json['accountId'] == null ? undefined : json['accountId'],
         'destinationId': json['destinationId'] == null ? undefined : json['destinationId'],
         'text': json['text'],

@@ -13,6 +13,28 @@
  */
 
 import { mapValues } from '../runtime.js';
+import type { ListWebhookDeliveries200ResponseDeliveriesInner } from './ListWebhookDeliveries200ResponseDeliveriesInner.js';
+import {
+    ListWebhookDeliveries200ResponseDeliveriesInnerFromJSON,
+    ListWebhookDeliveries200ResponseDeliveriesInnerFromJSONTyped,
+    ListWebhookDeliveries200ResponseDeliveriesInnerToJSON,
+    ListWebhookDeliveries200ResponseDeliveriesInnerToJSONTyped,
+} from './ListWebhookDeliveries200ResponseDeliveriesInner.js';
+import type { ListWebhookDeliveries200ResponseHistogramInner } from './ListWebhookDeliveries200ResponseHistogramInner.js';
+import {
+    ListWebhookDeliveries200ResponseHistogramInnerFromJSON,
+    ListWebhookDeliveries200ResponseHistogramInnerFromJSONTyped,
+    ListWebhookDeliveries200ResponseHistogramInnerToJSON,
+    ListWebhookDeliveries200ResponseHistogramInnerToJSONTyped,
+} from './ListWebhookDeliveries200ResponseHistogramInner.js';
+import type { ListWebhookDeliveries200ResponseFacets } from './ListWebhookDeliveries200ResponseFacets.js';
+import {
+    ListWebhookDeliveries200ResponseFacetsFromJSON,
+    ListWebhookDeliveries200ResponseFacetsFromJSONTyped,
+    ListWebhookDeliveries200ResponseFacetsToJSON,
+    ListWebhookDeliveries200ResponseFacetsToJSONTyped,
+} from './ListWebhookDeliveries200ResponseFacets.js';
+
 /**
  * 
  * @export
@@ -22,7 +44,19 @@ export interface ListWebhookDeliveries200Response {
     /**
      * 
      */
-    deliveries: Array<any>;
+    deliveries: Array<ListWebhookDeliveries200ResponseDeliveriesInner>;
+    /**
+     * 
+     */
+    nextCursor: string | null;
+    /**
+     * 
+     */
+    facets: ListWebhookDeliveries200ResponseFacets;
+    /**
+     * 
+     */
+    histogram: Array<ListWebhookDeliveries200ResponseHistogramInner>;
 }
 
 /**
@@ -30,6 +64,9 @@ export interface ListWebhookDeliveries200Response {
  */
 export function instanceOfListWebhookDeliveries200Response(value: object): value is ListWebhookDeliveries200Response {
     if (!('deliveries' in value) || value['deliveries'] === undefined) return false;
+    if (!('nextCursor' in value) || value['nextCursor'] === undefined) return false;
+    if (!('facets' in value) || value['facets'] === undefined) return false;
+    if (!('histogram' in value) || value['histogram'] === undefined) return false;
     return true;
 }
 
@@ -43,7 +80,10 @@ export function ListWebhookDeliveries200ResponseFromJSONTyped(json: any, ignoreD
     }
     return {
         
-        'deliveries': json['deliveries'],
+        'deliveries': ((json['deliveries'] as Array<any>).map(ListWebhookDeliveries200ResponseDeliveriesInnerFromJSON)),
+        'nextCursor': json['nextCursor'],
+        'facets': ListWebhookDeliveries200ResponseFacetsFromJSON(json['facets']),
+        'histogram': ((json['histogram'] as Array<any>).map(ListWebhookDeliveries200ResponseHistogramInnerFromJSON)),
     };
 }
 
@@ -58,7 +98,10 @@ export function ListWebhookDeliveries200ResponseToJSONTyped(value?: ListWebhookD
 
     return {
         
-        'deliveries': value['deliveries'],
+        'deliveries': ((value['deliveries'] as Array<any>).map(ListWebhookDeliveries200ResponseDeliveriesInnerToJSON)),
+        'nextCursor': value['nextCursor'],
+        'facets': ListWebhookDeliveries200ResponseFacetsToJSON(value['facets']),
+        'histogram': ((value['histogram'] as Array<any>).map(ListWebhookDeliveries200ResponseHistogramInnerToJSON)),
     };
 }
 

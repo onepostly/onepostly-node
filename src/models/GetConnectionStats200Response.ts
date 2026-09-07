@@ -13,6 +13,14 @@
  */
 
 import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime.js';
+import type { GetConnectionStats200ResponseStats } from './GetConnectionStats200ResponseStats.js';
+import {
+    GetConnectionStats200ResponseStatsFromJSON,
+    GetConnectionStats200ResponseStatsFromJSONTyped,
+    GetConnectionStats200ResponseStatsToJSON,
+    GetConnectionStats200ResponseStatsToJSONTyped,
+} from './GetConnectionStats200ResponseStats.js';
+
 /**
  * 
  * @export
@@ -34,7 +42,7 @@ export interface GetConnectionStats200Response {
     /**
      * 
      */
-    stats?: { [key: string]: any | null; } | null;
+    stats?: GetConnectionStats200ResponseStats | null;
     /**
      * 
      */
@@ -65,7 +73,7 @@ export function GetConnectionStats200ResponseFromJSONTyped(json: any, ignoreDisc
         'accountId': json['accountId'],
         'platform': json['platform'],
         'status': json['status'],
-        'stats': json['stats'] === undefined ? undefined : json['stats'] === null ? null : json['stats'],
+        'stats': json['stats'] === undefined ? undefined : json['stats'] === null ? null : GetConnectionStats200ResponseStatsFromJSON(json['stats']),
         'fetchedAt': (json['fetchedAt'] == null ? json['fetchedAt'] : parseDateTime(json['fetchedAt'])),
     };
 }
@@ -84,7 +92,7 @@ export function GetConnectionStats200ResponseToJSONTyped(value?: GetConnectionSt
         'accountId': value['accountId'],
         'platform': value['platform'],
         'status': value['status'],
-        'stats': value['stats'],
+        'stats': GetConnectionStats200ResponseStatsToJSON(value['stats']),
         'fetchedAt': value['fetchedAt'] == null ? value['fetchedAt'] : serializeDateTime(value['fetchedAt']),
     };
 }

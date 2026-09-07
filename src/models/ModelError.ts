@@ -13,14 +13,6 @@
  */
 
 import { mapValues } from '../runtime.js';
-import type { ErrorError } from './ErrorError.js';
-import {
-    ErrorErrorFromJSON,
-    ErrorErrorFromJSONTyped,
-    ErrorErrorToJSON,
-    ErrorErrorToJSONTyped,
-} from './ErrorError.js';
-
 /**
  * 
  * @export
@@ -28,9 +20,25 @@ import {
  */
 export interface ModelError {
     /**
-     * 
+     * Human-readable message. Display-only; never branch on it.
      */
-    error: ErrorError;
+    error: string;
+    /**
+     * Stable machine-readable code.
+     */
+    code: string;
+    /**
+     * Request field at fault, when applicable.
+     */
+    param?: string;
+    /**
+     * Additional structured context, when available.
+     */
+    details?: { [key: string]: any | null; };
+    /**
+     * Upstream platform that rejected the request, when applicable.
+     */
+    platform?: string;
 }
 
 /**
@@ -38,6 +46,7 @@ export interface ModelError {
  */
 export function instanceOfModelError(value: object): value is ModelError {
     if (!('error' in value) || value['error'] === undefined) return false;
+    if (!('code' in value) || value['code'] === undefined) return false;
     return true;
 }
 
@@ -51,7 +60,11 @@ export function ModelErrorFromJSONTyped(json: any, ignoreDiscriminator: boolean)
     }
     return {
         
-        'error': ErrorErrorFromJSON(json['error']),
+        'error': json['error'],
+        'code': json['code'],
+        'param': json['param'] == null ? undefined : json['param'],
+        'details': json['details'] == null ? undefined : json['details'],
+        'platform': json['platform'] == null ? undefined : json['platform'],
     };
 }
 
@@ -66,7 +79,11 @@ export function ModelErrorToJSONTyped(value?: ModelError | null, ignoreDiscrimin
 
     return {
         
-        'error': ErrorErrorToJSON(value['error']),
+        'error': value['error'],
+        'code': value['code'],
+        'param': value['param'],
+        'details': value['details'],
+        'platform': value['platform'],
     };
 }
 

@@ -22,6 +22,7 @@ export const MediaKind = {
     Image: 'image',
     MultiImage: 'multi-image',
     Video: 'video',
+    Document: 'document',
     Stories: 'stories',
 } as const;
 export type MediaKind = typeof MediaKind[keyof typeof MediaKind];

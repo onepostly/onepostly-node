@@ -13,13 +13,13 @@
  */
 
 import { mapValues } from '../runtime.js';
-import type { Webhook } from './Webhook.js';
+import type { CreateWebhook201ResponseWebhook } from './CreateWebhook201ResponseWebhook.js';
 import {
-    WebhookFromJSON,
-    WebhookFromJSONTyped,
-    WebhookToJSON,
-    WebhookToJSONTyped,
-} from './Webhook.js';
+    CreateWebhook201ResponseWebhookFromJSON,
+    CreateWebhook201ResponseWebhookFromJSONTyped,
+    CreateWebhook201ResponseWebhookToJSON,
+    CreateWebhook201ResponseWebhookToJSONTyped,
+} from './CreateWebhook201ResponseWebhook.js';
 
 /**
  * 
@@ -30,7 +30,7 @@ export interface CreateWebhook201Response {
     /**
      * 
      */
-    webhook: Webhook;
+    webhook: CreateWebhook201ResponseWebhook;
 }
 
 /**
@@ -51,7 +51,7 @@ export function CreateWebhook201ResponseFromJSONTyped(json: any, ignoreDiscrimin
     }
     return {
         
-        'webhook': WebhookFromJSON(json['webhook']),
+        'webhook': CreateWebhook201ResponseWebhookFromJSON(json['webhook']),
     };
 }
 
@@ -66,7 +66,7 @@ export function CreateWebhook201ResponseToJSONTyped(value?: CreateWebhook201Resp
 
     return {
         
-        'webhook': WebhookToJSON(value['webhook']),
+        'webhook': CreateWebhook201ResponseWebhookToJSON(value['webhook']),
     };
 }
 

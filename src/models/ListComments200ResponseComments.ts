@@ -13,6 +13,14 @@
  */
 
 import { mapValues } from '../runtime.js';
+import type { ListComments200ResponseCommentsSubjectsInner } from './ListComments200ResponseCommentsSubjectsInner.js';
+import {
+    ListComments200ResponseCommentsSubjectsInnerFromJSON,
+    ListComments200ResponseCommentsSubjectsInnerFromJSONTyped,
+    ListComments200ResponseCommentsSubjectsInnerToJSON,
+    ListComments200ResponseCommentsSubjectsInnerToJSONTyped,
+} from './ListComments200ResponseCommentsSubjectsInner.js';
+
 /**
  * 
  * @export
@@ -26,7 +34,7 @@ export interface ListComments200ResponseComments {
     /**
      * 
      */
-    subjects: Array<any>;
+    subjects: Array<ListComments200ResponseCommentsSubjectsInner>;
 }
 
 /**
@@ -49,7 +57,7 @@ export function ListComments200ResponseCommentsFromJSONTyped(json: any, ignoreDi
     return {
         
         'post': json['post'],
-        'subjects': json['subjects'],
+        'subjects': ((json['subjects'] as Array<any>).map(ListComments200ResponseCommentsSubjectsInnerFromJSON)),
     };
 }
 
@@ -65,7 +73,7 @@ export function ListComments200ResponseCommentsToJSONTyped(value?: ListComments2
     return {
         
         'post': value['post'],
-        'subjects': value['subjects'],
+        'subjects': ((value['subjects'] as Array<any>).map(ListComments200ResponseCommentsSubjectsInnerToJSON)),
     };
 }
 

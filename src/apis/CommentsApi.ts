@@ -43,34 +43,34 @@ export interface CreateCommentRequest {
 
 export interface DeleteCommentRequest {
     /**
-     * Internal post id or platform-native post id. Native ids require accountId.
-     */
-    post: string;
-    /**
      * Platform-native comment id.
      */
     commentId: string;
+    /**
+     * Internal post id or platform-native post id. Native ids require accountId. Omit only when destinationId is passed on its own.
+     */
+    post?: string;
     /**
      * Required for platform-native post ids; disambiguates internal posts with several destinations.
      */
     accountId?: string;
     /**
-     * Internal destinations only. Narrows with accountId.
+     * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
      */
     destinationId?: string;
 }
 
 export interface ListCommentsRequest {
     /**
-     * Internal post id or platform-native post id. Native ids require accountId.
+     * Internal post id or platform-native post id. Native ids require accountId. Omit only when destinationId is passed on its own.
      */
-    post: string;
+    post?: string;
     /**
      * Required for platform-native post ids; disambiguates internal posts with several destinations.
      */
     accountId?: string;
     /**
-     * Internal destinations only. Narrows with accountId.
+     * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
      */
     destinationId?: string;
     /**
@@ -153,13 +153,6 @@ export class CommentsApi extends runtime.BaseAPI {
      * Creates request options for deleteComment without sending the request
      */
     async deleteCommentRequestOpts(requestParameters: DeleteCommentRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['post'] == null) {
-            throw new runtime.RequiredError(
-                'post',
-                'Required parameter "post" was null or undefined when calling deleteComment().'
-            );
-        }
-
         if (requestParameters['commentId'] == null) {
             throw new runtime.RequiredError(
                 'commentId',
@@ -234,13 +227,6 @@ export class CommentsApi extends runtime.BaseAPI {
      * Creates request options for listComments without sending the request
      */
     async listCommentsRequestOpts(requestParameters: ListCommentsRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['post'] == null) {
-            throw new runtime.RequiredError(
-                'post',
-                'Required parameter "post" was null or undefined when calling listComments().'
-            );
-        }
-
         const queryParameters: any = {};
 
         if (requestParameters['post'] != null) {
@@ -303,7 +289,7 @@ export class CommentsApi extends runtime.BaseAPI {
      * Comments for every destination of a post, or for one platform-native post id.
      * List comments
      */
-    async listComments(requestParameters: ListCommentsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListComments200Response> {
+    async listComments(requestParameters: ListCommentsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListComments200Response> {
         const response = await this.listCommentsRaw(requestParameters, initOverrides);
         return await response.value();
     }

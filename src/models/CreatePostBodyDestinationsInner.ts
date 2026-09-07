@@ -13,6 +13,14 @@
  */
 
 import { mapValues } from '../runtime.js';
+import type { CreatePostBodyDestinationsInnerUserTagsInner } from './CreatePostBodyDestinationsInnerUserTagsInner.js';
+import {
+    CreatePostBodyDestinationsInnerUserTagsInnerFromJSON,
+    CreatePostBodyDestinationsInnerUserTagsInnerFromJSONTyped,
+    CreatePostBodyDestinationsInnerUserTagsInnerToJSON,
+    CreatePostBodyDestinationsInnerUserTagsInnerToJSONTyped,
+} from './CreatePostBodyDestinationsInnerUserTagsInner.js';
+
 /**
  * 
  * @export
@@ -31,6 +39,10 @@ export interface CreatePostBodyDestinationsInner {
      * 
      */
     quoteTweetId?: string;
+    /**
+     * Bluesky and Threads only. Post to reply to: at:// URI on Bluesky, post id on Threads.
+     */
+    replyToId?: string;
     /**
      * 
      */
@@ -103,6 +115,82 @@ export interface CreatePostBodyDestinationsInner {
      * 
      */
     thumbnailUrl?: string;
+    /**
+     * Instagram, Facebook, LinkedIn, and YouTube only. Comment posted right after publish.
+     */
+    firstComment?: string;
+    /**
+     * YouTube only. Video tags; combined length must stay under 500 characters.
+     */
+    tags?: Array<string>;
+    /**
+     * YouTube only. Video category id (e.g. "22", "10", "20").
+     */
+    categoryId?: string;
+    /**
+     * YouTube only. COPPA self-declared made-for-kids flag.
+     */
+    madeForKids?: boolean;
+    /**
+     * YouTube only. Disclose realistic AI-generated or altered content.
+     */
+    containsSyntheticMedia?: boolean;
+    /**
+     * Instagram only. Tagged users; x/y required for image posts.
+     */
+    userTags?: Array<CreatePostBodyDestinationsInnerUserTagsInner>;
+    /**
+     * Instagram only. Up to 3 collaborator usernames (feed images, reels, carousels).
+     */
+    collaborators?: Array<string>;
+    /**
+     * Instagram reels only. Cover frame offset in ms.
+     */
+    thumbOffset?: number;
+    /**
+     * Instagram reels only. Custom cover image URL.
+     */
+    coverUrl?: string;
+    /**
+     * Instagram reels only. Rename the original audio once.
+     */
+    audioName?: string;
+    /**
+     * Instagram reels only. true = feed + reels tab, false = reels tab only.
+     */
+    shareToFeed?: boolean;
+    /**
+     * Instagram only. Facebook Page id that has location data.
+     */
+    locationId?: string;
+    /**
+     * Instagram only. Paid partnership label (Facebook Login connections).
+     */
+    isPaidPartnership?: boolean;
+    /**
+     * TikTok videos only. Cover frame timestamp in ms.
+     */
+    videoCoverTimestampMs?: number;
+    /**
+     * TikTok photo posts only. Cover photo index (0-based).
+     */
+    photoCoverIndex?: number;
+    /**
+     * TikTok photo posts only. Auto-add recommended music.
+     */
+    autoAddMusic?: boolean;
+    /**
+     * Reddit only. Submit a self post even when link is present.
+     */
+    forceSelf?: boolean;
+    /**
+     * Reddit only. Submit the native video as a videogif.
+     */
+    videoGif?: boolean;
+    /**
+     * X only. Allowlist of up to 25 uppercase ISO 3166-1 alpha-2 country codes. Media is hidden outside these countries; the tweet text stays visible globally. Ignored for text-only tweets.
+     */
+    geoRestriction?: Array<string>;
 }
 
 
@@ -149,6 +237,7 @@ export function CreatePostBodyDestinationsInnerFromJSONTyped(json: any, ignoreDi
         'accountId': json['accountId'],
         'text': json['text'] == null ? undefined : json['text'],
         'quoteTweetId': json['quoteTweetId'] == null ? undefined : json['quoteTweetId'],
+        'replyToId': json['replyToId'] == null ? undefined : json['replyToId'],
         'privacyStatus': json['privacyStatus'] == null ? undefined : json['privacyStatus'],
         'privacyLevel': json['privacyLevel'] == null ? undefined : json['privacyLevel'],
         'disableComment': json['disableComment'] == null ? undefined : json['disableComment'],
@@ -167,6 +256,25 @@ export function CreatePostBodyDestinationsInnerFromJSONTyped(json: any, ignoreDi
         'nsfw': json['nsfw'] == null ? undefined : json['nsfw'],
         'spoiler': json['spoiler'] == null ? undefined : json['spoiler'],
         'thumbnailUrl': json['thumbnailUrl'] == null ? undefined : json['thumbnailUrl'],
+        'firstComment': json['firstComment'] == null ? undefined : json['firstComment'],
+        'tags': json['tags'] == null ? undefined : json['tags'],
+        'categoryId': json['categoryId'] == null ? undefined : json['categoryId'],
+        'madeForKids': json['madeForKids'] == null ? undefined : json['madeForKids'],
+        'containsSyntheticMedia': json['containsSyntheticMedia'] == null ? undefined : json['containsSyntheticMedia'],
+        'userTags': json['userTags'] == null ? undefined : ((json['userTags'] as Array<any>).map(CreatePostBodyDestinationsInnerUserTagsInnerFromJSON)),
+        'collaborators': json['collaborators'] == null ? undefined : json['collaborators'],
+        'thumbOffset': json['thumbOffset'] == null ? undefined : json['thumbOffset'],
+        'coverUrl': json['coverUrl'] == null ? undefined : json['coverUrl'],
+        'audioName': json['audioName'] == null ? undefined : json['audioName'],
+        'shareToFeed': json['shareToFeed'] == null ? undefined : json['shareToFeed'],
+        'locationId': json['locationId'] == null ? undefined : json['locationId'],
+        'isPaidPartnership': json['isPaidPartnership'] == null ? undefined : json['isPaidPartnership'],
+        'videoCoverTimestampMs': json['videoCoverTimestampMs'] == null ? undefined : json['videoCoverTimestampMs'],
+        'photoCoverIndex': json['photoCoverIndex'] == null ? undefined : json['photoCoverIndex'],
+        'autoAddMusic': json['autoAddMusic'] == null ? undefined : json['autoAddMusic'],
+        'forceSelf': json['forceSelf'] == null ? undefined : json['forceSelf'],
+        'videoGif': json['videoGif'] == null ? undefined : json['videoGif'],
+        'geoRestriction': json['geoRestriction'] == null ? undefined : json['geoRestriction'],
     };
 }
 
@@ -184,6 +292,7 @@ export function CreatePostBodyDestinationsInnerToJSONTyped(value?: CreatePostBod
         'accountId': value['accountId'],
         'text': value['text'],
         'quoteTweetId': value['quoteTweetId'],
+        'replyToId': value['replyToId'],
         'privacyStatus': value['privacyStatus'],
         'privacyLevel': value['privacyLevel'],
         'disableComment': value['disableComment'],
@@ -202,6 +311,25 @@ export function CreatePostBodyDestinationsInnerToJSONTyped(value?: CreatePostBod
         'nsfw': value['nsfw'],
         'spoiler': value['spoiler'],
         'thumbnailUrl': value['thumbnailUrl'],
+        'firstComment': value['firstComment'],
+        'tags': value['tags'],
+        'categoryId': value['categoryId'],
+        'madeForKids': value['madeForKids'],
+        'containsSyntheticMedia': value['containsSyntheticMedia'],
+        'userTags': value['userTags'] == null ? undefined : ((value['userTags'] as Array<any>).map(CreatePostBodyDestinationsInnerUserTagsInnerToJSON)),
+        'collaborators': value['collaborators'],
+        'thumbOffset': value['thumbOffset'],
+        'coverUrl': value['coverUrl'],
+        'audioName': value['audioName'],
+        'shareToFeed': value['shareToFeed'],
+        'locationId': value['locationId'],
+        'isPaidPartnership': value['isPaidPartnership'],
+        'videoCoverTimestampMs': value['videoCoverTimestampMs'],
+        'photoCoverIndex': value['photoCoverIndex'],
+        'autoAddMusic': value['autoAddMusic'],
+        'forceSelf': value['forceSelf'],
+        'videoGif': value['videoGif'],
+        'geoRestriction': value['geoRestriction'],
     };
 }
 

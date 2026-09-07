@@ -24,6 +24,11 @@ import {
     CreateWebhookBodyToJSON,
 } from '../models/CreateWebhookBody.js';
 import {
+    type GetWebhook200Response,
+    GetWebhook200ResponseFromJSON,
+    GetWebhook200ResponseToJSON,
+} from '../models/GetWebhook200Response.js';
+import {
     type ListWebhookDeliveries200Response,
     ListWebhookDeliveries200ResponseFromJSON,
     ListWebhookDeliveries200ResponseToJSON,
@@ -76,16 +81,25 @@ export interface ListWebhookDeliveriesRequest {
      */
     id: string;
     /**
-     * Page size (default varies by endpoint).
+     * Window in days (default 7, capped by plan retention).
      */
-    limit?: number;
-}
-
-export interface RotateWebhookSecretRequest {
+    range?: ListWebhookDeliveriesRangeEnum;
+    /**
+     * Comma-separated delivery statuses (success,failed).
+     */
+    status?: string;
+    /**
+     * Prefix match on event type/id within the window.
+     */
+    q?: string;
     /**
      * 
      */
-    id: string;
+    cursor?: string;
+    /**
+     * 
+     */
+    limit?: number;
 }
 
 export interface TestWebhookRequest {
@@ -268,17 +282,17 @@ export class WebhooksApi extends runtime.BaseAPI {
     /**
      * Get webhook
      */
-    async getWebhookRaw(requestParameters: GetWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateWebhook201Response>> {
+    async getWebhookRaw(requestParameters: GetWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetWebhook200Response>> {
         const requestOptions = await this.getWebhookRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => CreateWebhook201ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => GetWebhook200ResponseFromJSON(jsonValue));
     }
 
     /**
      * Get webhook
      */
-    async getWebhook(requestParameters: GetWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateWebhook201Response> {
+    async getWebhook(requestParameters: GetWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetWebhook200Response> {
         const response = await this.getWebhookRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -295,6 +309,22 @@ export class WebhooksApi extends runtime.BaseAPI {
         }
 
         const queryParameters: any = {};
+
+        if (requestParameters['range'] != null) {
+            queryParameters['range'] = requestParameters['range'];
+        }
+
+        if (requestParameters['status'] != null) {
+            queryParameters['status'] = requestParameters['status'];
+        }
+
+        if (requestParameters['q'] != null) {
+            queryParameters['q'] = requestParameters['q'];
+        }
+
+        if (requestParameters['cursor'] != null) {
+            queryParameters['cursor'] = requestParameters['cursor'];
+        }
 
         if (requestParameters['limit'] != null) {
             queryParameters['limit'] = requestParameters['limit'];
@@ -443,63 +473,6 @@ export class WebhooksApi extends runtime.BaseAPI {
     }
 
     /**
-     * Creates request options for rotateWebhookSecret without sending the request
-     */
-    async rotateWebhookSecretRequestOpts(requestParameters: RotateWebhookSecretRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling rotateWebhookSecret().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
-        }
-
-        if (this.configuration && this.configuration.accessToken) {
-            const token = this.configuration.accessToken;
-            const tokenString = await token("ApiKeyBearer", []);
-
-            if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
-            }
-        }
-
-        let urlPath = `/v1/webhooks/{id}/rotate-secret`;
-        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
-
-        return {
-            path: urlPath,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-        };
-    }
-
-    /**
-     * Rotate webhook secret
-     */
-    async rotateWebhookSecretRaw(requestParameters: RotateWebhookSecretRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateWebhook201Response>> {
-        const requestOptions = await this.rotateWebhookSecretRequestOpts(requestParameters);
-        const response = await this.request(requestOptions, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => CreateWebhook201ResponseFromJSON(jsonValue));
-    }
-
-    /**
-     * Rotate webhook secret
-     */
-    async rotateWebhookSecret(requestParameters: RotateWebhookSecretRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateWebhook201Response> {
-        const response = await this.rotateWebhookSecretRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
      * Creates request options for testWebhook without sending the request
      */
     async testWebhookRequestOpts(requestParameters: TestWebhookRequest): Promise<runtime.RequestOpts> {
@@ -608,19 +581,30 @@ export class WebhooksApi extends runtime.BaseAPI {
     /**
      * Update webhook
      */
-    async updateWebhookRaw(requestParameters: UpdateWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateWebhook201Response>> {
+    async updateWebhookRaw(requestParameters: UpdateWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetWebhook200Response>> {
         const requestOptions = await this.updateWebhookRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => CreateWebhook201ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => GetWebhook200ResponseFromJSON(jsonValue));
     }
 
     /**
      * Update webhook
      */
-    async updateWebhook(requestParameters: UpdateWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateWebhook201Response> {
+    async updateWebhook(requestParameters: UpdateWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetWebhook200Response> {
         const response = await this.updateWebhookRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
 }
+
+/**
+ * @export
+ */
+export const ListWebhookDeliveriesRangeEnum = {
+    _1: '1',
+    _3: '3',
+    _7: '7',
+    _30: '30',
+} as const;
+export type ListWebhookDeliveriesRangeEnum = typeof ListWebhookDeliveriesRangeEnum[keyof typeof ListWebhookDeliveriesRangeEnum];

@@ -147,8 +147,8 @@ All methods take a single request-parameters object; required fields are listed 
 
 | Method | Description |
 | --- | --- |
+| `media.getMediaPresignedUrl()` | Get a presigned upload URL |
 | `media.listMedia()` | List media |
-| `media.uploadMedia()` | Upload media |
 | `media.deleteMedia()` | Delete media |
 
 ### PostsApi
@@ -200,7 +200,6 @@ All methods take a single request-parameters object; required fields are listed 
 | `webhooks.getWebhook()` | Get webhook |
 | `webhooks.deleteWebhook()` | Delete webhook |
 | `webhooks.updateWebhook()` | Update webhook |
-| `webhooks.rotateWebhookSecret()` | Rotate webhook secret |
 | `webhooks.listWebhookDeliveries()` | List webhook deliveries |
 | `webhooks.testWebhook()` | Send test event |
 <!-- END GENERATED API REFERENCE -->

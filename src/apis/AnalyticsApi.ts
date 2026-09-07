@@ -26,30 +26,30 @@ import {
 
 export interface GetAnalyticsRequest {
     /**
-     * Internal post id or platform-native post id. Native ids require accountId.
+     * Internal post id or platform-native post id. Native ids require accountId. Omit only when destinationId is passed on its own.
      */
-    post: string;
+    post?: string;
     /**
      * Required for platform-native post ids; disambiguates internal posts with several destinations.
      */
     accountId?: string;
     /**
-     * Internal destinations only. Mutually narrows with accountId.
+     * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
      */
     destinationId?: string;
 }
 
 export interface GetAnalyticsTimelineRequest {
     /**
-     * Internal post id or platform-native post id. Native ids require accountId.
+     * Internal post id or platform-native post id. Native ids require accountId. Omit only when destinationId is passed on its own.
      */
-    post: string;
+    post?: string;
     /**
      * Required for platform-native post ids; disambiguates internal posts with several destinations.
      */
     accountId?: string;
     /**
-     * Internal destinations only. Mutually narrows with accountId.
+     * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
      */
     destinationId?: string;
     /**
@@ -71,13 +71,6 @@ export class AnalyticsApi extends runtime.BaseAPI {
      * Creates request options for getAnalytics without sending the request
      */
     async getAnalyticsRequestOpts(requestParameters: GetAnalyticsRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['post'] == null) {
-            throw new runtime.RequiredError(
-                'post',
-                'Required parameter "post" was null or undefined when calling getAnalytics().'
-            );
-        }
-
         const queryParameters: any = {};
 
         if (requestParameters['post'] != null) {
@@ -132,7 +125,7 @@ export class AnalyticsApi extends runtime.BaseAPI {
      * Normalized metrics collected automatically for a post published through Onepostly or a platform-native post id. Posts younger than 30 days refresh about hourly, older subjects about weekly. Native post ids sync on first read; each subject carries fetchedAt. If it looks stale on an older subject, read again in a few minutes.
      * Get analytics
      */
-    async getAnalytics(requestParameters: GetAnalyticsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetAnalytics200Response> {
+    async getAnalytics(requestParameters: GetAnalyticsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetAnalytics200Response> {
         const response = await this.getAnalyticsRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -141,13 +134,6 @@ export class AnalyticsApi extends runtime.BaseAPI {
      * Creates request options for getAnalyticsTimeline without sending the request
      */
     async getAnalyticsTimelineRequestOpts(requestParameters: GetAnalyticsTimelineRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['post'] == null) {
-            throw new runtime.RequiredError(
-                'post',
-                'Required parameter "post" was null or undefined when calling getAnalyticsTimeline().'
-            );
-        }
-
         const queryParameters: any = {};
 
         if (requestParameters['post'] != null) {
@@ -210,7 +196,7 @@ export class AnalyticsApi extends runtime.BaseAPI {
      * Daily cumulative metrics per subject, captured automatically by the Onepostly pipeline. Range defaults to the last 366 days.
      * Get daily analytics timeline
      */
-    async getAnalyticsTimeline(requestParameters: GetAnalyticsTimelineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetAnalyticsTimeline200Response> {
+    async getAnalyticsTimeline(requestParameters: GetAnalyticsTimelineRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetAnalyticsTimeline200Response> {
         const response = await this.getAnalyticsTimelineRaw(requestParameters, initOverrides);
         return await response.value();
     }

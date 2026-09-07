@@ -22,13 +22,34 @@ export interface Retweet201Response {
     /**
      * 
      */
-    retweet?: any | null;
+    postId: string;
+    /**
+     * 
+     */
+    destinationId: string;
+    /**
+     * 
+     */
+    platform: string;
+    /**
+     * 
+     */
+    retweeted: boolean;
+    /**
+     * 
+     */
+    retweetId: string | null;
 }
 
 /**
  * Check if a given object implements the Retweet201Response interface.
  */
 export function instanceOfRetweet201Response(value: object): value is Retweet201Response {
+    if (!('postId' in value) || value['postId'] === undefined) return false;
+    if (!('destinationId' in value) || value['destinationId'] === undefined) return false;
+    if (!('platform' in value) || value['platform'] === undefined) return false;
+    if (!('retweeted' in value) || value['retweeted'] === undefined) return false;
+    if (!('retweetId' in value) || value['retweetId'] === undefined) return false;
     return true;
 }
 
@@ -42,7 +63,11 @@ export function Retweet201ResponseFromJSONTyped(json: any, ignoreDiscriminator: 
     }
     return {
         
-        'retweet': json['retweet'] === undefined ? undefined : json['retweet'] === null ? null : json['retweet'],
+        'postId': json['postId'],
+        'destinationId': json['destinationId'],
+        'platform': json['platform'],
+        'retweeted': json['retweeted'],
+        'retweetId': json['retweetId'],
     };
 }
 
@@ -57,7 +82,11 @@ export function Retweet201ResponseToJSONTyped(value?: Retweet201Response | null,
 
     return {
         
-        'retweet': value['retweet'],
+        'postId': value['postId'],
+        'destinationId': value['destinationId'],
+        'platform': value['platform'],
+        'retweeted': value['retweeted'],
+        'retweetId': value['retweetId'],
     };
 }
 

@@ -13,6 +13,13 @@
  */
 
 import { mapValues } from '../runtime.js';
+import type { Comment } from './Comment.js';
+import {
+    CommentFromJSON,
+    CommentFromJSONTyped,
+    CommentToJSON,
+    CommentToJSONTyped,
+} from './Comment.js';
 import type { GetAnalytics200ResponseAnalyticsSubjectsInnerError } from './GetAnalytics200ResponseAnalyticsSubjectsInnerError.js';
 import {
     GetAnalytics200ResponseAnalyticsSubjectsInnerErrorFromJSON,
@@ -20,24 +27,17 @@ import {
     GetAnalytics200ResponseAnalyticsSubjectsInnerErrorToJSON,
     GetAnalytics200ResponseAnalyticsSubjectsInnerErrorToJSONTyped,
 } from './GetAnalytics200ResponseAnalyticsSubjectsInnerError.js';
-import type { Actor } from './Actor.js';
-import {
-    ActorFromJSON,
-    ActorFromJSONTyped,
-    ActorToJSON,
-    ActorToJSONTyped,
-} from './Actor.js';
 
 /**
  * 
  * @export
- * @interface ListRetweeters200ResponseRetweetsSubjectsInner
+ * @interface ListComments200ResponseCommentsSubjectsInner
  */
-export interface ListRetweeters200ResponseRetweetsSubjectsInner {
+export interface ListComments200ResponseCommentsSubjectsInner {
     /**
      * 
      */
-    scope: ListRetweeters200ResponseRetweetsSubjectsInnerScopeEnum;
+    scope: ListComments200ResponseCommentsSubjectsInnerScopeEnum;
     /**
      * 
      */
@@ -57,49 +57,53 @@ export interface ListRetweeters200ResponseRetweetsSubjectsInner {
     /**
      * 
      */
-    status?: string;
+    status: string;
     /**
      * 
      */
-    actors?: Array<Actor>;
+    comments: Array<Comment>;
     /**
      * 
      */
-    nextCursor?: string | null;
+    nextCursor: string | null;
     /**
      * 
      */
-    error?: GetAnalytics200ResponseAnalyticsSubjectsInnerError | null;
+    error: GetAnalytics200ResponseAnalyticsSubjectsInnerError | null;
 }
 
 
 /**
  * @export
  */
-export const ListRetweeters200ResponseRetweetsSubjectsInnerScopeEnum = {
+export const ListComments200ResponseCommentsSubjectsInnerScopeEnum = {
     Destination: 'destination',
     External: 'external',
 } as const;
-export type ListRetweeters200ResponseRetweetsSubjectsInnerScopeEnum = typeof ListRetweeters200ResponseRetweetsSubjectsInnerScopeEnum[keyof typeof ListRetweeters200ResponseRetweetsSubjectsInnerScopeEnum];
+export type ListComments200ResponseCommentsSubjectsInnerScopeEnum = typeof ListComments200ResponseCommentsSubjectsInnerScopeEnum[keyof typeof ListComments200ResponseCommentsSubjectsInnerScopeEnum];
 
 
 /**
- * Check if a given object implements the ListRetweeters200ResponseRetweetsSubjectsInner interface.
+ * Check if a given object implements the ListComments200ResponseCommentsSubjectsInner interface.
  */
-export function instanceOfListRetweeters200ResponseRetweetsSubjectsInner(value: object): value is ListRetweeters200ResponseRetweetsSubjectsInner {
+export function instanceOfListComments200ResponseCommentsSubjectsInner(value: object): value is ListComments200ResponseCommentsSubjectsInner {
     if (!('scope' in value) || value['scope'] === undefined) return false;
     if (!('subjectId' in value) || value['subjectId'] === undefined) return false;
     if (!('accountId' in value) || value['accountId'] === undefined) return false;
     if (!('platform' in value) || value['platform'] === undefined) return false;
     if (!('externalPostId' in value) || value['externalPostId'] === undefined) return false;
+    if (!('status' in value) || value['status'] === undefined) return false;
+    if (!('comments' in value) || value['comments'] === undefined) return false;
+    if (!('nextCursor' in value) || value['nextCursor'] === undefined) return false;
+    if (!('error' in value) || value['error'] === undefined) return false;
     return true;
 }
 
-export function ListRetweeters200ResponseRetweetsSubjectsInnerFromJSON(json: any): ListRetweeters200ResponseRetweetsSubjectsInner {
-    return ListRetweeters200ResponseRetweetsSubjectsInnerFromJSONTyped(json, false);
+export function ListComments200ResponseCommentsSubjectsInnerFromJSON(json: any): ListComments200ResponseCommentsSubjectsInner {
+    return ListComments200ResponseCommentsSubjectsInnerFromJSONTyped(json, false);
 }
 
-export function ListRetweeters200ResponseRetweetsSubjectsInnerFromJSONTyped(json: any, ignoreDiscriminator: boolean): ListRetweeters200ResponseRetweetsSubjectsInner {
+export function ListComments200ResponseCommentsSubjectsInnerFromJSONTyped(json: any, ignoreDiscriminator: boolean): ListComments200ResponseCommentsSubjectsInner {
     if (json == null) {
         return json;
     }
@@ -110,18 +114,18 @@ export function ListRetweeters200ResponseRetweetsSubjectsInnerFromJSONTyped(json
         'accountId': json['accountId'],
         'platform': json['platform'],
         'externalPostId': json['externalPostId'],
-        'status': json['status'] == null ? undefined : json['status'],
-        'actors': json['actors'] == null ? undefined : ((json['actors'] as Array<any>).map(ActorFromJSON)),
-        'nextCursor': json['nextCursor'] === undefined ? undefined : json['nextCursor'] === null ? null : json['nextCursor'],
-        'error': json['error'] === undefined ? undefined : json['error'] === null ? null : GetAnalytics200ResponseAnalyticsSubjectsInnerErrorFromJSON(json['error']),
+        'status': json['status'],
+        'comments': ((json['comments'] as Array<any>).map(CommentFromJSON)),
+        'nextCursor': json['nextCursor'],
+        'error': GetAnalytics200ResponseAnalyticsSubjectsInnerErrorFromJSON(json['error']),
     };
 }
 
-export function ListRetweeters200ResponseRetweetsSubjectsInnerToJSON(json: any): ListRetweeters200ResponseRetweetsSubjectsInner {
-    return ListRetweeters200ResponseRetweetsSubjectsInnerToJSONTyped(json, false);
+export function ListComments200ResponseCommentsSubjectsInnerToJSON(json: any): ListComments200ResponseCommentsSubjectsInner {
+    return ListComments200ResponseCommentsSubjectsInnerToJSONTyped(json, false);
 }
 
-export function ListRetweeters200ResponseRetweetsSubjectsInnerToJSONTyped(value?: ListRetweeters200ResponseRetweetsSubjectsInner | null, ignoreDiscriminator: boolean = false): any {
+export function ListComments200ResponseCommentsSubjectsInnerToJSONTyped(value?: ListComments200ResponseCommentsSubjectsInner | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
@@ -134,7 +138,7 @@ export function ListRetweeters200ResponseRetweetsSubjectsInnerToJSONTyped(value?
         'platform': value['platform'],
         'externalPostId': value['externalPostId'],
         'status': value['status'],
-        'actors': value['actors'] == null ? undefined : ((value['actors'] as Array<any>).map(ActorToJSON)),
+        'comments': ((value['comments'] as Array<any>).map(CommentToJSON)),
         'nextCursor': value['nextCursor'],
         'error': GetAnalytics200ResponseAnalyticsSubjectsInnerErrorToJSON(value['error']),
     };

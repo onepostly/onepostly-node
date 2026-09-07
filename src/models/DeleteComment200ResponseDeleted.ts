@@ -16,9 +16,9 @@ import { mapValues } from '../runtime.js';
 /**
  * 
  * @export
- * @interface Like201Response
+ * @interface DeleteComment200ResponseDeleted
  */
-export interface Like201Response {
+export interface DeleteComment200ResponseDeleted {
     /**
      * 
      */
@@ -34,30 +34,30 @@ export interface Like201Response {
     /**
      * 
      */
-    kind: string;
+    commentId: string;
     /**
      * 
      */
-    active: boolean;
+    deleted: boolean;
 }
 
 /**
- * Check if a given object implements the Like201Response interface.
+ * Check if a given object implements the DeleteComment200ResponseDeleted interface.
  */
-export function instanceOfLike201Response(value: object): value is Like201Response {
+export function instanceOfDeleteComment200ResponseDeleted(value: object): value is DeleteComment200ResponseDeleted {
     if (!('postId' in value) || value['postId'] === undefined) return false;
     if (!('destinationId' in value) || value['destinationId'] === undefined) return false;
     if (!('platform' in value) || value['platform'] === undefined) return false;
-    if (!('kind' in value) || value['kind'] === undefined) return false;
-    if (!('active' in value) || value['active'] === undefined) return false;
+    if (!('commentId' in value) || value['commentId'] === undefined) return false;
+    if (!('deleted' in value) || value['deleted'] === undefined) return false;
     return true;
 }
 
-export function Like201ResponseFromJSON(json: any): Like201Response {
-    return Like201ResponseFromJSONTyped(json, false);
+export function DeleteComment200ResponseDeletedFromJSON(json: any): DeleteComment200ResponseDeleted {
+    return DeleteComment200ResponseDeletedFromJSONTyped(json, false);
 }
 
-export function Like201ResponseFromJSONTyped(json: any, ignoreDiscriminator: boolean): Like201Response {
+export function DeleteComment200ResponseDeletedFromJSONTyped(json: any, ignoreDiscriminator: boolean): DeleteComment200ResponseDeleted {
     if (json == null) {
         return json;
     }
@@ -66,16 +66,16 @@ export function Like201ResponseFromJSONTyped(json: any, ignoreDiscriminator: boo
         'postId': json['postId'],
         'destinationId': json['destinationId'],
         'platform': json['platform'],
-        'kind': json['kind'],
-        'active': json['active'],
+        'commentId': json['commentId'],
+        'deleted': json['deleted'],
     };
 }
 
-export function Like201ResponseToJSON(json: any): Like201Response {
-    return Like201ResponseToJSONTyped(json, false);
+export function DeleteComment200ResponseDeletedToJSON(json: any): DeleteComment200ResponseDeleted {
+    return DeleteComment200ResponseDeletedToJSONTyped(json, false);
 }
 
-export function Like201ResponseToJSONTyped(value?: Like201Response | null, ignoreDiscriminator: boolean = false): any {
+export function DeleteComment200ResponseDeletedToJSONTyped(value?: DeleteComment200ResponseDeleted | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
@@ -85,8 +85,8 @@ export function Like201ResponseToJSONTyped(value?: Like201Response | null, ignor
         'postId': value['postId'],
         'destinationId': value['destinationId'],
         'platform': value['platform'],
-        'kind': value['kind'],
-        'active': value['active'],
+        'commentId': value['commentId'],
+        'deleted': value['deleted'],
     };
 }
 

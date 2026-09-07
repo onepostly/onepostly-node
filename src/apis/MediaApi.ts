@@ -19,16 +19,28 @@ import {
     ListMedia200ResponseToJSON,
 } from '../models/ListMedia200Response.js';
 import {
-    type UploadMedia201Response,
-    UploadMedia201ResponseFromJSON,
-    UploadMedia201ResponseToJSON,
-} from '../models/UploadMedia201Response.js';
+    type PresignMediaBody,
+    PresignMediaBodyFromJSON,
+    PresignMediaBodyToJSON,
+} from '../models/PresignMediaBody.js';
+import {
+    type PresignedUpload,
+    PresignedUploadFromJSON,
+    PresignedUploadToJSON,
+} from '../models/PresignedUpload.js';
 
 export interface DeleteMediaRequest {
     /**
      * 
      */
     id: string;
+}
+
+export interface GetMediaPresignedUrlRequest {
+    /**
+     * 
+     */
+    presignMediaBody: PresignMediaBody;
 }
 
 export interface ListMediaRequest {
@@ -40,13 +52,6 @@ export interface ListMediaRequest {
      * Offset for list endpoints.
      */
     offset?: number | null;
-}
-
-export interface UploadMediaRequest {
-    /**
-     * 
-     */
-    file?: Blob;
 }
 
 /**
@@ -111,6 +116,65 @@ export class MediaApi extends runtime.BaseAPI {
     }
 
     /**
+     * Creates request options for getMediaPresignedUrl without sending the request
+     */
+    async getMediaPresignedUrlRequestOpts(requestParameters: GetMediaPresignedUrlRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['presignMediaBody'] == null) {
+            throw new runtime.RequiredError(
+                'presignMediaBody',
+                'Required parameter "presignMediaBody" was null or undefined when calling getMediaPresignedUrl().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("ApiKeyBearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/media/presign`;
+
+        return {
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: PresignMediaBodyToJSON(requestParameters['presignMediaBody']),
+        };
+    }
+
+    /**
+     * Get a presigned upload URL
+     */
+    async getMediaPresignedUrlRaw(requestParameters: GetMediaPresignedUrlRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PresignedUpload>> {
+        const requestOptions = await this.getMediaPresignedUrlRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => PresignedUploadFromJSON(jsonValue));
+    }
+
+    /**
+     * Get a presigned upload URL
+     */
+    async getMediaPresignedUrl(requestParameters: GetMediaPresignedUrlRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PresignedUpload> {
+        const response = await this.getMediaPresignedUrlRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Creates request options for listMedia without sending the request
      */
     async listMediaRequestOpts(requestParameters: ListMediaRequest): Promise<runtime.RequestOpts> {
@@ -164,76 +228,6 @@ export class MediaApi extends runtime.BaseAPI {
      */
     async listMedia(requestParameters: ListMediaRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListMedia200Response> {
         const response = await this.listMediaRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Creates request options for uploadMedia without sending the request
-     */
-    async uploadMediaRequestOpts(requestParameters: UploadMediaRequest): Promise<runtime.RequestOpts> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
-        }
-
-        if (this.configuration && this.configuration.accessToken) {
-            const token = this.configuration.accessToken;
-            const tokenString = await token("ApiKeyBearer", []);
-
-            if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
-            }
-        }
-        const consumes: runtime.Consume[] = [
-            { contentType: 'multipart/form-data' },
-        ];
-        // @ts-ignore: canConsumeForm may be unused
-        const canConsumeForm = runtime.canConsumeForm(consumes);
-
-        let formParams: { append(param: string, value: any): any };
-        let useForm = false;
-        // use FormData to transmit files using content-type "multipart/form-data"
-        useForm = canConsumeForm;
-        if (useForm) {
-            formParams = new FormData();
-        } else {
-            formParams = new URLSearchParams();
-        }
-
-        if (requestParameters['file'] != null) {
-            formParams.append('file', requestParameters['file'] as any);
-        }
-
-
-        let urlPath = `/v1/media`;
-
-        return {
-            path: urlPath,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: formParams,
-        };
-    }
-
-    /**
-     * Upload media
-     */
-    async uploadMediaRaw(requestParameters: UploadMediaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UploadMedia201Response>> {
-        const requestOptions = await this.uploadMediaRequestOpts(requestParameters);
-        const response = await this.request(requestOptions, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => UploadMedia201ResponseFromJSON(jsonValue));
-    }
-
-    /**
-     * Upload media
-     */
-    async uploadMedia(requestParameters: UploadMediaRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UploadMedia201Response> {
-        const response = await this.uploadMediaRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

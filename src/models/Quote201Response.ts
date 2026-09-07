@@ -13,6 +13,14 @@
  */
 
 import { mapValues } from '../runtime.js';
+import type { Post } from './Post.js';
+import {
+    PostFromJSON,
+    PostFromJSONTyped,
+    PostToJSON,
+    PostToJSONTyped,
+} from './Post.js';
+
 /**
  * 
  * @export
@@ -22,13 +30,24 @@ export interface Quote201Response {
     /**
      * 
      */
-    quote?: any | null;
+    sourcePostId: string;
+    /**
+     * 
+     */
+    sourceDestinationId: string;
+    /**
+     * 
+     */
+    post: Post;
 }
 
 /**
  * Check if a given object implements the Quote201Response interface.
  */
 export function instanceOfQuote201Response(value: object): value is Quote201Response {
+    if (!('sourcePostId' in value) || value['sourcePostId'] === undefined) return false;
+    if (!('sourceDestinationId' in value) || value['sourceDestinationId'] === undefined) return false;
+    if (!('post' in value) || value['post'] === undefined) return false;
     return true;
 }
 
@@ -42,7 +61,9 @@ export function Quote201ResponseFromJSONTyped(json: any, ignoreDiscriminator: bo
     }
     return {
         
-        'quote': json['quote'] === undefined ? undefined : json['quote'] === null ? null : json['quote'],
+        'sourcePostId': json['sourcePostId'],
+        'sourceDestinationId': json['sourceDestinationId'],
+        'post': PostFromJSON(json['post']),
     };
 }
 
@@ -57,7 +78,9 @@ export function Quote201ResponseToJSONTyped(value?: Quote201Response | null, ign
 
     return {
         
-        'quote': value['quote'],
+        'sourcePostId': value['sourcePostId'],
+        'sourceDestinationId': value['sourceDestinationId'],
+        'post': PostToJSON(value['post']),
     };
 }
 

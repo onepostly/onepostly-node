@@ -16,9 +16,9 @@ import { mapValues } from '../runtime.js';
 /**
  * 
  * @export
- * @interface Like201Response
+ * @interface UndoRetweet200Response
  */
-export interface Like201Response {
+export interface UndoRetweet200Response {
     /**
      * 
      */
@@ -34,30 +34,25 @@ export interface Like201Response {
     /**
      * 
      */
-    kind: string;
-    /**
-     * 
-     */
-    active: boolean;
+    retweeted: boolean;
 }
 
 /**
- * Check if a given object implements the Like201Response interface.
+ * Check if a given object implements the UndoRetweet200Response interface.
  */
-export function instanceOfLike201Response(value: object): value is Like201Response {
+export function instanceOfUndoRetweet200Response(value: object): value is UndoRetweet200Response {
     if (!('postId' in value) || value['postId'] === undefined) return false;
     if (!('destinationId' in value) || value['destinationId'] === undefined) return false;
     if (!('platform' in value) || value['platform'] === undefined) return false;
-    if (!('kind' in value) || value['kind'] === undefined) return false;
-    if (!('active' in value) || value['active'] === undefined) return false;
+    if (!('retweeted' in value) || value['retweeted'] === undefined) return false;
     return true;
 }
 
-export function Like201ResponseFromJSON(json: any): Like201Response {
-    return Like201ResponseFromJSONTyped(json, false);
+export function UndoRetweet200ResponseFromJSON(json: any): UndoRetweet200Response {
+    return UndoRetweet200ResponseFromJSONTyped(json, false);
 }
 
-export function Like201ResponseFromJSONTyped(json: any, ignoreDiscriminator: boolean): Like201Response {
+export function UndoRetweet200ResponseFromJSONTyped(json: any, ignoreDiscriminator: boolean): UndoRetweet200Response {
     if (json == null) {
         return json;
     }
@@ -66,16 +61,15 @@ export function Like201ResponseFromJSONTyped(json: any, ignoreDiscriminator: boo
         'postId': json['postId'],
         'destinationId': json['destinationId'],
         'platform': json['platform'],
-        'kind': json['kind'],
-        'active': json['active'],
+        'retweeted': json['retweeted'],
     };
 }
 
-export function Like201ResponseToJSON(json: any): Like201Response {
-    return Like201ResponseToJSONTyped(json, false);
+export function UndoRetweet200ResponseToJSON(json: any): UndoRetweet200Response {
+    return UndoRetweet200ResponseToJSONTyped(json, false);
 }
 
-export function Like201ResponseToJSONTyped(value?: Like201Response | null, ignoreDiscriminator: boolean = false): any {
+export function UndoRetweet200ResponseToJSONTyped(value?: UndoRetweet200Response | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
@@ -85,8 +79,7 @@ export function Like201ResponseToJSONTyped(value?: Like201Response | null, ignor
         'postId': value['postId'],
         'destinationId': value['destinationId'],
         'platform': value['platform'],
-        'kind': value['kind'],
-        'active': value['active'],
+        'retweeted': value['retweeted'],
     };
 }
 

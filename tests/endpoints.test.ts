@@ -56,11 +56,11 @@ describe("spec endpoints surface as SDK methods", () => {
     it("exposes deleteMedia", () => {
       expect(typeof new MediaApi(config)["deleteMedia"]).toBe("function");
     });
+    it("exposes getMediaPresignedUrl", () => {
+      expect(typeof new MediaApi(config)["getMediaPresignedUrl"]).toBe("function");
+    });
     it("exposes listMedia", () => {
       expect(typeof new MediaApi(config)["listMedia"]).toBe("function");
-    });
-    it("exposes uploadMedia", () => {
-      expect(typeof new MediaApi(config)["uploadMedia"]).toBe("function");
     });
   });
 
@@ -151,9 +151,6 @@ describe("spec endpoints surface as SDK methods", () => {
     });
     it("exposes listWebhooks", () => {
       expect(typeof new WebhooksApi(config)["listWebhooks"]).toBe("function");
-    });
-    it("exposes rotateWebhookSecret", () => {
-      expect(typeof new WebhooksApi(config)["rotateWebhookSecret"]).toBe("function");
     });
     it("exposes testWebhook", () => {
       expect(typeof new WebhooksApi(config)["testWebhook"]).toBe("function");

@@ -57,10 +57,6 @@ export interface DeletePostDestinationRequest {
     /**
      * 
      */
-    id: string;
-    /**
-     * 
-     */
     destinationId: string;
 }
 
@@ -218,13 +214,6 @@ export class PostsApi extends runtime.BaseAPI {
      * Creates request options for deletePostDestination without sending the request
      */
     async deletePostDestinationRequestOpts(requestParameters: DeletePostDestinationRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling deletePostDestination().'
-            );
-        }
-
         if (requestParameters['destinationId'] == null) {
             throw new runtime.RequiredError(
                 'destinationId',
@@ -249,8 +238,7 @@ export class PostsApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/posts/{id}/destinations/{destinationId}`;
-        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        let urlPath = `/v1/destinations/{destinationId}`;
         urlPath = urlPath.replace('{destinationId}', encodeURIComponent(String(requestParameters['destinationId'])));
 
         return {

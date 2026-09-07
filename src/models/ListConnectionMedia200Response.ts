@@ -13,6 +13,14 @@
  */
 
 import { mapValues } from '../runtime.js';
+import type { ListConnectionMedia200ResponseItemsInner } from './ListConnectionMedia200ResponseItemsInner.js';
+import {
+    ListConnectionMedia200ResponseItemsInnerFromJSON,
+    ListConnectionMedia200ResponseItemsInnerFromJSONTyped,
+    ListConnectionMedia200ResponseItemsInnerToJSON,
+    ListConnectionMedia200ResponseItemsInnerToJSONTyped,
+} from './ListConnectionMedia200ResponseItemsInner.js';
+
 /**
  * 
  * @export
@@ -30,7 +38,7 @@ export interface ListConnectionMedia200Response {
     /**
      * 
      */
-    items: Array<{ [key: string]: any | null; }>;
+    items: Array<ListConnectionMedia200ResponseItemsInner>;
     /**
      * 
      */
@@ -60,7 +68,7 @@ export function ListConnectionMedia200ResponseFromJSONTyped(json: any, ignoreDis
         
         'accountId': json['accountId'],
         'platform': json['platform'],
-        'items': json['items'],
+        'items': ((json['items'] as Array<any>).map(ListConnectionMedia200ResponseItemsInnerFromJSON)),
         'nextCursor': json['nextCursor'],
     };
 }
@@ -78,7 +86,7 @@ export function ListConnectionMedia200ResponseToJSONTyped(value?: ListConnection
         
         'accountId': value['accountId'],
         'platform': value['platform'],
-        'items': value['items'],
+        'items': ((value['items'] as Array<any>).map(ListConnectionMedia200ResponseItemsInnerToJSON)),
         'nextCursor': value['nextCursor'],
     };
 }

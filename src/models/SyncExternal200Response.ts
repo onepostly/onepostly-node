@@ -13,6 +13,13 @@
  */
 
 import { mapValues } from '../runtime.js';
+import type { SyncExternal200ResponsePost } from './SyncExternal200ResponsePost.js';
+import {
+    SyncExternal200ResponsePostFromJSON,
+    SyncExternal200ResponsePostFromJSONTyped,
+    SyncExternal200ResponsePostToJSON,
+    SyncExternal200ResponsePostToJSONTyped,
+} from './SyncExternal200ResponsePost.js';
 import type { ExternalPost } from './ExternalPost.js';
 import {
     ExternalPostFromJSON,
@@ -45,7 +52,7 @@ export interface SyncExternal200Response {
     /**
      * 
      */
-    post?: ExternalPost | null;
+    post?: SyncExternal200ResponsePost | null;
     /**
      * 
      */
@@ -72,7 +79,7 @@ export function SyncExternal200ResponseFromJSONTyped(json: any, ignoreDiscrimina
         
         'synced': SyncExternal200ResponseSyncedFromJSON(json['synced']),
         'found': json['found'] == null ? undefined : json['found'],
-        'post': json['post'] === undefined ? undefined : json['post'] === null ? null : ExternalPostFromJSON(json['post']),
+        'post': json['post'] === undefined ? undefined : json['post'] === null ? null : SyncExternal200ResponsePostFromJSON(json['post']),
         'posts': json['posts'] == null ? undefined : ((json['posts'] as Array<any>).map(ExternalPostFromJSON)),
     };
 }
@@ -90,7 +97,7 @@ export function SyncExternal200ResponseToJSONTyped(value?: SyncExternal200Respon
         
         'synced': SyncExternal200ResponseSyncedToJSON(value['synced']),
         'found': value['found'],
-        'post': ExternalPostToJSON(value['post']),
+        'post': SyncExternal200ResponsePostToJSON(value['post']),
         'posts': value['posts'] == null ? undefined : ((value['posts'] as Array<any>).map(ExternalPostToJSON)),
     };
 }

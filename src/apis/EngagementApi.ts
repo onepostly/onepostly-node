@@ -14,11 +14,6 @@
 
 import * as runtime from '../runtime.js';
 import {
-    type Bookmark201Response,
-    Bookmark201ResponseFromJSON,
-    Bookmark201ResponseToJSON,
-} from '../models/Bookmark201Response.js';
-import {
     type EngagementTargetBody,
     EngagementTargetBodyFromJSON,
     EngagementTargetBodyToJSON,
@@ -48,6 +43,11 @@ import {
     Retweet201ResponseFromJSON,
     Retweet201ResponseToJSON,
 } from '../models/Retweet201Response.js';
+import {
+    type UndoRetweet200Response,
+    UndoRetweet200ResponseFromJSON,
+    UndoRetweet200ResponseToJSON,
+} from '../models/UndoRetweet200Response.js';
 
 export interface BookmarkRequest {
     /**
@@ -65,15 +65,15 @@ export interface LikeRequest {
 
 export interface ListRetweetersRequest {
     /**
-     * Internal post id or platform-native post id. Native ids require accountId.
+     * Internal post id or platform-native post id. Native ids require accountId. Omit only when destinationId is passed on its own.
      */
-    post: string;
+    post?: string;
     /**
      * Required for platform-native post ids; disambiguates internal posts with several destinations.
      */
     accountId?: string;
     /**
-     * Internal destinations only. Narrows with accountId.
+     * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
      */
     destinationId?: string;
     /**
@@ -95,15 +95,15 @@ export interface QuoteRequest {
 
 export interface RemoveBookmarkRequest {
     /**
-     * Internal post id or platform-native post id. Native ids require accountId.
+     * Internal post id or platform-native post id. Native ids require accountId. Omit only when destinationId is passed on its own.
      */
-    post: string;
+    post?: string;
     /**
      * Required for platform-native post ids; disambiguates internal posts with several destinations.
      */
     accountId?: string;
     /**
-     * Internal destinations only. Narrows with accountId.
+     * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
      */
     destinationId?: string;
 }
@@ -117,30 +117,30 @@ export interface RetweetRequest {
 
 export interface UndoRetweetRequest {
     /**
-     * Internal post id or platform-native post id. Native ids require accountId.
+     * Internal post id or platform-native post id. Native ids require accountId. Omit only when destinationId is passed on its own.
      */
-    post: string;
+    post?: string;
     /**
      * Required for platform-native post ids; disambiguates internal posts with several destinations.
      */
     accountId?: string;
     /**
-     * Internal destinations only. Narrows with accountId.
+     * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
      */
     destinationId?: string;
 }
 
 export interface UnlikeRequest {
     /**
-     * Internal post id or platform-native post id. Native ids require accountId.
+     * Internal post id or platform-native post id. Native ids require accountId. Omit only when destinationId is passed on its own.
      */
-    post: string;
+    post?: string;
     /**
      * Required for platform-native post ids; disambiguates internal posts with several destinations.
      */
     accountId?: string;
     /**
-     * Internal destinations only. Narrows with accountId.
+     * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
      */
     destinationId?: string;
 }
@@ -195,18 +195,18 @@ export class EngagementApi extends runtime.BaseAPI {
      * Bookmark one published destination or native post.
      * Bookmark
      */
-    async bookmarkRaw(requestParameters: BookmarkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Bookmark201Response>> {
+    async bookmarkRaw(requestParameters: BookmarkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Like201Response>> {
         const requestOptions = await this.bookmarkRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => Bookmark201ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => Like201ResponseFromJSON(jsonValue));
     }
 
     /**
      * Bookmark one published destination or native post.
      * Bookmark
      */
-    async bookmark(requestParameters: BookmarkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Bookmark201Response> {
+    async bookmark(requestParameters: BookmarkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Like201Response> {
         const response = await this.bookmarkRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -276,13 +276,6 @@ export class EngagementApi extends runtime.BaseAPI {
      * Creates request options for listRetweeters without sending the request
      */
     async listRetweetersRequestOpts(requestParameters: ListRetweetersRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['post'] == null) {
-            throw new runtime.RequiredError(
-                'post',
-                'Required parameter "post" was null or undefined when calling listRetweeters().'
-            );
-        }
-
         const queryParameters: any = {};
 
         if (requestParameters['post'] != null) {
@@ -345,7 +338,7 @@ export class EngagementApi extends runtime.BaseAPI {
      * Accounts that reposted a post, grouped per destination or native post.
      * List retweeters
      */
-    async listRetweeters(requestParameters: ListRetweetersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListRetweeters200Response> {
+    async listRetweeters(requestParameters: ListRetweetersRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListRetweeters200Response> {
         const response = await this.listRetweetersRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -415,13 +408,6 @@ export class EngagementApi extends runtime.BaseAPI {
      * Creates request options for removeBookmark without sending the request
      */
     async removeBookmarkRequestOpts(requestParameters: RemoveBookmarkRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['post'] == null) {
-            throw new runtime.RequiredError(
-                'post',
-                'Required parameter "post" was null or undefined when calling removeBookmark().'
-            );
-        }
-
         const queryParameters: any = {};
 
         if (requestParameters['post'] != null) {
@@ -465,18 +451,18 @@ export class EngagementApi extends runtime.BaseAPI {
      * Remove a bookmark from the connected account.
      * Remove bookmark
      */
-    async removeBookmarkRaw(requestParameters: RemoveBookmarkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Bookmark201Response>> {
+    async removeBookmarkRaw(requestParameters: RemoveBookmarkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Like201Response>> {
         const requestOptions = await this.removeBookmarkRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => Bookmark201ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => Like201ResponseFromJSON(jsonValue));
     }
 
     /**
      * Remove a bookmark from the connected account.
      * Remove bookmark
      */
-    async removeBookmark(requestParameters: RemoveBookmarkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Bookmark201Response> {
+    async removeBookmark(requestParameters: RemoveBookmarkRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Like201Response> {
         const response = await this.removeBookmarkRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -546,13 +532,6 @@ export class EngagementApi extends runtime.BaseAPI {
      * Creates request options for undoRetweet without sending the request
      */
     async undoRetweetRequestOpts(requestParameters: UndoRetweetRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['post'] == null) {
-            throw new runtime.RequiredError(
-                'post',
-                'Required parameter "post" was null or undefined when calling undoRetweet().'
-            );
-        }
-
         const queryParameters: any = {};
 
         if (requestParameters['post'] != null) {
@@ -596,18 +575,18 @@ export class EngagementApi extends runtime.BaseAPI {
      * Remove a repost created by the connected account.
      * Undo retweet
      */
-    async undoRetweetRaw(requestParameters: UndoRetweetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Retweet201Response>> {
+    async undoRetweetRaw(requestParameters: UndoRetweetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UndoRetweet200Response>> {
         const requestOptions = await this.undoRetweetRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => Retweet201ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => UndoRetweet200ResponseFromJSON(jsonValue));
     }
 
     /**
      * Remove a repost created by the connected account.
      * Undo retweet
      */
-    async undoRetweet(requestParameters: UndoRetweetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Retweet201Response> {
+    async undoRetweet(requestParameters: UndoRetweetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UndoRetweet200Response> {
         const response = await this.undoRetweetRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -616,13 +595,6 @@ export class EngagementApi extends runtime.BaseAPI {
      * Creates request options for unlike without sending the request
      */
     async unlikeRequestOpts(requestParameters: UnlikeRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['post'] == null) {
-            throw new runtime.RequiredError(
-                'post',
-                'Required parameter "post" was null or undefined when calling unlike().'
-            );
-        }
-
         const queryParameters: any = {};
 
         if (requestParameters['post'] != null) {
@@ -677,7 +649,7 @@ export class EngagementApi extends runtime.BaseAPI {
      * Remove a like from the connected account.
      * Unlike
      */
-    async unlike(requestParameters: UnlikeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Like201Response> {
+    async unlike(requestParameters: UnlikeRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Like201Response> {
         const response = await this.unlikeRaw(requestParameters, initOverrides);
         return await response.value();
     }

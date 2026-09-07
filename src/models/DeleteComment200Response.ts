@@ -13,6 +13,14 @@
  */
 
 import { mapValues } from '../runtime.js';
+import type { DeleteComment200ResponseDeleted } from './DeleteComment200ResponseDeleted.js';
+import {
+    DeleteComment200ResponseDeletedFromJSON,
+    DeleteComment200ResponseDeletedFromJSONTyped,
+    DeleteComment200ResponseDeletedToJSON,
+    DeleteComment200ResponseDeletedToJSONTyped,
+} from './DeleteComment200ResponseDeleted.js';
+
 /**
  * 
  * @export
@@ -22,13 +30,14 @@ export interface DeleteComment200Response {
     /**
      * 
      */
-    deleted?: any | null;
+    deleted: DeleteComment200ResponseDeleted;
 }
 
 /**
  * Check if a given object implements the DeleteComment200Response interface.
  */
 export function instanceOfDeleteComment200Response(value: object): value is DeleteComment200Response {
+    if (!('deleted' in value) || value['deleted'] === undefined) return false;
     return true;
 }
 
@@ -42,7 +51,7 @@ export function DeleteComment200ResponseFromJSONTyped(json: any, ignoreDiscrimin
     }
     return {
         
-        'deleted': json['deleted'] === undefined ? undefined : json['deleted'] === null ? null : json['deleted'],
+        'deleted': DeleteComment200ResponseDeletedFromJSON(json['deleted']),
     };
 }
 
@@ -57,7 +66,7 @@ export function DeleteComment200ResponseToJSONTyped(value?: DeleteComment200Resp
 
     return {
         
-        'deleted': value['deleted'],
+        'deleted': DeleteComment200ResponseDeletedToJSON(value['deleted']),
     };
 }
 

@@ -13,6 +13,13 @@
  */
 
 import { mapValues } from '../runtime.js';
+import type { ThreadItem } from './ThreadItem.js';
+import {
+    ThreadItemFromJSON,
+    ThreadItemFromJSONTyped,
+    ThreadItemToJSON,
+    ThreadItemToJSONTyped,
+} from './ThreadItem.js';
 import type { CreatePostBodyDestinationsInner } from './CreatePostBodyDestinationsInner.js';
 import {
     CreatePostBodyDestinationsInnerFromJSON,
@@ -41,7 +48,7 @@ export interface CreatePostBody {
     /**
      * 
      */
-    thread?: Array<string>;
+    threadItems?: Array<ThreadItem>;
     /**
      * 
      */
@@ -55,7 +62,7 @@ export interface CreatePostBody {
      */
     scheduledFor?: string;
     /**
-     * 
+     * IANA zone for scheduledFor. No example on purpose, see scheduledFor.
      */
     timezone?: string;
     /**
@@ -86,7 +93,7 @@ export function CreatePostBodyFromJSONTyped(json: any, ignoreDiscriminator: bool
     return {
         
         'text': json['text'] == null ? undefined : json['text'],
-        'thread': json['thread'] == null ? undefined : json['thread'],
+        'threadItems': json['threadItems'] == null ? undefined : ((json['threadItems'] as Array<any>).map(ThreadItemFromJSON)),
         'mediaUrls': json['mediaUrls'] == null ? undefined : json['mediaUrls'],
         'mediaKind': MediaKindFromJSON(json['mediaKind']),
         'scheduledFor': json['scheduledFor'] == null ? undefined : json['scheduledFor'],
@@ -107,7 +114,7 @@ export function CreatePostBodyToJSONTyped(value?: CreatePostBody | null, ignoreD
     return {
         
         'text': value['text'],
-        'thread': value['thread'],
+        'threadItems': value['threadItems'] == null ? undefined : ((value['threadItems'] as Array<any>).map(ThreadItemToJSON)),
         'mediaUrls': value['mediaUrls'],
         'mediaKind': MediaKindToJSON(value['mediaKind']),
         'scheduledFor': value['scheduledFor'],
