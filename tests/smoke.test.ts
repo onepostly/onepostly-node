@@ -70,13 +70,27 @@ describe("generated client smoke", () => {
     expect(calls[0].init.method).toBe("DELETE");
   });
 
-  it("uploadMedia posts multipart form data", async () => {
-    const { calls, fetchMock } = withFetch({ status: 201, body: { media: { id: "m1" } } });
+  it("getMediaPresignedUrl posts filename and content type", async () => {
+    const { calls, fetchMock } = withFetch({
+      status: 200,
+      body: {
+        uploadUrl: "https://cdn.example.com/upload?sig=1",
+        publicUrl: "https://cdn.example.com/temp/a.png",
+        key: "temp/a.png",
+        expiresIn: 3600,
+      },
+    });
     const { MediaApi } = await import("../src/index.js");
     const media = new MediaApi(new Configuration({ apiKey: "op_test", fetchApi: fetchMock }));
-    const file = new File([new Uint8Array([1, 2, 3])], "a.png", { type: "image/png" });
-    await media.uploadMedia({ file });
+    const result = await media.getMediaPresignedUrl({
+      presignMediaBody: { filename: "a.png", contentType: "image/png" },
+    });
+    expect(calls[0].url).toContain("/v1/media/presign");
     expect(calls[0].init.method).toBe("POST");
-    expect(calls[0].init.body).toBeInstanceOf(FormData);
+    expect(JSON.parse(String(calls[0].init.body))).toEqual({
+      filename: "a.png",
+      contentType: "image/png",
+    });
+    expect(result.publicUrl).toBe("https://cdn.example.com/temp/a.png");
   });
 });
