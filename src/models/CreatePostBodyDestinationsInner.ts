@@ -20,6 +20,13 @@ import {
     CreatePostBodyDestinationsInnerUserTagsInnerToJSON,
     CreatePostBodyDestinationsInnerUserTagsInnerToJSONTyped,
 } from './CreatePostBodyDestinationsInnerUserTagsInner.js';
+import type { CreatePostBodyDestinationsInnerCarouselCardsInner } from './CreatePostBodyDestinationsInnerCarouselCardsInner.js';
+import {
+    CreatePostBodyDestinationsInnerCarouselCardsInnerFromJSON,
+    CreatePostBodyDestinationsInnerCarouselCardsInnerFromJSONTyped,
+    CreatePostBodyDestinationsInnerCarouselCardsInnerToJSON,
+    CreatePostBodyDestinationsInnerCarouselCardsInnerToJSONTyped,
+} from './CreatePostBodyDestinationsInnerCarouselCardsInner.js';
 
 /**
  * 
@@ -28,55 +35,59 @@ import {
  */
 export interface CreatePostBodyDestinationsInner {
     /**
-     * 
+     * Connection id from POST /v1/connections.
      */
     accountId: string;
     /**
-     * 
+     * Per-destination text override. Falls back to the root text.
      */
     text?: string;
     /**
-     * 
+     * X or Bluesky only. Post id to quote. Bluesky uses an at:// URI.
      */
     quoteTweetId?: string;
+    /**
+     * Bluesky only. Language tags for the post (e.g. ["en", "pt"]).
+     */
+    langs?: Array<string>;
     /**
      * Bluesky and Threads only. Post to reply to: at:// URI on Bluesky, post id on Threads.
      */
     replyToId?: string;
     /**
-     * 
+     * YouTube only. Video privacy status. Defaults to public.
      */
     privacyStatus?: CreatePostBodyDestinationsInnerPrivacyStatusEnum;
     /**
-     * 
+     * TikTok only. Required for TikTok destinations.
      */
     privacyLevel?: CreatePostBodyDestinationsInnerPrivacyLevelEnum;
     /**
-     * 
+     * TikTok only. True disables comments.
      */
     disableComment?: boolean;
     /**
-     * 
+     * TikTok only. True disables duets.
      */
     disableDuet?: boolean;
     /**
-     * 
+     * TikTok only. True disables stitches.
      */
     disableStitch?: boolean;
     /**
-     * 
+     * TikTok only. Declares the content promotes the creator's own brand.
      */
     brandOrganicToggle?: boolean;
     /**
-     * 
+     * TikTok only. Declares a paid partnership with a third party.
      */
     brandContentToggle?: boolean;
     /**
-     * 
+     * TikTok only. Discloses AI-generated content.
      */
     aiGenerated?: boolean;
     /**
-     * 
+     * YouTube, Pinterest, and TikTok only. Video or pin description. Falls back to the post text.
      */
     description?: string;
     /**
@@ -84,41 +95,25 @@ export interface CreatePostBodyDestinationsInner {
      */
     boardId?: string;
     /**
-     * 
+     * Pinterest only. Video Pin cover image URL.
+     */
+    coverImageUrl?: string;
+    /**
+     * Pinterest, Bluesky, and Facebook only. Destination link URL. Must be HTTPS; link shorteners are rejected.
      */
     link?: string;
     /**
-     * 
+     * YouTube, Pinterest, and Facebook only. Title override. YouTube and Pinterest cap it at 100 characters.
      */
     title?: string;
     /**
-     * 
-     */
-    subreddit?: string;
-    /**
-     * 
-     */
-    flairId?: string;
-    /**
-     * 
-     */
-    flairText?: string;
-    /**
-     * 
-     */
-    nsfw?: boolean;
-    /**
-     * 
-     */
-    spoiler?: boolean;
-    /**
-     * 
-     */
-    thumbnailUrl?: string;
-    /**
-     * Instagram, Facebook, LinkedIn, and YouTube only. Comment posted right after publish.
+     * Instagram, Facebook, LinkedIn, YouTube, and Threads only. Comment posted right after publish (on Threads, as a reply to the root post, max 500 characters).
      */
     firstComment?: string;
+    /**
+     * Threads only. Topic tag (1-50 characters, no periods or ampersands). Overrides auto-extraction from content hashtags.
+     */
+    topicTag?: string;
     /**
      * YouTube only. Video tags; combined length must stay under 500 characters.
      */
@@ -160,6 +155,30 @@ export interface CreatePostBodyDestinationsInner {
      */
     shareToFeed?: boolean;
     /**
+     * Instagram reels only. true publishes as a trial reel (non-followers).
+     */
+    trialReel?: boolean;
+    /**
+     * Instagram reels only. Trial reel graduation strategy (default MANUAL). Requires trialReel.
+     */
+    trialGraduationStrategy?: CreatePostBodyDestinationsInnerTrialGraduationStrategyEnum;
+    /**
+     * Instagram reels only (single video, Facebook Login). Catalog audio id from audio search.
+     */
+    audioId?: string;
+    /**
+     * Instagram reels only. Attached audio volume 1-100 (default 100). Requires audioId.
+     */
+    audioVolume?: number;
+    /**
+     * Instagram reels only. Original video volume 1-100 (default 100). Requires audioId.
+     */
+    videoVolume?: number;
+    /**
+     * Instagram and Pinterest only. Self-disclosure of AI usage. Instagram sends is_ai_generated; Pinterest adds the AI-modified label. Instagram: not supported for stories.
+     */
+    isAiGenerated?: boolean;
+    /**
      * Instagram only. Facebook Page id that has location data.
      */
     locationId?: string;
@@ -167,6 +186,38 @@ export interface CreatePostBodyDestinationsInner {
      * Instagram only. Paid partnership label (Facebook Login connections).
      */
     isPaidPartnership?: boolean;
+    /**
+     * Instagram only. Up to 2 sponsor usernames (leading @ optional) or numeric user ids. Implies the paid partnership label. Feed, reels, and carousels; not stories.
+     */
+    brandedContentSponsors?: Array<string>;
+    /**
+     * Instagram only. false turns comments off right after publish (best-effort). Ignored for stories.
+     */
+    commentsEnabled?: boolean;
+    /**
+     * Facebook only. true creates an unpublished draft in Publishing Tools instead of publishing. Not supported for stories; firstComment is skipped for drafts.
+     */
+    draft?: boolean;
+    /**
+     * Facebook only. Multi-link carousel cards (2-10, one per image in order). Requires multi-image with the same number of images.
+     */
+    carouselCards?: Array<CreatePostBodyDestinationsInnerCarouselCardsInner>;
+    /**
+     * Facebook only. Top-level See more link for the carousel end card. Only used with carouselCards.
+     */
+    carouselLink?: string;
+    /**
+     * Facebook only. Preset id for large-text background posts (text-only feed posts).
+     */
+    textFormatPresetId?: string;
+    /**
+     * Facebook only. Reel title, separate from the caption. Only valid with mediaKind reel.
+     */
+    reelTitle?: string;
+    /**
+     * Facebook only. Post to a specific Page id managed by the same organization (resolves to the matching connection).
+     */
+    pageId?: string;
     /**
      * TikTok videos only. Cover frame timestamp in ms.
      */
@@ -179,14 +230,6 @@ export interface CreatePostBodyDestinationsInner {
      * TikTok photo posts only. Auto-add recommended music.
      */
     autoAddMusic?: boolean;
-    /**
-     * Reddit only. Submit a self post even when link is present.
-     */
-    forceSelf?: boolean;
-    /**
-     * Reddit only. Submit the native video as a videogif.
-     */
-    videoGif?: boolean;
     /**
      * X only. Allowlist of up to 25 uppercase ISO 3166-1 alpha-2 country codes. Media is hidden outside these countries; the tweet text stays visible globally. Ignored for text-only tweets.
      */
@@ -215,6 +258,15 @@ export const CreatePostBodyDestinationsInnerPrivacyLevelEnum = {
 } as const;
 export type CreatePostBodyDestinationsInnerPrivacyLevelEnum = typeof CreatePostBodyDestinationsInnerPrivacyLevelEnum[keyof typeof CreatePostBodyDestinationsInnerPrivacyLevelEnum];
 
+/**
+ * @export
+ */
+export const CreatePostBodyDestinationsInnerTrialGraduationStrategyEnum = {
+    Manual: 'MANUAL',
+    SsPerformance: 'SS_PERFORMANCE',
+} as const;
+export type CreatePostBodyDestinationsInnerTrialGraduationStrategyEnum = typeof CreatePostBodyDestinationsInnerTrialGraduationStrategyEnum[keyof typeof CreatePostBodyDestinationsInnerTrialGraduationStrategyEnum];
+
 
 /**
  * Check if a given object implements the CreatePostBodyDestinationsInner interface.
@@ -237,6 +289,7 @@ export function CreatePostBodyDestinationsInnerFromJSONTyped(json: any, ignoreDi
         'accountId': json['accountId'],
         'text': json['text'] == null ? undefined : json['text'],
         'quoteTweetId': json['quoteTweetId'] == null ? undefined : json['quoteTweetId'],
+        'langs': json['langs'] == null ? undefined : json['langs'],
         'replyToId': json['replyToId'] == null ? undefined : json['replyToId'],
         'privacyStatus': json['privacyStatus'] == null ? undefined : json['privacyStatus'],
         'privacyLevel': json['privacyLevel'] == null ? undefined : json['privacyLevel'],
@@ -248,15 +301,11 @@ export function CreatePostBodyDestinationsInnerFromJSONTyped(json: any, ignoreDi
         'aiGenerated': json['aiGenerated'] == null ? undefined : json['aiGenerated'],
         'description': json['description'] == null ? undefined : json['description'],
         'boardId': json['boardId'] == null ? undefined : json['boardId'],
+        'coverImageUrl': json['coverImageUrl'] == null ? undefined : json['coverImageUrl'],
         'link': json['link'] == null ? undefined : json['link'],
         'title': json['title'] == null ? undefined : json['title'],
-        'subreddit': json['subreddit'] == null ? undefined : json['subreddit'],
-        'flairId': json['flairId'] == null ? undefined : json['flairId'],
-        'flairText': json['flairText'] == null ? undefined : json['flairText'],
-        'nsfw': json['nsfw'] == null ? undefined : json['nsfw'],
-        'spoiler': json['spoiler'] == null ? undefined : json['spoiler'],
-        'thumbnailUrl': json['thumbnailUrl'] == null ? undefined : json['thumbnailUrl'],
         'firstComment': json['firstComment'] == null ? undefined : json['firstComment'],
+        'topicTag': json['topicTag'] == null ? undefined : json['topicTag'],
         'tags': json['tags'] == null ? undefined : json['tags'],
         'categoryId': json['categoryId'] == null ? undefined : json['categoryId'],
         'madeForKids': json['madeForKids'] == null ? undefined : json['madeForKids'],
@@ -267,13 +316,25 @@ export function CreatePostBodyDestinationsInnerFromJSONTyped(json: any, ignoreDi
         'coverUrl': json['coverUrl'] == null ? undefined : json['coverUrl'],
         'audioName': json['audioName'] == null ? undefined : json['audioName'],
         'shareToFeed': json['shareToFeed'] == null ? undefined : json['shareToFeed'],
+        'trialReel': json['trialReel'] == null ? undefined : json['trialReel'],
+        'trialGraduationStrategy': json['trialGraduationStrategy'] == null ? undefined : json['trialGraduationStrategy'],
+        'audioId': json['audioId'] == null ? undefined : json['audioId'],
+        'audioVolume': json['audioVolume'] == null ? undefined : json['audioVolume'],
+        'videoVolume': json['videoVolume'] == null ? undefined : json['videoVolume'],
+        'isAiGenerated': json['isAiGenerated'] == null ? undefined : json['isAiGenerated'],
         'locationId': json['locationId'] == null ? undefined : json['locationId'],
         'isPaidPartnership': json['isPaidPartnership'] == null ? undefined : json['isPaidPartnership'],
+        'brandedContentSponsors': json['brandedContentSponsors'] == null ? undefined : json['brandedContentSponsors'],
+        'commentsEnabled': json['commentsEnabled'] == null ? undefined : json['commentsEnabled'],
+        'draft': json['draft'] == null ? undefined : json['draft'],
+        'carouselCards': json['carouselCards'] == null ? undefined : ((json['carouselCards'] as Array<any>).map(CreatePostBodyDestinationsInnerCarouselCardsInnerFromJSON)),
+        'carouselLink': json['carouselLink'] == null ? undefined : json['carouselLink'],
+        'textFormatPresetId': json['textFormatPresetId'] == null ? undefined : json['textFormatPresetId'],
+        'reelTitle': json['reelTitle'] == null ? undefined : json['reelTitle'],
+        'pageId': json['pageId'] == null ? undefined : json['pageId'],
         'videoCoverTimestampMs': json['videoCoverTimestampMs'] == null ? undefined : json['videoCoverTimestampMs'],
         'photoCoverIndex': json['photoCoverIndex'] == null ? undefined : json['photoCoverIndex'],
         'autoAddMusic': json['autoAddMusic'] == null ? undefined : json['autoAddMusic'],
-        'forceSelf': json['forceSelf'] == null ? undefined : json['forceSelf'],
-        'videoGif': json['videoGif'] == null ? undefined : json['videoGif'],
         'geoRestriction': json['geoRestriction'] == null ? undefined : json['geoRestriction'],
     };
 }
@@ -292,6 +353,7 @@ export function CreatePostBodyDestinationsInnerToJSONTyped(value?: CreatePostBod
         'accountId': value['accountId'],
         'text': value['text'],
         'quoteTweetId': value['quoteTweetId'],
+        'langs': value['langs'],
         'replyToId': value['replyToId'],
         'privacyStatus': value['privacyStatus'],
         'privacyLevel': value['privacyLevel'],
@@ -303,15 +365,11 @@ export function CreatePostBodyDestinationsInnerToJSONTyped(value?: CreatePostBod
         'aiGenerated': value['aiGenerated'],
         'description': value['description'],
         'boardId': value['boardId'],
+        'coverImageUrl': value['coverImageUrl'],
         'link': value['link'],
         'title': value['title'],
-        'subreddit': value['subreddit'],
-        'flairId': value['flairId'],
-        'flairText': value['flairText'],
-        'nsfw': value['nsfw'],
-        'spoiler': value['spoiler'],
-        'thumbnailUrl': value['thumbnailUrl'],
         'firstComment': value['firstComment'],
+        'topicTag': value['topicTag'],
         'tags': value['tags'],
         'categoryId': value['categoryId'],
         'madeForKids': value['madeForKids'],
@@ -322,13 +380,25 @@ export function CreatePostBodyDestinationsInnerToJSONTyped(value?: CreatePostBod
         'coverUrl': value['coverUrl'],
         'audioName': value['audioName'],
         'shareToFeed': value['shareToFeed'],
+        'trialReel': value['trialReel'],
+        'trialGraduationStrategy': value['trialGraduationStrategy'],
+        'audioId': value['audioId'],
+        'audioVolume': value['audioVolume'],
+        'videoVolume': value['videoVolume'],
+        'isAiGenerated': value['isAiGenerated'],
         'locationId': value['locationId'],
         'isPaidPartnership': value['isPaidPartnership'],
+        'brandedContentSponsors': value['brandedContentSponsors'],
+        'commentsEnabled': value['commentsEnabled'],
+        'draft': value['draft'],
+        'carouselCards': value['carouselCards'] == null ? undefined : ((value['carouselCards'] as Array<any>).map(CreatePostBodyDestinationsInnerCarouselCardsInnerToJSON)),
+        'carouselLink': value['carouselLink'],
+        'textFormatPresetId': value['textFormatPresetId'],
+        'reelTitle': value['reelTitle'],
+        'pageId': value['pageId'],
         'videoCoverTimestampMs': value['videoCoverTimestampMs'],
         'photoCoverIndex': value['photoCoverIndex'],
         'autoAddMusic': value['autoAddMusic'],
-        'forceSelf': value['forceSelf'],
-        'videoGif': value['videoGif'],
         'geoRestriction': value['geoRestriction'],
     };
 }

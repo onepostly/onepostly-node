@@ -18,6 +18,7 @@
  * @export
  */
 export const PostStatus = {
+    Draft: 'draft',
     Queued: 'queued',
     Processing: 'processing',
     Published: 'published',

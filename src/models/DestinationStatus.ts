@@ -18,6 +18,7 @@
  * @export
  */
 export const DestinationStatus = {
+    Draft: 'draft',
     Queued: 'queued',
     Processing: 'processing',
     Published: 'published',

@@ -73,9 +73,33 @@ export interface ListPostsRequest {
      */
     limit?: number;
     /**
-     * Offset for list endpoints.
+     * Page to return, starting at 1. Defaults to 1.
      */
-    offset?: number | null;
+    page?: number;
+    /**
+     * Comma-separated statuses (e.g. `scheduled,published`). Omit for all.
+     */
+    status?: string;
+    /**
+     * Only posts with at least one destination on this platform.
+     */
+    platform?: string;
+    /**
+     * Only posts with at least one destination on this account.
+     */
+    accountId?: string;
+    /**
+     * ISO instant; lower bound for the post's content date.
+     */
+    dateAfter?: Date;
+    /**
+     * ISO instant; upper bound for the post's content date.
+     */
+    dateBefore?: Date;
+    /**
+     * Ordering. Defaults to `created_desc`. `metric:*` ranks by summed lifetime metrics and restricts to measured posts.
+     */
+    sort?: ListPostsSortEnum;
 }
 
 export interface SyncExternalRequest {
@@ -336,8 +360,32 @@ export class PostsApi extends runtime.BaseAPI {
             queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (requestParameters['offset'] != null) {
-            queryParameters['offset'] = requestParameters['offset'];
+        if (requestParameters['page'] != null) {
+            queryParameters['page'] = requestParameters['page'];
+        }
+
+        if (requestParameters['status'] != null) {
+            queryParameters['status'] = requestParameters['status'];
+        }
+
+        if (requestParameters['platform'] != null) {
+            queryParameters['platform'] = requestParameters['platform'];
+        }
+
+        if (requestParameters['accountId'] != null) {
+            queryParameters['accountId'] = requestParameters['accountId'];
+        }
+
+        if (requestParameters['dateAfter'] != null) {
+            queryParameters['dateAfter'] = runtime.serializeDateTime(requestParameters['dateAfter'] as any);
+        }
+
+        if (requestParameters['dateBefore'] != null) {
+            queryParameters['dateBefore'] = runtime.serializeDateTime(requestParameters['dateBefore'] as any);
+        }
+
+        if (requestParameters['sort'] != null) {
+            queryParameters['sort'] = requestParameters['sort'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -445,3 +493,24 @@ export class PostsApi extends runtime.BaseAPI {
     }
 
 }
+
+/**
+ * @export
+ */
+export const ListPostsSortEnum = {
+    CreatedDesc: 'created_desc',
+    CreatedAsc: 'created_asc',
+    ScheduledDesc: 'scheduled_desc',
+    ScheduledAsc: 'scheduled_asc',
+    Status: 'status',
+    Platform: 'platform',
+    MetricEngagement: 'metric:engagement',
+    MetricLikes: 'metric:likes',
+    MetricComments: 'metric:comments',
+    MetricShares: 'metric:shares',
+    MetricViews: 'metric:views',
+    MetricImpressions: 'metric:impressions',
+    MetricReach: 'metric:reach',
+    MetricSaves: 'metric:saves',
+} as const;
+export type ListPostsSortEnum = typeof ListPostsSortEnum[keyof typeof ListPostsSortEnum];

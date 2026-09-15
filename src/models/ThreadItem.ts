@@ -20,11 +20,11 @@ import { mapValues } from '../runtime.js';
  */
 export interface ThreadItem {
     /**
-     * 
+     * Reply text. May be empty only when mediaItems is provided.
      */
     content?: string;
     /**
-     * 
+     * Media URLs attached to this reply only.
      */
     mediaItems?: Array<string>;
 }

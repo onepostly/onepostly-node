@@ -49,9 +49,9 @@ export interface ListMediaRequest {
      */
     limit?: number;
     /**
-     * Offset for list endpoints.
+     * Page to return, starting at 1. Defaults to 1.
      */
-    offset?: number | null;
+    page?: number;
 }
 
 /**
@@ -184,8 +184,8 @@ export class MediaApi extends runtime.BaseAPI {
             queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (requestParameters['offset'] != null) {
-            queryParameters['offset'] = requestParameters['offset'];
+        if (requestParameters['page'] != null) {
+            queryParameters['page'] = requestParameters['page'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};

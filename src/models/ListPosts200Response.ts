@@ -20,6 +20,13 @@ import {
     PostToJSON,
     PostToJSONTyped,
 } from './Post.js';
+import type { ListPosts200ResponseFacets } from './ListPosts200ResponseFacets.js';
+import {
+    ListPosts200ResponseFacetsFromJSON,
+    ListPosts200ResponseFacetsFromJSONTyped,
+    ListPosts200ResponseFacetsToJSON,
+    ListPosts200ResponseFacetsToJSONTyped,
+} from './ListPosts200ResponseFacets.js';
 
 /**
  * 
@@ -31,6 +38,22 @@ export interface ListPosts200Response {
      * 
      */
     posts: Array<Post>;
+    /**
+     * Total posts matching the filters, across every page.
+     */
+    total: number;
+    /**
+     * The 1-based page this response carries.
+     */
+    page: number;
+    /**
+     * True when at least one more post follows this page. Request `page + 1` while it is true.
+     */
+    hasMore: boolean;
+    /**
+     * 
+     */
+    facets: ListPosts200ResponseFacets;
 }
 
 /**
@@ -38,6 +61,10 @@ export interface ListPosts200Response {
  */
 export function instanceOfListPosts200Response(value: object): value is ListPosts200Response {
     if (!('posts' in value) || value['posts'] === undefined) return false;
+    if (!('total' in value) || value['total'] === undefined) return false;
+    if (!('page' in value) || value['page'] === undefined) return false;
+    if (!('hasMore' in value) || value['hasMore'] === undefined) return false;
+    if (!('facets' in value) || value['facets'] === undefined) return false;
     return true;
 }
 
@@ -52,6 +79,10 @@ export function ListPosts200ResponseFromJSONTyped(json: any, ignoreDiscriminator
     return {
         
         'posts': ((json['posts'] as Array<any>).map(PostFromJSON)),
+        'total': json['total'],
+        'page': json['page'],
+        'hasMore': json['hasMore'],
+        'facets': ListPosts200ResponseFacetsFromJSON(json['facets']),
     };
 }
 
@@ -67,6 +98,10 @@ export function ListPosts200ResponseToJSONTyped(value?: ListPosts200Response | n
     return {
         
         'posts': ((value['posts'] as Array<any>).map(PostToJSON)),
+        'total': value['total'],
+        'page': value['page'],
+        'hasMore': value['hasMore'],
+        'facets': ListPosts200ResponseFacetsToJSON(value['facets']),
     };
 }
 

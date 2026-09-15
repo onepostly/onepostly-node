@@ -29,6 +29,11 @@ import {
     GetWebhook200ResponseToJSON,
 } from '../models/GetWebhook200Response.js';
 import {
+    type GetWebhookDeliverySummary200Response,
+    GetWebhookDeliverySummary200ResponseFromJSON,
+    GetWebhookDeliverySummary200ResponseToJSON,
+} from '../models/GetWebhookDeliverySummary200Response.js';
+import {
     type ListWebhookDeliveries200Response,
     ListWebhookDeliveries200ResponseFromJSON,
     ListWebhookDeliveries200ResponseToJSON,
@@ -73,6 +78,13 @@ export interface GetWebhookRequest {
      * 
      */
     id: string;
+}
+
+export interface GetWebhookDeliverySummaryRequest {
+    /**
+     * Window in days (default 7, capped by plan retention).
+     */
+    range?: GetWebhookDeliverySummaryRangeEnum;
 }
 
 export interface ListWebhookDeliveriesRequest {
@@ -294,6 +306,61 @@ export class WebhooksApi extends runtime.BaseAPI {
      */
     async getWebhook(requestParameters: GetWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetWebhook200Response> {
         const response = await this.getWebhookRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for getWebhookDeliverySummary without sending the request
+     */
+    async getWebhookDeliverySummaryRequestOpts(requestParameters: GetWebhookDeliverySummaryRequest): Promise<runtime.RequestOpts> {
+        const queryParameters: any = {};
+
+        if (requestParameters['range'] != null) {
+            queryParameters['range'] = requestParameters['range'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("ApiKeyBearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/webhooks/delivery-summary`;
+
+        return {
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Delivery volume per endpoint over the window, as a fixed-length series of buckets plus totals.
+     * Get webhook delivery summary
+     */
+    async getWebhookDeliverySummaryRaw(requestParameters: GetWebhookDeliverySummaryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetWebhookDeliverySummary200Response>> {
+        const requestOptions = await this.getWebhookDeliverySummaryRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => GetWebhookDeliverySummary200ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Delivery volume per endpoint over the window, as a fixed-length series of buckets plus totals.
+     * Get webhook delivery summary
+     */
+    async getWebhookDeliverySummary(requestParameters: GetWebhookDeliverySummaryRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetWebhookDeliverySummary200Response> {
+        const response = await this.getWebhookDeliverySummaryRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -598,6 +665,16 @@ export class WebhooksApi extends runtime.BaseAPI {
 
 }
 
+/**
+ * @export
+ */
+export const GetWebhookDeliverySummaryRangeEnum = {
+    _1: '1',
+    _3: '3',
+    _7: '7',
+    _30: '30',
+} as const;
+export type GetWebhookDeliverySummaryRangeEnum = typeof GetWebhookDeliverySummaryRangeEnum[keyof typeof GetWebhookDeliverySummaryRangeEnum];
 /**
  * @export
  */

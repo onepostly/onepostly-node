@@ -14,6 +14,11 @@
 
 import * as runtime from '../runtime.js';
 import {
+    type CommentTargetBody,
+    CommentTargetBodyFromJSON,
+    CommentTargetBodyToJSON,
+} from '../models/CommentTargetBody.js';
+import {
     type CreateComment201Response,
     CreateComment201ResponseFromJSON,
     CreateComment201ResponseToJSON,
@@ -24,10 +29,35 @@ import {
     CreateCommentBodyToJSON,
 } from '../models/CreateCommentBody.js';
 import {
+    type CreatePrivateReply201Response,
+    CreatePrivateReply201ResponseFromJSON,
+    CreatePrivateReply201ResponseToJSON,
+} from '../models/CreatePrivateReply201Response.js';
+import {
+    type CreatePrivateReplyRequest,
+    CreatePrivateReplyRequestFromJSON,
+    CreatePrivateReplyRequestToJSON,
+} from '../models/CreatePrivateReplyRequest.js';
+import {
     type DeleteComment200Response,
     DeleteComment200ResponseFromJSON,
     DeleteComment200ResponseToJSON,
 } from '../models/DeleteComment200Response.js';
+import {
+    type HideComment200Response,
+    HideComment200ResponseFromJSON,
+    HideComment200ResponseToJSON,
+} from '../models/HideComment200Response.js';
+import {
+    type HideCommentRequest,
+    HideCommentRequestFromJSON,
+    HideCommentRequestToJSON,
+} from '../models/HideCommentRequest.js';
+import {
+    type LikeComment200Response,
+    LikeComment200ResponseFromJSON,
+    LikeComment200ResponseToJSON,
+} from '../models/LikeComment200Response.js';
 import {
     type ListComments200Response,
     ListComments200ResponseFromJSON,
@@ -39,6 +69,13 @@ export interface CreateCommentRequest {
      * 
      */
     createCommentBody: CreateCommentBody;
+}
+
+export interface CreatePrivateReplyOperationRequest {
+    /**
+     * 
+     */
+    createPrivateReplyRequest: CreatePrivateReplyRequest;
 }
 
 export interface DeleteCommentRequest {
@@ -58,6 +95,20 @@ export interface DeleteCommentRequest {
      * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
      */
     destinationId?: string;
+}
+
+export interface HideCommentOperationRequest {
+    /**
+     * 
+     */
+    hideCommentRequest: HideCommentRequest;
+}
+
+export interface LikeCommentRequest {
+    /**
+     * 
+     */
+    commentTargetBody: CommentTargetBody;
 }
 
 export interface ListCommentsRequest {
@@ -81,6 +132,25 @@ export interface ListCommentsRequest {
      * Requires a single resolved target
      */
     cursor?: string;
+}
+
+export interface UnlikeCommentRequest {
+    /**
+     * Platform-native comment id.
+     */
+    commentId: string;
+    /**
+     * Internal post id or platform-native post id. Native ids require accountId. Omit only when destinationId is passed on its own.
+     */
+    post?: string;
+    /**
+     * Required for platform-native post ids; disambiguates internal posts with several destinations.
+     */
+    accountId?: string;
+    /**
+     * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
+     */
+    destinationId?: string;
 }
 
 /**
@@ -146,6 +216,67 @@ export class CommentsApi extends runtime.BaseAPI {
      */
     async createComment(requestParameters: CreateCommentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateComment201Response> {
         const response = await this.createCommentRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for createPrivateReply without sending the request
+     */
+    async createPrivateReplyRequestOpts(requestParameters: CreatePrivateReplyOperationRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['createPrivateReplyRequest'] == null) {
+            throw new runtime.RequiredError(
+                'createPrivateReplyRequest',
+                'Required parameter "createPrivateReplyRequest" was null or undefined when calling createPrivateReply().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("ApiKeyBearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/comments/private-reply`;
+
+        return {
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: CreatePrivateReplyRequestToJSON(requestParameters['createPrivateReplyRequest']),
+        };
+    }
+
+    /**
+     * Send a direct message in response to a comment (Instagram, Facebook). One private reply per comment, 7-day window.
+     * Send private reply
+     */
+    async createPrivateReplyRaw(requestParameters: CreatePrivateReplyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreatePrivateReply201Response>> {
+        const requestOptions = await this.createPrivateReplyRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => CreatePrivateReply201ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Send a direct message in response to a comment (Instagram, Facebook). One private reply per comment, 7-day window.
+     * Send private reply
+     */
+    async createPrivateReply(requestParameters: CreatePrivateReplyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreatePrivateReply201Response> {
+        const response = await this.createPrivateReplyRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -224,6 +355,128 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Creates request options for hideComment without sending the request
+     */
+    async hideCommentRequestOpts(requestParameters: HideCommentOperationRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['hideCommentRequest'] == null) {
+            throw new runtime.RequiredError(
+                'hideCommentRequest',
+                'Required parameter "hideCommentRequest" was null or undefined when calling hideComment().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("ApiKeyBearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/comments/hide`;
+
+        return {
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: HideCommentRequestToJSON(requestParameters['hideCommentRequest']),
+        };
+    }
+
+    /**
+     * Hide or unhide a comment on Instagram, Facebook, or Threads. Hidden comments are visible only to the commenter.
+     * Hide or unhide comment
+     */
+    async hideCommentRaw(requestParameters: HideCommentOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<HideComment200Response>> {
+        const requestOptions = await this.hideCommentRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => HideComment200ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Hide or unhide a comment on Instagram, Facebook, or Threads. Hidden comments are visible only to the commenter.
+     * Hide or unhide comment
+     */
+    async hideComment(requestParameters: HideCommentOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<HideComment200Response> {
+        const response = await this.hideCommentRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for likeComment without sending the request
+     */
+    async likeCommentRequestOpts(requestParameters: LikeCommentRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['commentTargetBody'] == null) {
+            throw new runtime.RequiredError(
+                'commentTargetBody',
+                'Required parameter "commentTargetBody" was null or undefined when calling likeComment().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("ApiKeyBearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/comments/like`;
+
+        return {
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: CommentTargetBodyToJSON(requestParameters['commentTargetBody']),
+        };
+    }
+
+    /**
+     * Like a comment as the connected account. Currently supported: Facebook.
+     * Like comment
+     */
+    async likeCommentRaw(requestParameters: LikeCommentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LikeComment200Response>> {
+        const requestOptions = await this.likeCommentRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => LikeComment200ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Like a comment as the connected account. Currently supported: Facebook.
+     * Like comment
+     */
+    async likeComment(requestParameters: LikeCommentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LikeComment200Response> {
+        const response = await this.likeCommentRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Creates request options for listComments without sending the request
      */
     async listCommentsRequestOpts(requestParameters: ListCommentsRequest): Promise<runtime.RequestOpts> {
@@ -291,6 +544,80 @@ export class CommentsApi extends runtime.BaseAPI {
      */
     async listComments(requestParameters: ListCommentsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListComments200Response> {
         const response = await this.listCommentsRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for unlikeComment without sending the request
+     */
+    async unlikeCommentRequestOpts(requestParameters: UnlikeCommentRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['commentId'] == null) {
+            throw new runtime.RequiredError(
+                'commentId',
+                'Required parameter "commentId" was null or undefined when calling unlikeComment().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters['post'] != null) {
+            queryParameters['post'] = requestParameters['post'];
+        }
+
+        if (requestParameters['accountId'] != null) {
+            queryParameters['accountId'] = requestParameters['accountId'];
+        }
+
+        if (requestParameters['destinationId'] != null) {
+            queryParameters['destinationId'] = requestParameters['destinationId'];
+        }
+
+        if (requestParameters['commentId'] != null) {
+            queryParameters['commentId'] = requestParameters['commentId'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("ApiKeyBearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/comments/like`;
+
+        return {
+            path: urlPath,
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Remove the connected account\'s like from a comment.
+     * Unlike comment
+     */
+    async unlikeCommentRaw(requestParameters: UnlikeCommentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LikeComment200Response>> {
+        const requestOptions = await this.unlikeCommentRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => LikeComment200ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Remove the connected account\'s like from a comment.
+     * Unlike comment
+     */
+    async unlikeComment(requestParameters: UnlikeCommentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LikeComment200Response> {
+        const response = await this.unlikeCommentRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

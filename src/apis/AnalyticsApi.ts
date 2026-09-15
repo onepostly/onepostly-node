@@ -30,13 +30,41 @@ export interface GetAnalyticsRequest {
      */
     post?: string;
     /**
-     * Required for platform-native post ids; disambiguates internal posts with several destinations.
+     * Required for platform-native post ids; disambiguates internal posts with several destinations. Alone (no post/destinationId) returns live account insights for Instagram and Facebook.
      */
     accountId?: string;
     /**
      * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
      */
     destinationId?: string;
+    /**
+     * Account-only: comma-separated metric names. Defaults per platform.
+     */
+    metrics?: string;
+    /**
+     * 
+     */
+    period?: GetAnalyticsPeriodEnum;
+    /**
+     * 
+     */
+    since?: number;
+    /**
+     * 
+     */
+    until?: number;
+    /**
+     * Account-only, Instagram: follower_type, media_product_type, age, city, country.
+     */
+    breakdown?: string;
+    /**
+     * Account-only, Instagram demographics: this_week, this_month, last_30_days.
+     */
+    timeframe?: string;
+    /**
+     * 
+     */
+    metricType?: string;
 }
 
 export interface GetAnalyticsTimelineRequest {
@@ -45,13 +73,41 @@ export interface GetAnalyticsTimelineRequest {
      */
     post?: string;
     /**
-     * Required for platform-native post ids; disambiguates internal posts with several destinations.
+     * Required for platform-native post ids; disambiguates internal posts with several destinations. Alone (no post/destinationId) returns live account insights for Instagram and Facebook.
      */
     accountId?: string;
     /**
      * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
      */
     destinationId?: string;
+    /**
+     * Account-only: comma-separated metric names. Defaults per platform.
+     */
+    metrics?: string;
+    /**
+     * 
+     */
+    period?: GetAnalyticsTimelinePeriodEnum;
+    /**
+     * 
+     */
+    since?: number;
+    /**
+     * 
+     */
+    until?: number;
+    /**
+     * Account-only, Instagram: follower_type, media_product_type, age, city, country.
+     */
+    breakdown?: string;
+    /**
+     * Account-only, Instagram demographics: this_week, this_month, last_30_days.
+     */
+    timeframe?: string;
+    /**
+     * 
+     */
+    metricType?: string;
     /**
      * Inclusive start date (YYYY-MM-DD).
      */
@@ -85,6 +141,34 @@ export class AnalyticsApi extends runtime.BaseAPI {
             queryParameters['destinationId'] = requestParameters['destinationId'];
         }
 
+        if (requestParameters['metrics'] != null) {
+            queryParameters['metrics'] = requestParameters['metrics'];
+        }
+
+        if (requestParameters['period'] != null) {
+            queryParameters['period'] = requestParameters['period'];
+        }
+
+        if (requestParameters['since'] != null) {
+            queryParameters['since'] = requestParameters['since'];
+        }
+
+        if (requestParameters['until'] != null) {
+            queryParameters['until'] = requestParameters['until'];
+        }
+
+        if (requestParameters['breakdown'] != null) {
+            queryParameters['breakdown'] = requestParameters['breakdown'];
+        }
+
+        if (requestParameters['timeframe'] != null) {
+            queryParameters['timeframe'] = requestParameters['timeframe'];
+        }
+
+        if (requestParameters['metricType'] != null) {
+            queryParameters['metricType'] = requestParameters['metricType'];
+        }
+
         const headerParameters: runtime.HTTPHeaders = {};
 
         if (this.configuration && this.configuration.apiKey) {
@@ -111,7 +195,7 @@ export class AnalyticsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Normalized metrics collected automatically for a post published through Onepostly or a platform-native post id. Posts younger than 30 days refresh about hourly, older subjects about weekly. Native post ids sync on first read; each subject carries fetchedAt. If it looks stale on an older subject, read again in a few minutes.
+     * Normalized metrics collected automatically for a post published through Onepostly or a platform-native post id. Posts younger than 30 days refresh about hourly, older subjects about weekly. Native post ids sync on first read; each subject carries fetchedAt. If it looks stale on an older subject, read again in a few minutes. Account-only (accountId without post/destinationId): live account-level insights for Instagram and Facebook, including demographics.
      * Get analytics
      */
     async getAnalyticsRaw(requestParameters: GetAnalyticsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetAnalytics200Response>> {
@@ -122,7 +206,7 @@ export class AnalyticsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Normalized metrics collected automatically for a post published through Onepostly or a platform-native post id. Posts younger than 30 days refresh about hourly, older subjects about weekly. Native post ids sync on first read; each subject carries fetchedAt. If it looks stale on an older subject, read again in a few minutes.
+     * Normalized metrics collected automatically for a post published through Onepostly or a platform-native post id. Posts younger than 30 days refresh about hourly, older subjects about weekly. Native post ids sync on first read; each subject carries fetchedAt. If it looks stale on an older subject, read again in a few minutes. Account-only (accountId without post/destinationId): live account-level insights for Instagram and Facebook, including demographics.
      * Get analytics
      */
     async getAnalytics(requestParameters: GetAnalyticsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetAnalytics200Response> {
@@ -146,6 +230,34 @@ export class AnalyticsApi extends runtime.BaseAPI {
 
         if (requestParameters['destinationId'] != null) {
             queryParameters['destinationId'] = requestParameters['destinationId'];
+        }
+
+        if (requestParameters['metrics'] != null) {
+            queryParameters['metrics'] = requestParameters['metrics'];
+        }
+
+        if (requestParameters['period'] != null) {
+            queryParameters['period'] = requestParameters['period'];
+        }
+
+        if (requestParameters['since'] != null) {
+            queryParameters['since'] = requestParameters['since'];
+        }
+
+        if (requestParameters['until'] != null) {
+            queryParameters['until'] = requestParameters['until'];
+        }
+
+        if (requestParameters['breakdown'] != null) {
+            queryParameters['breakdown'] = requestParameters['breakdown'];
+        }
+
+        if (requestParameters['timeframe'] != null) {
+            queryParameters['timeframe'] = requestParameters['timeframe'];
+        }
+
+        if (requestParameters['metricType'] != null) {
+            queryParameters['metricType'] = requestParameters['metricType'];
         }
 
         if (requestParameters['from'] != null) {
@@ -182,7 +294,7 @@ export class AnalyticsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Daily cumulative metrics per subject, captured automatically by the Onepostly pipeline. Range defaults to the last 366 days.
+     * Daily cumulative metrics per subject, captured automatically by the Onepostly pipeline. Range defaults to the last 90 days.
      * Get daily analytics timeline
      */
     async getAnalyticsTimelineRaw(requestParameters: GetAnalyticsTimelineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetAnalyticsTimeline200Response>> {
@@ -193,7 +305,7 @@ export class AnalyticsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Daily cumulative metrics per subject, captured automatically by the Onepostly pipeline. Range defaults to the last 366 days.
+     * Daily cumulative metrics per subject, captured automatically by the Onepostly pipeline. Range defaults to the last 90 days.
      * Get daily analytics timeline
      */
     async getAnalyticsTimeline(requestParameters: GetAnalyticsTimelineRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetAnalyticsTimeline200Response> {
@@ -202,3 +314,24 @@ export class AnalyticsApi extends runtime.BaseAPI {
     }
 
 }
+
+/**
+ * @export
+ */
+export const GetAnalyticsPeriodEnum = {
+    Day: 'day',
+    Week: 'week',
+    Days28: 'days_28',
+    Lifetime: 'lifetime',
+} as const;
+export type GetAnalyticsPeriodEnum = typeof GetAnalyticsPeriodEnum[keyof typeof GetAnalyticsPeriodEnum];
+/**
+ * @export
+ */
+export const GetAnalyticsTimelinePeriodEnum = {
+    Day: 'day',
+    Week: 'week',
+    Days28: 'days_28',
+    Lifetime: 'lifetime',
+} as const;
+export type GetAnalyticsTimelinePeriodEnum = typeof GetAnalyticsTimelinePeriodEnum[keyof typeof GetAnalyticsTimelinePeriodEnum];

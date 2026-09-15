@@ -31,6 +31,10 @@ export interface ConnectBlueskyRequest {
      * Existing connection id to re-authorize without consuming a plan slot.
      */
     reconnectId?: string;
+    /**
+     * Workspace profile name to file the new connection under — created if it does not exist. API-key calls that omit it fall back to the workspace default profile. Ignored on reconnect.
+     */
+    profileName?: string;
 }
 
 /**
@@ -55,6 +59,7 @@ export function ConnectBlueskyRequestFromJSONTyped(json: any, ignoreDiscriminato
         'identifier': json['identifier'],
         'appPassword': json['appPassword'],
         'reconnectId': json['reconnectId'] == null ? undefined : json['reconnectId'],
+        'profileName': json['profileName'] == null ? undefined : json['profileName'],
     };
 }
 
@@ -72,6 +77,7 @@ export function ConnectBlueskyRequestToJSONTyped(value?: ConnectBlueskyRequest |
         'identifier': value['identifier'],
         'appPassword': value['appPassword'],
         'reconnectId': value['reconnectId'],
+        'profileName': value['profileName'],
     };
 }
 

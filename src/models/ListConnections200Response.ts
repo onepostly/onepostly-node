@@ -31,6 +31,18 @@ export interface ListConnections200Response {
      * 
      */
     connections: Array<Connection>;
+    /**
+     * Connections matching the filters, across every page.
+     */
+    total: number;
+    /**
+     * The 1-based page this response carries.
+     */
+    page: number;
+    /**
+     * True when at least one more connection follows this page. Request `page + 1` while it is true.
+     */
+    hasMore: boolean;
 }
 
 /**
@@ -38,6 +50,9 @@ export interface ListConnections200Response {
  */
 export function instanceOfListConnections200Response(value: object): value is ListConnections200Response {
     if (!('connections' in value) || value['connections'] === undefined) return false;
+    if (!('total' in value) || value['total'] === undefined) return false;
+    if (!('page' in value) || value['page'] === undefined) return false;
+    if (!('hasMore' in value) || value['hasMore'] === undefined) return false;
     return true;
 }
 
@@ -52,6 +67,9 @@ export function ListConnections200ResponseFromJSONTyped(json: any, ignoreDiscrim
     return {
         
         'connections': ((json['connections'] as Array<any>).map(ConnectionFromJSON)),
+        'total': json['total'],
+        'page': json['page'],
+        'hasMore': json['hasMore'],
     };
 }
 
@@ -67,6 +85,9 @@ export function ListConnections200ResponseToJSONTyped(value?: ListConnections200
     return {
         
         'connections': ((value['connections'] as Array<any>).map(ConnectionToJSON)),
+        'total': value['total'],
+        'page': value['page'],
+        'hasMore': value['hasMore'],
     };
 }
 

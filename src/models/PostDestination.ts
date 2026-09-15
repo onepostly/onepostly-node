@@ -20,6 +20,13 @@ import {
     DestinationStatusToJSON,
     DestinationStatusToJSONTyped,
 } from './DestinationStatus.js';
+import type { PostMetrics } from './PostMetrics.js';
+import {
+    PostMetricsFromJSON,
+    PostMetricsFromJSONTyped,
+    PostMetricsToJSON,
+    PostMetricsToJSONTyped,
+} from './PostMetrics.js';
 
 /**
  * 
@@ -63,6 +70,10 @@ export interface PostDestination {
      * 
      */
     publishedAt: Date | null;
+    /**
+     * 
+     */
+    metrics: PostMetrics | null;
 }
 
 
@@ -80,6 +91,7 @@ export function instanceOfPostDestination(value: object): value is PostDestinati
     if (!('errorCode' in value) || value['errorCode'] === undefined) return false;
     if (!('errorMessage' in value) || value['errorMessage'] === undefined) return false;
     if (!('publishedAt' in value) || value['publishedAt'] === undefined) return false;
+    if (!('metrics' in value) || value['metrics'] === undefined) return false;
     return true;
 }
 
@@ -102,6 +114,7 @@ export function PostDestinationFromJSONTyped(json: any, ignoreDiscriminator: boo
         'errorCode': json['errorCode'],
         'errorMessage': json['errorMessage'],
         'publishedAt': (json['publishedAt'] == null ? null : parseDateTime(json['publishedAt'])),
+        'metrics': PostMetricsFromJSON(json['metrics']),
     };
 }
 
@@ -125,6 +138,7 @@ export function PostDestinationToJSONTyped(value?: PostDestination | null, ignor
         'errorCode': value['errorCode'],
         'errorMessage': value['errorMessage'],
         'publishedAt': value['publishedAt'] == null ? value['publishedAt'] : serializeDateTime(value['publishedAt']),
+        'metrics': PostMetricsToJSON(value['metrics']),
     };
 }
 

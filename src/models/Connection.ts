@@ -58,6 +58,10 @@ export interface Connection {
     /**
      * 
      */
+    profileName: string | null;
+    /**
+     * 
+     */
     createdAt: Date;
     /**
      * 
@@ -89,6 +93,7 @@ export function instanceOfConnection(value: object): value is Connection {
     if (!('tokenExpiresAt' in value) || value['tokenExpiresAt'] === undefined) return false;
     if (!('canAutoRenew' in value) || value['canAutoRenew'] === undefined) return false;
     if (!('authHealth' in value) || value['authHealth'] === undefined) return false;
+    if (!('profileName' in value) || value['profileName'] === undefined) return false;
     if (!('createdAt' in value) || value['createdAt'] === undefined) return false;
     if (!('updatedAt' in value) || value['updatedAt'] === undefined) return false;
     return true;
@@ -113,6 +118,7 @@ export function ConnectionFromJSONTyped(json: any, ignoreDiscriminator: boolean)
         'tokenExpiresAt': (json['tokenExpiresAt'] == null ? null : parseDateTime(json['tokenExpiresAt'])),
         'canAutoRenew': json['canAutoRenew'],
         'authHealth': json['authHealth'],
+        'profileName': json['profileName'],
         'createdAt': (json['createdAt'] == null ? json['createdAt'] : parseDateTime(json['createdAt'])),
         'updatedAt': (json['updatedAt'] == null ? json['updatedAt'] : parseDateTime(json['updatedAt'])),
     };
@@ -138,6 +144,7 @@ export function ConnectionToJSONTyped(value?: Connection | null, ignoreDiscrimin
         'tokenExpiresAt': value['tokenExpiresAt'] == null ? value['tokenExpiresAt'] : serializeDateTime(value['tokenExpiresAt']),
         'canAutoRenew': value['canAutoRenew'],
         'authHealth': value['authHealth'],
+        'profileName': value['profileName'],
         'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
     };

@@ -14,6 +14,21 @@
 
 import * as runtime from '../runtime.js';
 import {
+    type CreateAutomation201Response,
+    CreateAutomation201ResponseFromJSON,
+    CreateAutomation201ResponseToJSON,
+} from '../models/CreateAutomation201Response.js';
+import {
+    type CreateAutomationBody,
+    CreateAutomationBodyFromJSON,
+    CreateAutomationBodyToJSON,
+} from '../models/CreateAutomationBody.js';
+import {
+    type DeleteAutomations200Response,
+    DeleteAutomations200ResponseFromJSON,
+    DeleteAutomations200ResponseToJSON,
+} from '../models/DeleteAutomations200Response.js';
+import {
     type EngagementTargetBody,
     EngagementTargetBodyFromJSON,
     EngagementTargetBodyToJSON,
@@ -23,6 +38,11 @@ import {
     Like201ResponseFromJSON,
     Like201ResponseToJSON,
 } from '../models/Like201Response.js';
+import {
+    type ListAutomations200Response,
+    ListAutomations200ResponseFromJSON,
+    ListAutomations200ResponseToJSON,
+} from '../models/ListAutomations200Response.js';
 import {
     type ListRetweeters200Response,
     ListRetweeters200ResponseFromJSON,
@@ -56,11 +76,40 @@ export interface BookmarkRequest {
     engagementTargetBody: EngagementTargetBody;
 }
 
+export interface CreateAutomationRequest {
+    /**
+     * 
+     */
+    createAutomationBody: CreateAutomationBody;
+}
+
+export interface DeleteAutomationsRequest {
+    /**
+     * 
+     */
+    accountId?: string;
+    /**
+     * Case-insensitive substring match on the rule name.
+     */
+    name?: string;
+}
+
 export interface LikeRequest {
     /**
      * 
      */
     engagementTargetBody: EngagementTargetBody;
+}
+
+export interface ListAutomationsRequest {
+    /**
+     * 
+     */
+    accountId?: string;
+    /**
+     * Case-insensitive substring match on the rule name.
+     */
+    name?: string;
 }
 
 export interface ListRetweetersRequest {
@@ -212,6 +261,124 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
+     * Creates request options for createAutomation without sending the request
+     */
+    async createAutomationRequestOpts(requestParameters: CreateAutomationRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['createAutomationBody'] == null) {
+            throw new runtime.RequiredError(
+                'createAutomationBody',
+                'Required parameter "createAutomationBody" was null or undefined when calling createAutomation().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("ApiKeyBearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/automations`;
+
+        return {
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: CreateAutomationBodyToJSON(requestParameters['createAutomationBody']),
+        };
+    }
+
+    /**
+     * Create inbox automation
+     */
+    async createAutomationRaw(requestParameters: CreateAutomationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateAutomation201Response>> {
+        const requestOptions = await this.createAutomationRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => CreateAutomation201ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Create inbox automation
+     */
+    async createAutomation(requestParameters: CreateAutomationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateAutomation201Response> {
+        const response = await this.createAutomationRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for deleteAutomations without sending the request
+     */
+    async deleteAutomationsRequestOpts(requestParameters: DeleteAutomationsRequest): Promise<runtime.RequestOpts> {
+        const queryParameters: any = {};
+
+        if (requestParameters['accountId'] != null) {
+            queryParameters['accountId'] = requestParameters['accountId'];
+        }
+
+        if (requestParameters['name'] != null) {
+            queryParameters['name'] = requestParameters['name'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("ApiKeyBearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/automations`;
+
+        return {
+            path: urlPath,
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Deletes the rules that match accountId, name, or both. At least one filter is required; name matches rule names case-insensitively by substring.
+     * Delete inbox automations
+     */
+    async deleteAutomationsRaw(requestParameters: DeleteAutomationsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DeleteAutomations200Response>> {
+        const requestOptions = await this.deleteAutomationsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => DeleteAutomations200ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Deletes the rules that match accountId, name, or both. At least one filter is required; name matches rule names case-insensitively by substring.
+     * Delete inbox automations
+     */
+    async deleteAutomations(requestParameters: DeleteAutomationsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DeleteAutomations200Response> {
+        const response = await this.deleteAutomationsRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Creates request options for like without sending the request
      */
     async likeRequestOpts(requestParameters: LikeRequest): Promise<runtime.RequestOpts> {
@@ -269,6 +436,65 @@ export class EngagementApi extends runtime.BaseAPI {
      */
     async like(requestParameters: LikeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Like201Response> {
         const response = await this.likeRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for listAutomations without sending the request
+     */
+    async listAutomationsRequestOpts(requestParameters: ListAutomationsRequest): Promise<runtime.RequestOpts> {
+        const queryParameters: any = {};
+
+        if (requestParameters['accountId'] != null) {
+            queryParameters['accountId'] = requestParameters['accountId'];
+        }
+
+        if (requestParameters['name'] != null) {
+            queryParameters['name'] = requestParameters['name'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("ApiKeyBearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/automations`;
+
+        return {
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Keyword auto-replies per connection: comment_to_dm (private reply to comments), story_reply and welcome_dm (DM auto-reply). keywords and excludeKeywords are case-insensitive substring matches. Instagram and Facebook only. Omit accountId to list every connection; name filters by a case-insensitive substring match.
+     * List inbox automations
+     */
+    async listAutomationsRaw(requestParameters: ListAutomationsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListAutomations200Response>> {
+        const requestOptions = await this.listAutomationsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ListAutomations200ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Keyword auto-replies per connection: comment_to_dm (private reply to comments), story_reply and welcome_dm (DM auto-reply). keywords and excludeKeywords are case-insensitive substring matches. Instagram and Facebook only. Omit accountId to list every connection; name filters by a case-insensitive substring match.
+     * List inbox automations
+     */
+    async listAutomations(requestParameters: ListAutomationsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListAutomations200Response> {
+        const response = await this.listAutomationsRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

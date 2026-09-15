@@ -31,6 +31,18 @@ export interface ListMedia200Response {
      * 
      */
     media: Array<MediaAsset>;
+    /**
+     * Total media assets, across every page.
+     */
+    total: number;
+    /**
+     * The 1-based page this response carries.
+     */
+    page: number;
+    /**
+     * True when at least one more asset follows this page. Request `page + 1` while it is true.
+     */
+    hasMore: boolean;
 }
 
 /**
@@ -38,6 +50,9 @@ export interface ListMedia200Response {
  */
 export function instanceOfListMedia200Response(value: object): value is ListMedia200Response {
     if (!('media' in value) || value['media'] === undefined) return false;
+    if (!('total' in value) || value['total'] === undefined) return false;
+    if (!('page' in value) || value['page'] === undefined) return false;
+    if (!('hasMore' in value) || value['hasMore'] === undefined) return false;
     return true;
 }
 
@@ -52,6 +67,9 @@ export function ListMedia200ResponseFromJSONTyped(json: any, ignoreDiscriminator
     return {
         
         'media': ((json['media'] as Array<any>).map(MediaAssetFromJSON)),
+        'total': json['total'],
+        'page': json['page'],
+        'hasMore': json['hasMore'],
     };
 }
 
@@ -67,6 +85,9 @@ export function ListMedia200ResponseToJSONTyped(value?: ListMedia200Response | n
     return {
         
         'media': ((value['media'] as Array<any>).map(MediaAssetToJSON)),
+        'total': value['total'],
+        'page': value['page'],
+        'hasMore': value['hasMore'],
     };
 }
 

@@ -42,7 +42,7 @@ export interface SelectFacebookPage200Response {
  */
 export function instanceOfSelectFacebookPage200Response(value: object): value is SelectFacebookPage200Response {
     if (!('connection' in value) || value['connection'] === undefined) return false;
-    if ((!('redirectUrl' in (value as Record<string, any>)) && !('redirect_url' in (value as Record<string, any>))) || ((value as Record<string, any>)['redirectUrl'] === undefined && (value as Record<string, any>)['redirect_url'] === undefined)) return false;
+    if (!('redirectUrl' in value) || value['redirectUrl'] === undefined) return false;
     return true;
 }
 
@@ -57,7 +57,7 @@ export function SelectFacebookPage200ResponseFromJSONTyped(json: any, ignoreDisc
     return {
         
         'connection': ConnectionFromJSON(json['connection']),
-        'redirectUrl': json['redirect_url'],
+        'redirectUrl': json['redirectUrl'],
     };
 }
 
@@ -73,7 +73,7 @@ export function SelectFacebookPage200ResponseToJSONTyped(value?: SelectFacebookP
     return {
         
         'connection': ConnectionToJSON(value['connection']),
-        'redirect_url': value['redirectUrl'],
+        'redirectUrl': value['redirectUrl'],
     };
 }
 

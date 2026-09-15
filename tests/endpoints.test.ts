@@ -13,6 +13,7 @@ import { MediaApi } from "../src/index.js";
 import { PostsApi } from "../src/index.js";
 import { AnalyticsApi } from "../src/index.js";
 import { CommentsApi } from "../src/index.js";
+import { InboxApi } from "../src/index.js";
 import { EngagementApi } from "../src/index.js";
 import { WebhooksApi } from "../src/index.js";
 
@@ -25,6 +26,15 @@ describe("spec endpoints surface as SDK methods", () => {
     });
     it("exposes createPinterestBoard", () => {
       expect(typeof new ConnectionsApi(config)["createPinterestBoard"]).toBe("function");
+    });
+    it("exposes createProfile", () => {
+      expect(typeof new ConnectionsApi(config)["createProfile"]).toBe("function");
+    });
+    it("exposes deleteProfile", () => {
+      expect(typeof new ConnectionsApi(config)["deleteProfile"]).toBe("function");
+    });
+    it("exposes getBlueskySettings", () => {
+      expect(typeof new ConnectionsApi(config)["getBlueskySettings"]).toBe("function");
     });
     it("exposes getConnectionStats", () => {
       expect(typeof new ConnectionsApi(config)["getConnectionStats"]).toBe("function");
@@ -41,14 +51,29 @@ describe("spec endpoints surface as SDK methods", () => {
     it("exposes listFacebookPages", () => {
       expect(typeof new ConnectionsApi(config)["listFacebookPages"]).toBe("function");
     });
+    it("exposes listInstagramAccounts", () => {
+      expect(typeof new ConnectionsApi(config)["listInstagramAccounts"]).toBe("function");
+    });
     it("exposes listPinterestBoards", () => {
       expect(typeof new ConnectionsApi(config)["listPinterestBoards"]).toBe("function");
+    });
+    it("exposes listProfiles", () => {
+      expect(typeof new ConnectionsApi(config)["listProfiles"]).toBe("function");
     });
     it("exposes selectFacebookPage", () => {
       expect(typeof new ConnectionsApi(config)["selectFacebookPage"]).toBe("function");
     });
+    it("exposes selectInstagramAccount", () => {
+      expect(typeof new ConnectionsApi(config)["selectInstagramAccount"]).toBe("function");
+    });
+    it("exposes setConnectionMessengerProfile", () => {
+      expect(typeof new ConnectionsApi(config)["setConnectionMessengerProfile"]).toBe("function");
+    });
     it("exposes startOAuth", () => {
       expect(typeof new ConnectionsApi(config)["startOAuth"]).toBe("function");
+    });
+    it("exposes updateBlueskySettings", () => {
+      expect(typeof new ConnectionsApi(config)["updateBlueskySettings"]).toBe("function");
     });
   });
 
@@ -98,11 +123,38 @@ describe("spec endpoints surface as SDK methods", () => {
     it("exposes createComment", () => {
       expect(typeof new CommentsApi(config)["createComment"]).toBe("function");
     });
+    it("exposes createPrivateReply", () => {
+      expect(typeof new CommentsApi(config)["createPrivateReply"]).toBe("function");
+    });
     it("exposes deleteComment", () => {
       expect(typeof new CommentsApi(config)["deleteComment"]).toBe("function");
     });
+    it("exposes hideComment", () => {
+      expect(typeof new CommentsApi(config)["hideComment"]).toBe("function");
+    });
+    it("exposes likeComment", () => {
+      expect(typeof new CommentsApi(config)["likeComment"]).toBe("function");
+    });
     it("exposes listComments", () => {
       expect(typeof new CommentsApi(config)["listComments"]).toBe("function");
+    });
+    it("exposes unlikeComment", () => {
+      expect(typeof new CommentsApi(config)["unlikeComment"]).toBe("function");
+    });
+  });
+
+  describe("InboxApi", () => {
+    it("exposes createInboxConversation", () => {
+      expect(typeof new InboxApi(config)["createInboxConversation"]).toBe("function");
+    });
+    it("exposes listInboxConversations", () => {
+      expect(typeof new InboxApi(config)["listInboxConversations"]).toBe("function");
+    });
+    it("exposes listInboxMessages", () => {
+      expect(typeof new InboxApi(config)["listInboxMessages"]).toBe("function");
+    });
+    it("exposes sendInboxMessage", () => {
+      expect(typeof new InboxApi(config)["sendInboxMessage"]).toBe("function");
     });
   });
 
@@ -110,8 +162,17 @@ describe("spec endpoints surface as SDK methods", () => {
     it("exposes bookmark", () => {
       expect(typeof new EngagementApi(config)["bookmark"]).toBe("function");
     });
+    it("exposes createAutomation", () => {
+      expect(typeof new EngagementApi(config)["createAutomation"]).toBe("function");
+    });
+    it("exposes deleteAutomations", () => {
+      expect(typeof new EngagementApi(config)["deleteAutomations"]).toBe("function");
+    });
     it("exposes like", () => {
       expect(typeof new EngagementApi(config)["like"]).toBe("function");
+    });
+    it("exposes listAutomations", () => {
+      expect(typeof new EngagementApi(config)["listAutomations"]).toBe("function");
     });
     it("exposes listRetweeters", () => {
       expect(typeof new EngagementApi(config)["listRetweeters"]).toBe("function");
@@ -142,6 +203,9 @@ describe("spec endpoints surface as SDK methods", () => {
     });
     it("exposes getWebhook", () => {
       expect(typeof new WebhooksApi(config)["getWebhook"]).toBe("function");
+    });
+    it("exposes getWebhookDeliverySummary", () => {
+      expect(typeof new WebhooksApi(config)["getWebhookDeliverySummary"]).toBe("function");
     });
     it("exposes listWebhookDeliveries", () => {
       expect(typeof new WebhooksApi(config)["listWebhookDeliveries"]).toBe("function");

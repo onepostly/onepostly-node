@@ -22,6 +22,7 @@ export const MediaKind = {
     Image: 'image',
     MultiImage: 'multi-image',
     Video: 'video',
+    Reel: 'reel',
     Document: 'document',
     Stories: 'stories',
 } as const;

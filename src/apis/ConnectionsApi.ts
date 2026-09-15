@@ -34,6 +34,21 @@ import {
     CreatePinterestBoardRequestToJSON,
 } from '../models/CreatePinterestBoardRequest.js';
 import {
+    type CreateProfile201Response,
+    CreateProfile201ResponseFromJSON,
+    CreateProfile201ResponseToJSON,
+} from '../models/CreateProfile201Response.js';
+import {
+    type CreateProfileRequest,
+    CreateProfileRequestFromJSON,
+    CreateProfileRequestToJSON,
+} from '../models/CreateProfileRequest.js';
+import {
+    type GetBlueskySettings200Response,
+    GetBlueskySettings200ResponseFromJSON,
+    GetBlueskySettings200ResponseToJSON,
+} from '../models/GetBlueskySettings200Response.js';
+import {
     type GetConnectionStats200Response,
     GetConnectionStats200ResponseFromJSON,
     GetConnectionStats200ResponseToJSON,
@@ -59,10 +74,25 @@ import {
     ListFacebookPages200ResponseToJSON,
 } from '../models/ListFacebookPages200Response.js';
 import {
+    type ListInstagramAccounts200Response,
+    ListInstagramAccounts200ResponseFromJSON,
+    ListInstagramAccounts200ResponseToJSON,
+} from '../models/ListInstagramAccounts200Response.js';
+import {
     type ListPinterestBoards200Response,
     ListPinterestBoards200ResponseFromJSON,
     ListPinterestBoards200ResponseToJSON,
 } from '../models/ListPinterestBoards200Response.js';
+import {
+    type ListProfiles200Response,
+    ListProfiles200ResponseFromJSON,
+    ListProfiles200ResponseToJSON,
+} from '../models/ListProfiles200Response.js';
+import {
+    type ListProfiles403Response,
+    ListProfiles403ResponseFromJSON,
+    ListProfiles403ResponseToJSON,
+} from '../models/ListProfiles403Response.js';
 import {
     type SelectFacebookPage200Response,
     SelectFacebookPage200ResponseFromJSON,
@@ -74,10 +104,35 @@ import {
     SelectFacebookPageRequestToJSON,
 } from '../models/SelectFacebookPageRequest.js';
 import {
+    type SelectInstagramAccountRequest,
+    SelectInstagramAccountRequestFromJSON,
+    SelectInstagramAccountRequestToJSON,
+} from '../models/SelectInstagramAccountRequest.js';
+import {
+    type SetConnectionMessengerProfile200Response,
+    SetConnectionMessengerProfile200ResponseFromJSON,
+    SetConnectionMessengerProfile200ResponseToJSON,
+} from '../models/SetConnectionMessengerProfile200Response.js';
+import {
+    type SetMessengerProfileBody,
+    SetMessengerProfileBodyFromJSON,
+    SetMessengerProfileBodyToJSON,
+} from '../models/SetMessengerProfileBody.js';
+import {
     type StartOAuth200Response,
     StartOAuth200ResponseFromJSON,
     StartOAuth200ResponseToJSON,
 } from '../models/StartOAuth200Response.js';
+import {
+    type UpdateBlueskySettings200Response,
+    UpdateBlueskySettings200ResponseFromJSON,
+    UpdateBlueskySettings200ResponseToJSON,
+} from '../models/UpdateBlueskySettings200Response.js';
+import {
+    type UpdateBlueskySettingsRequest,
+    UpdateBlueskySettingsRequestFromJSON,
+    UpdateBlueskySettingsRequestToJSON,
+} from '../models/UpdateBlueskySettingsRequest.js';
 
 export interface ConnectBlueskyOperationRequest {
     /**
@@ -97,11 +152,40 @@ export interface CreatePinterestBoardOperationRequest {
     createPinterestBoardRequest: CreatePinterestBoardRequest;
 }
 
+export interface CreateProfileOperationRequest {
+    /**
+     * 
+     */
+    createProfileRequest: CreateProfileRequest;
+}
+
+export interface DeleteProfileRequest {
+    /**
+     * 
+     */
+    id: string;
+}
+
+export interface GetBlueskySettingsRequest {
+    /**
+     * 
+     */
+    id: string;
+}
+
 export interface GetConnectionStatsRequest {
     /**
      * 
      */
     id: string;
+    /**
+     * Facebook only, comma-separated: messenger-profile, reviews.
+     */
+    include?: string;
+    /**
+     * Page size for included reviews (default 20).
+     */
+    limit?: number;
 }
 
 export interface GetTikTokCreatorInfoRequest {
@@ -124,9 +208,59 @@ export interface ListConnectionMediaRequest {
      * Pagination cursor from the previous response.
      */
     cursor?: string;
+    /**
+     * Instagram only: stories lists active stories, audio searches catalog audio.
+     */
+    kind?: ListConnectionMediaKindEnum;
+    /**
+     * Audio search query (kind=audio). Omitted = trending.
+     */
+    q?: string;
+    /**
+     * 
+     */
+    audioType?: ListConnectionMediaAudioTypeEnum;
+}
+
+export interface ListConnectionsRequest {
+    /**
+     * Connections per page. Defaults to 500 for this endpoint.
+     */
+    limit?: number;
+    /**
+     * Page to return, starting at 1. Defaults to 1.
+     */
+    page?: number;
+    /**
+     * Case-insensitive search over display name, handle, and platform.
+     */
+    q?: string;
+    /**
+     * Only accounts filed under this profile name. Unknown names match nothing.
+     */
+    profile?: string;
+    /**
+     * Only accounts on this platform.
+     */
+    platform?: string;
+    /**
+     * Only accounts connected within the last N days.
+     */
+    addedWithinDays?: number;
+    /**
+     * Result order. Defaults to `newest`.
+     */
+    sort?: ListConnectionsSortEnum;
 }
 
 export interface ListFacebookPagesRequest {
+    /**
+     * 
+     */
+    tempToken: string;
+}
+
+export interface ListInstagramAccountsRequest {
     /**
      * 
      */
@@ -147,6 +281,24 @@ export interface SelectFacebookPageOperationRequest {
     selectFacebookPageRequest: SelectFacebookPageRequest;
 }
 
+export interface SelectInstagramAccountOperationRequest {
+    /**
+     * 
+     */
+    selectInstagramAccountRequest: SelectInstagramAccountRequest;
+}
+
+export interface SetConnectionMessengerProfileRequest {
+    /**
+     * 
+     */
+    id: string;
+    /**
+     * 
+     */
+    setMessengerProfileBody: SetMessengerProfileBody;
+}
+
 export interface StartOAuthRequest {
     /**
      * 
@@ -161,9 +313,28 @@ export interface StartOAuthRequest {
      */
     reconnect?: string;
     /**
-     * Facebook only. When true/1, skip hosted page picker and return tempToken to redirect_url.
+     * Workspace profile name to file the new connection under — created if it does not exist. API-key starts that omit it fall back to the workspace default profile. Ignored on reconnect.
+     */
+    profile?: string;
+    /**
+     * Selection platforms only (Facebook, Instagram via Facebook Login). When true/1, skip hosted picker and return tempToken to redirectUrl.
      */
     headless?: string;
+    /**
+     * Instagram only. instagram_login (default, direct Business Login) or facebook_login (Page-linked account via Facebook Login, with a second account-selection step).
+     */
+    loginMethod?: StartOAuthLoginMethodEnum;
+}
+
+export interface UpdateBlueskySettingsOperationRequest {
+    /**
+     * 
+     */
+    id: string;
+    /**
+     * 
+     */
+    updateBlueskySettingsRequest: UpdateBlueskySettingsRequest;
 }
 
 /**
@@ -302,6 +473,184 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Creates request options for createProfile without sending the request
+     */
+    async createProfileRequestOpts(requestParameters: CreateProfileOperationRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['createProfileRequest'] == null) {
+            throw new runtime.RequiredError(
+                'createProfileRequest',
+                'Required parameter "createProfileRequest" was null or undefined when calling createProfile().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("ApiKeyBearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/profiles`;
+
+        return {
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: CreateProfileRequestToJSON(requestParameters['createProfileRequest']),
+        };
+    }
+
+    /**
+     * Creates a connection profile. The palette tone is assigned by the server so new profiles stay visually distinct.
+     * Create profile
+     */
+    async createProfileRaw(requestParameters: CreateProfileOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateProfile201Response>> {
+        const requestOptions = await this.createProfileRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => CreateProfile201ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Creates a connection profile. The palette tone is assigned by the server so new profiles stay visually distinct.
+     * Create profile
+     */
+    async createProfile(requestParameters: CreateProfileOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateProfile201Response> {
+        const response = await this.createProfileRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for deleteProfile without sending the request
+     */
+    async deleteProfileRequestOpts(requestParameters: DeleteProfileRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling deleteProfile().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("ApiKeyBearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/profiles/{id}`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+
+        return {
+            path: urlPath,
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Deletes a profile. Its connections are kept and become unassigned rather than being disconnected.
+     * Delete profile
+     */
+    async deleteProfileRaw(requestParameters: DeleteProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const requestOptions = await this.deleteProfileRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Deletes a profile. Its connections are kept and become unassigned rather than being disconnected.
+     * Delete profile
+     */
+    async deleteProfile(requestParameters: DeleteProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.deleteProfileRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Creates request options for getBlueskySettings without sending the request
+     */
+    async getBlueskySettingsRequestOpts(requestParameters: GetBlueskySettingsRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling getBlueskySettings().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("ApiKeyBearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/connections/{id}/bluesky/settings`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+
+        return {
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Bluesky-only. Returns the account default post languages applied when a post omits langs.
+     * Get Bluesky account settings
+     */
+    async getBlueskySettingsRaw(requestParameters: GetBlueskySettingsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetBlueskySettings200Response>> {
+        const requestOptions = await this.getBlueskySettingsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => GetBlueskySettings200ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Bluesky-only. Returns the account default post languages applied when a post omits langs.
+     * Get Bluesky account settings
+     */
+    async getBlueskySettings(requestParameters: GetBlueskySettingsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetBlueskySettings200Response> {
+        const response = await this.getBlueskySettingsRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Creates request options for getConnectionStats without sending the request
      */
     async getConnectionStatsRequestOpts(requestParameters: GetConnectionStatsRequest): Promise<runtime.RequestOpts> {
@@ -313,6 +662,14 @@ export class ConnectionsApi extends runtime.BaseAPI {
         }
 
         const queryParameters: any = {};
+
+        if (requestParameters['include'] != null) {
+            queryParameters['include'] = requestParameters['include'];
+        }
+
+        if (requestParameters['limit'] != null) {
+            queryParameters['limit'] = requestParameters['limit'];
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -341,7 +698,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Live follower / following / likes / video counts when the platform supports it (e.g. TikTok).
+     * Live follower / following / likes / video counts when the platform supports it (e.g. TikTok, Instagram, Facebook). Facebook Pages additionally expose messenger-profile (ice breakers + persistent menu) and reviews via ?include=.
      * Get connection account stats
      */
     async getConnectionStatsRaw(requestParameters: GetConnectionStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetConnectionStats200Response>> {
@@ -352,7 +709,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Live follower / following / likes / video counts when the platform supports it (e.g. TikTok).
+     * Live follower / following / likes / video counts when the platform supports it (e.g. TikTok, Instagram, Facebook). Facebook Pages additionally expose messenger-profile (ice breakers + persistent menu) and reviews via ?include=.
      * Get connection account stats
      */
     async getConnectionStats(requestParameters: GetConnectionStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetConnectionStats200Response> {
@@ -440,6 +797,18 @@ export class ConnectionsApi extends runtime.BaseAPI {
             queryParameters['cursor'] = requestParameters['cursor'];
         }
 
+        if (requestParameters['kind'] != null) {
+            queryParameters['kind'] = requestParameters['kind'];
+        }
+
+        if (requestParameters['q'] != null) {
+            queryParameters['q'] = requestParameters['q'];
+        }
+
+        if (requestParameters['audioType'] != null) {
+            queryParameters['audioType'] = requestParameters['audioType'];
+        }
+
         const headerParameters: runtime.HTTPHeaders = {};
 
         if (this.configuration && this.configuration.apiKey) {
@@ -467,7 +836,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Paginated public creator media for platforms that support it (e.g. TikTok).
+     * Paginated public creator media for platforms that support it (e.g. TikTok). Instagram additionally supports kind=stories (active 24h stories) and kind=audio (catalog audio search via q, Facebook Login only).
      * List creator media
      */
     async listConnectionMediaRaw(requestParameters: ListConnectionMediaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListConnectionMedia200Response>> {
@@ -478,7 +847,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Paginated public creator media for platforms that support it (e.g. TikTok).
+     * Paginated public creator media for platforms that support it (e.g. TikTok). Instagram additionally supports kind=stories (active 24h stories) and kind=audio (catalog audio search via q, Facebook Login only).
      * List creator media
      */
     async listConnectionMedia(requestParameters: ListConnectionMediaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListConnectionMedia200Response> {
@@ -489,8 +858,36 @@ export class ConnectionsApi extends runtime.BaseAPI {
     /**
      * Creates request options for listConnections without sending the request
      */
-    async listConnectionsRequestOpts(): Promise<runtime.RequestOpts> {
+    async listConnectionsRequestOpts(requestParameters: ListConnectionsRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
+
+        if (requestParameters['limit'] != null) {
+            queryParameters['limit'] = requestParameters['limit'];
+        }
+
+        if (requestParameters['page'] != null) {
+            queryParameters['page'] = requestParameters['page'];
+        }
+
+        if (requestParameters['q'] != null) {
+            queryParameters['q'] = requestParameters['q'];
+        }
+
+        if (requestParameters['profile'] != null) {
+            queryParameters['profile'] = requestParameters['profile'];
+        }
+
+        if (requestParameters['platform'] != null) {
+            queryParameters['platform'] = requestParameters['platform'];
+        }
+
+        if (requestParameters['addedWithinDays'] != null) {
+            queryParameters['addedWithinDays'] = requestParameters['addedWithinDays'];
+        }
+
+        if (requestParameters['sort'] != null) {
+            queryParameters['sort'] = requestParameters['sort'];
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -518,20 +915,22 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Lists the organization\'s connections, newest first. Responses are paginated: `limit` controls how many connections a page carries (default 500, max 500) and `page` selects the page starting at 1. Use `total` and `hasMore` to walk every page.
      * List connections
      */
-    async listConnectionsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListConnections200Response>> {
-        const requestOptions = await this.listConnectionsRequestOpts();
+    async listConnectionsRaw(requestParameters: ListConnectionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListConnections200Response>> {
+        const requestOptions = await this.listConnectionsRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => ListConnections200ResponseFromJSON(jsonValue));
     }
 
     /**
+     * Lists the organization\'s connections, newest first. Responses are paginated: `limit` controls how many connections a page carries (default 500, max 500) and `page` selects the page starting at 1. Use `total` and `hasMore` to walk every page.
      * List connections
      */
-    async listConnections(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListConnections200Response> {
-        const response = await this.listConnectionsRaw(initOverrides);
+    async listConnections(requestParameters: ListConnectionsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListConnections200Response> {
+        const response = await this.listConnectionsRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -598,6 +997,68 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Creates request options for listInstagramAccounts without sending the request
+     */
+    async listInstagramAccountsRequestOpts(requestParameters: ListInstagramAccountsRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['tempToken'] == null) {
+            throw new runtime.RequiredError(
+                'tempToken',
+                'Required parameter "tempToken" was null or undefined when calling listInstagramAccounts().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters['tempToken'] != null) {
+            queryParameters['tempToken'] = requestParameters['tempToken'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("ApiKeyBearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/connections/oauth/instagram/accounts`;
+
+        return {
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * After Instagram OAuth with loginMethod=facebook_login, list the Instagram professional accounts linked to the user\'s Pages. Requires tempToken from the callback.
+     * List linked Instagram accounts for pending connect
+     */
+    async listInstagramAccountsRaw(requestParameters: ListInstagramAccountsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListInstagramAccounts200Response>> {
+        const requestOptions = await this.listInstagramAccountsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ListInstagramAccounts200ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * After Instagram OAuth with loginMethod=facebook_login, list the Instagram professional accounts linked to the user\'s Pages. Requires tempToken from the callback.
+     * List linked Instagram accounts for pending connect
+     */
+    async listInstagramAccounts(requestParameters: ListInstagramAccountsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListInstagramAccounts200Response> {
+        const response = await this.listInstagramAccountsRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Creates request options for listPinterestBoards without sending the request
      */
     async listPinterestBoardsRequestOpts(requestParameters: ListPinterestBoardsRequest): Promise<runtime.RequestOpts> {
@@ -653,6 +1114,57 @@ export class ConnectionsApi extends runtime.BaseAPI {
      */
     async listPinterestBoards(requestParameters: ListPinterestBoardsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListPinterestBoards200Response> {
         const response = await this.listPinterestBoardsRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for listProfiles without sending the request
+     */
+    async listProfilesRequestOpts(): Promise<runtime.RequestOpts> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("ApiKeyBearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/profiles`;
+
+        return {
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Lists the workspace\'s connection profiles (the groupings connections are filed under), oldest first.
+     * List profiles
+     */
+    async listProfilesRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListProfiles200Response>> {
+        const requestOptions = await this.listProfilesRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ListProfiles200ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Lists the workspace\'s connection profiles (the groupings connections are filed under), oldest first.
+     * List profiles
+     */
+    async listProfiles(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListProfiles200Response> {
+        const response = await this.listProfilesRaw(initOverrides);
         return await response.value();
     }
 
@@ -716,6 +1228,134 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Creates request options for selectInstagramAccount without sending the request
+     */
+    async selectInstagramAccountRequestOpts(requestParameters: SelectInstagramAccountOperationRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['selectInstagramAccountRequest'] == null) {
+            throw new runtime.RequiredError(
+                'selectInstagramAccountRequest',
+                'Required parameter "selectInstagramAccountRequest" was null or undefined when calling selectInstagramAccount().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("ApiKeyBearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/connections/oauth/instagram/select`;
+
+        return {
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SelectInstagramAccountRequestToJSON(requestParameters['selectInstagramAccountRequest']),
+        };
+    }
+
+    /**
+     * Select Instagram account and finish connect
+     */
+    async selectInstagramAccountRaw(requestParameters: SelectInstagramAccountOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SelectFacebookPage200Response>> {
+        const requestOptions = await this.selectInstagramAccountRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SelectFacebookPage200ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Select Instagram account and finish connect
+     */
+    async selectInstagramAccount(requestParameters: SelectInstagramAccountOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SelectFacebookPage200Response> {
+        const response = await this.selectInstagramAccountRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for setConnectionMessengerProfile without sending the request
+     */
+    async setConnectionMessengerProfileRequestOpts(requestParameters: SetConnectionMessengerProfileRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling setConnectionMessengerProfile().'
+            );
+        }
+
+        if (requestParameters['setMessengerProfileBody'] == null) {
+            throw new runtime.RequiredError(
+                'setMessengerProfileBody',
+                'Required parameter "setMessengerProfileBody" was null or undefined when calling setConnectionMessengerProfile().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("ApiKeyBearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/connections/{id}/stats`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+
+        return {
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SetMessengerProfileBodyToJSON(requestParameters['setMessengerProfileBody']),
+        };
+    }
+
+    /**
+     * Facebook Page only. Set ice breakers (max 4) and/or persistent menu (max 3).
+     * Set Messenger profile
+     */
+    async setConnectionMessengerProfileRaw(requestParameters: SetConnectionMessengerProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SetConnectionMessengerProfile200Response>> {
+        const requestOptions = await this.setConnectionMessengerProfileRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SetConnectionMessengerProfile200ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Facebook Page only. Set ice breakers (max 4) and/or persistent menu (max 3).
+     * Set Messenger profile
+     */
+    async setConnectionMessengerProfile(requestParameters: SetConnectionMessengerProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SetConnectionMessengerProfile200Response> {
+        const response = await this.setConnectionMessengerProfileRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Creates request options for startOAuth without sending the request
      */
     async startOAuthRequestOpts(requestParameters: StartOAuthRequest): Promise<runtime.RequestOpts> {
@@ -729,15 +1369,23 @@ export class ConnectionsApi extends runtime.BaseAPI {
         const queryParameters: any = {};
 
         if (requestParameters['redirectUrl'] != null) {
-            queryParameters['redirect_url'] = requestParameters['redirectUrl'];
+            queryParameters['redirectUrl'] = requestParameters['redirectUrl'];
         }
 
         if (requestParameters['reconnect'] != null) {
             queryParameters['reconnect'] = requestParameters['reconnect'];
         }
 
+        if (requestParameters['profile'] != null) {
+            queryParameters['profile'] = requestParameters['profile'];
+        }
+
         if (requestParameters['headless'] != null) {
             queryParameters['headless'] = requestParameters['headless'];
+        }
+
+        if (requestParameters['loginMethod'] != null) {
+            queryParameters['loginMethod'] = requestParameters['loginMethod'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -767,7 +1415,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns a platform authorization URL. API keys require `redirect_url`. Dashboard session may omit it.
+     * Returns a platform authorization URL. API keys require `redirectUrl`. Dashboard session may omit it.
      * Start OAuth connect
      */
     async startOAuthRaw(requestParameters: StartOAuthRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StartOAuth200Response>> {
@@ -778,7 +1426,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns a platform authorization URL. API keys require `redirect_url`. Dashboard session may omit it.
+     * Returns a platform authorization URL. API keys require `redirectUrl`. Dashboard session may omit it.
      * Start OAuth connect
      */
     async startOAuth(requestParameters: StartOAuthRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StartOAuth200Response> {
@@ -786,4 +1434,107 @@ export class ConnectionsApi extends runtime.BaseAPI {
         return await response.value();
     }
 
+    /**
+     * Creates request options for updateBlueskySettings without sending the request
+     */
+    async updateBlueskySettingsRequestOpts(requestParameters: UpdateBlueskySettingsOperationRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling updateBlueskySettings().'
+            );
+        }
+
+        if (requestParameters['updateBlueskySettingsRequest'] == null) {
+            throw new runtime.RequiredError(
+                'updateBlueskySettingsRequest',
+                'Required parameter "updateBlueskySettingsRequest" was null or undefined when calling updateBlueskySettings().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("ApiKeyBearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/connections/{id}/bluesky/settings`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+
+        return {
+            path: urlPath,
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: UpdateBlueskySettingsRequestToJSON(requestParameters['updateBlueskySettingsRequest']),
+        };
+    }
+
+    /**
+     * Bluesky-only. Sets or clears the account default post languages (1-3 BCP-47 codes). Explicit null clears the default.
+     * Update Bluesky account settings
+     */
+    async updateBlueskySettingsRaw(requestParameters: UpdateBlueskySettingsOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UpdateBlueskySettings200Response>> {
+        const requestOptions = await this.updateBlueskySettingsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => UpdateBlueskySettings200ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Bluesky-only. Sets or clears the account default post languages (1-3 BCP-47 codes). Explicit null clears the default.
+     * Update Bluesky account settings
+     */
+    async updateBlueskySettings(requestParameters: UpdateBlueskySettingsOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UpdateBlueskySettings200Response> {
+        const response = await this.updateBlueskySettingsRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
 }
+
+/**
+ * @export
+ */
+export const ListConnectionMediaKindEnum = {
+    Media: 'media',
+    Stories: 'stories',
+    Audio: 'audio',
+} as const;
+export type ListConnectionMediaKindEnum = typeof ListConnectionMediaKindEnum[keyof typeof ListConnectionMediaKindEnum];
+/**
+ * @export
+ */
+export const ListConnectionMediaAudioTypeEnum = {
+    Music: 'music',
+    OriginalSound: 'original_sound',
+} as const;
+export type ListConnectionMediaAudioTypeEnum = typeof ListConnectionMediaAudioTypeEnum[keyof typeof ListConnectionMediaAudioTypeEnum];
+/**
+ * @export
+ */
+export const ListConnectionsSortEnum = {
+    Newest: 'newest',
+    Oldest: 'oldest',
+} as const;
+export type ListConnectionsSortEnum = typeof ListConnectionsSortEnum[keyof typeof ListConnectionsSortEnum];
+/**
+ * @export
+ */
+export const StartOAuthLoginMethodEnum = {
+    InstagramLogin: 'instagram_login',
+    FacebookLogin: 'facebook_login',
+} as const;
+export type StartOAuthLoginMethodEnum = typeof StartOAuthLoginMethodEnum[keyof typeof StartOAuthLoginMethodEnum];

@@ -54,7 +54,7 @@ export function SelectFacebookPageRequestFromJSONTyped(json: any, ignoreDiscrimi
         
         'tempToken': json['tempToken'],
         'pageId': json['pageId'],
-        'redirectUrl': json['redirect_url'] == null ? undefined : json['redirect_url'],
+        'redirectUrl': json['redirectUrl'] == null ? undefined : json['redirectUrl'],
     };
 }
 
@@ -71,7 +71,7 @@ export function SelectFacebookPageRequestToJSONTyped(value?: SelectFacebookPageR
         
         'tempToken': value['tempToken'],
         'pageId': value['pageId'],
-        'redirect_url': value['redirectUrl'],
+        'redirectUrl': value['redirectUrl'],
     };
 }
 

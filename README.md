@@ -133,15 +133,23 @@ All methods take a single request-parameters object; required fields are listed 
 | Method | Description |
 | --- | --- |
 | `connections.listConnections()` | List connections |
-| `connections.getConnectionStats()` | Get connection account stats |
-| `connections.listConnectionMedia()` | List creator media |
-| `connections.getTikTokCreatorInfo()` | Get TikTok creator info |
-| `connections.listPinterestBoards()` | List Pinterest boards |
-| `connections.createPinterestBoard()` | Create Pinterest board |
 | `connections.connectBluesky()` | Connect Bluesky via App Password |
 | `connections.startOAuth()` | Start OAuth connect |
 | `connections.listFacebookPages()` | List Facebook Pages for pending connect |
 | `connections.selectFacebookPage()` | Select Facebook Page and finish connect |
+| `connections.listInstagramAccounts()` | List linked Instagram accounts for pending connect |
+| `connections.selectInstagramAccount()` | Select Instagram account and finish connect |
+| `connections.getConnectionStats()` | Get connection account stats |
+| `connections.setConnectionMessengerProfile()` | Set Messenger profile |
+| `connections.listConnectionMedia()` | List creator media |
+| `connections.getTikTokCreatorInfo()` | Get TikTok creator info |
+| `connections.listPinterestBoards()` | List Pinterest boards |
+| `connections.createPinterestBoard()` | Create Pinterest board |
+| `connections.getBlueskySettings()` | Get Bluesky account settings |
+| `connections.updateBlueskySettings()` | Update Bluesky account settings |
+| `connections.listProfiles()` | List profiles |
+| `connections.createProfile()` | Create profile |
+| `connections.deleteProfile()` | Delete profile |
 
 ### MediaApi
 
@@ -176,19 +184,35 @@ All methods take a single request-parameters object; required fields are listed 
 | `comments.listComments()` | List comments |
 | `comments.createComment()` | Create reply |
 | `comments.deleteComment()` | Delete own comment |
+| `comments.hideComment()` | Hide or unhide comment |
+| `comments.likeComment()` | Like comment |
+| `comments.unlikeComment()` | Unlike comment |
+| `comments.createPrivateReply()` | Send private reply |
 
 ### EngagementApi
 
 | Method | Description |
 | --- | --- |
-| `engagement.listRetweeters()` | List retweeters |
-| `engagement.retweet()` | Retweet |
-| `engagement.undoRetweet()` | Undo retweet |
+| `engagement.listAutomations()` | List inbox automations |
+| `engagement.createAutomation()` | Create inbox automation |
+| `engagement.deleteAutomations()` | Delete inbox automations |
 | `engagement.like()` | Like |
 | `engagement.unlike()` | Unlike |
 | `engagement.bookmark()` | Bookmark |
 | `engagement.removeBookmark()` | Remove bookmark |
+| `engagement.listRetweeters()` | List retweeters |
+| `engagement.retweet()` | Retweet |
+| `engagement.undoRetweet()` | Undo retweet |
 | `engagement.quote()` | Quote tweet |
+
+### InboxApi
+
+| Method | Description |
+| --- | --- |
+| `inbox.listInboxConversations()` | List inbox conversations |
+| `inbox.createInboxConversation()` | Create inbox conversation |
+| `inbox.listInboxMessages()` | List inbox messages |
+| `inbox.sendInboxMessage()` | Send inbox message |
 
 ### WebhooksApi
 
@@ -197,6 +221,7 @@ All methods take a single request-parameters object; required fields are listed 
 | `webhooks.listWebhookEventTypes()` | List webhook event types |
 | `webhooks.listWebhooks()` | List webhooks |
 | `webhooks.createWebhook()` | Create webhook |
+| `webhooks.getWebhookDeliverySummary()` | Get webhook delivery summary |
 | `webhooks.getWebhook()` | Get webhook |
 | `webhooks.deleteWebhook()` | Delete webhook |
 | `webhooks.updateWebhook()` | Update webhook |
