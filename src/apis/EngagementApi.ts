@@ -217,12 +217,12 @@ export class EngagementApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
         }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
-            const tokenString = await token("ApiKeyBearer", []);
+            const tokenString = await token("Bearer", []);
 
             if (tokenString) {
                 headerParameters["Authorization"] = `Bearer ${tokenString}`;
@@ -278,12 +278,12 @@ export class EngagementApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
         }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
-            const tokenString = await token("ApiKeyBearer", []);
+            const tokenString = await token("Bearer", []);
 
             if (tokenString) {
                 headerParameters["Authorization"] = `Bearer ${tokenString}`;
@@ -336,12 +336,12 @@ export class EngagementApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
         }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
-            const tokenString = await token("ApiKeyBearer", []);
+            const tokenString = await token("Bearer", []);
 
             if (tokenString) {
                 headerParameters["Authorization"] = `Bearer ${tokenString}`;
@@ -396,12 +396,12 @@ export class EngagementApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
         }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
-            const tokenString = await token("ApiKeyBearer", []);
+            const tokenString = await token("Bearer", []);
 
             if (tokenString) {
                 headerParameters["Authorization"] = `Bearer ${tokenString}`;
@@ -456,12 +456,12 @@ export class EngagementApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
         }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
-            const tokenString = await token("ApiKeyBearer", []);
+            const tokenString = await token("Bearer", []);
 
             if (tokenString) {
                 headerParameters["Authorization"] = `Bearer ${tokenString}`;
@@ -527,12 +527,12 @@ export class EngagementApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
         }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
-            const tokenString = await token("ApiKeyBearer", []);
+            const tokenString = await token("Bearer", []);
 
             if (tokenString) {
                 headerParameters["Authorization"] = `Bearer ${tokenString}`;
@@ -587,12 +587,12 @@ export class EngagementApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
         }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
-            const tokenString = await token("ApiKeyBearer", []);
+            const tokenString = await token("Bearer", []);
 
             if (tokenString) {
                 headerParameters["Authorization"] = `Bearer ${tokenString}`;
@@ -651,12 +651,12 @@ export class EngagementApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
         }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
-            const tokenString = await token("ApiKeyBearer", []);
+            const tokenString = await token("Bearer", []);
 
             if (tokenString) {
                 headerParameters["Authorization"] = `Bearer ${tokenString}`;
@@ -711,12 +711,12 @@ export class EngagementApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
         }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
-            const tokenString = await token("ApiKeyBearer", []);
+            const tokenString = await token("Bearer", []);
 
             if (tokenString) {
                 headerParameters["Authorization"] = `Bearer ${tokenString}`;
@@ -775,12 +775,12 @@ export class EngagementApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
         }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
-            const tokenString = await token("ApiKeyBearer", []);
+            const tokenString = await token("Bearer", []);
 
             if (tokenString) {
                 headerParameters["Authorization"] = `Bearer ${tokenString}`;
@@ -838,12 +838,12 @@ export class EngagementApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKeyHeader authentication
+            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
         }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
-            const tokenString = await token("ApiKeyBearer", []);
+            const tokenString = await token("Bearer", []);
 
             if (tokenString) {
                 headerParameters["Authorization"] = `Bearer ${tokenString}`;
