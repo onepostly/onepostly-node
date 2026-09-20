@@ -62,6 +62,10 @@ export interface Connection {
     /**
      * 
      */
+    xSubscriptionType: string | null;
+    /**
+     * 
+     */
     createdAt: Date;
     /**
      * 
@@ -94,6 +98,7 @@ export function instanceOfConnection(value: object): value is Connection {
     if (!('canAutoRenew' in value) || value['canAutoRenew'] === undefined) return false;
     if (!('authHealth' in value) || value['authHealth'] === undefined) return false;
     if (!('profileName' in value) || value['profileName'] === undefined) return false;
+    if (!('xSubscriptionType' in value) || value['xSubscriptionType'] === undefined) return false;
     if (!('createdAt' in value) || value['createdAt'] === undefined) return false;
     if (!('updatedAt' in value) || value['updatedAt'] === undefined) return false;
     return true;
@@ -119,6 +124,7 @@ export function ConnectionFromJSONTyped(json: any, ignoreDiscriminator: boolean)
         'canAutoRenew': json['canAutoRenew'],
         'authHealth': json['authHealth'],
         'profileName': json['profileName'],
+        'xSubscriptionType': json['xSubscriptionType'],
         'createdAt': (json['createdAt'] == null ? json['createdAt'] : parseDateTime(json['createdAt'])),
         'updatedAt': (json['updatedAt'] == null ? json['updatedAt'] : parseDateTime(json['updatedAt'])),
     };
@@ -145,6 +151,7 @@ export function ConnectionToJSONTyped(value?: Connection | null, ignoreDiscrimin
         'canAutoRenew': value['canAutoRenew'],
         'authHealth': value['authHealth'],
         'profileName': value['profileName'],
+        'xSubscriptionType': value['xSubscriptionType'],
         'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
     };
