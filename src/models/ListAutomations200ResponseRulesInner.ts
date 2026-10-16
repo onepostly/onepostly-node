@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -32,11 +32,11 @@ export interface ListAutomations200ResponseRulesInner {
      */
     kind: ListAutomations200ResponseRulesInnerKindEnum;
     /**
-     * Case-insensitive substring triggers. The rule fires when a comment or message contains any of them.
+     * The rule runs when a comment or message contains any of these words. Matching ignores case.
      */
     keywords: Array<string>;
     /**
-     * Skip the rule when the comment or message contains any of these.
+     * The rule is skipped when a comment or message contains any of these words.
      */
     excludeKeywords: Array<string>;
     /**

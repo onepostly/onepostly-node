@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -32,15 +32,15 @@ export interface ListConnections200Response {
      */
     connections: Array<Connection>;
     /**
-     * Connections matching the filters, across every page.
+     * Number of connections that match the filters, across all pages.
      */
     total: number;
     /**
-     * The 1-based page this response carries.
+     * The page number of this response, starting at 1.
      */
     page: number;
     /**
-     * True when at least one more connection follows this page. Request `page + 1` while it is true.
+     * True when more connections follow this page. Request the next page while it is true.
      */
     hasMore: boolean;
 }

@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -32,15 +32,15 @@ export interface ListMedia200Response {
      */
     media: Array<MediaAsset>;
     /**
-     * Total media assets, across every page.
+     * Total media assets across all pages.
      */
     total: number;
     /**
-     * The 1-based page this response carries.
+     * Page number of this response, starting at 1.
      */
     page: number;
     /**
-     * True when at least one more asset follows this page. Request `page + 1` while it is true.
+     * True when more assets follow this page. Request the next page to get them.
      */
     hasMore: boolean;
 }

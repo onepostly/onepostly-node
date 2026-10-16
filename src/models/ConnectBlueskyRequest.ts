@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -20,19 +20,19 @@ import { mapValues } from '../runtime.js';
  */
 export interface ConnectBlueskyRequest {
     /**
-     * Handle, email, or DID (e.g. alice.bsky.social).
+     * Bluesky handle, email or DID, such as alice.bsky.social.
      */
     identifier: string;
     /**
-     * App Password (xxxx-xxxx-xxxx-xxxx).
+     * A Bluesky App Password, in the form xxxx-xxxx-xxxx-xxxx.
      */
     appPassword: string;
     /**
-     * Existing connection id to re-authorize without consuming a plan slot.
+     * Id of an existing connection to re-authorize. Reconnecting does not use a plan slot.
      */
     reconnectId?: string;
     /**
-     * Workspace profile name to file the new connection under — created if it does not exist. API-key calls that omit it fall back to the workspace default profile. Ignored on reconnect.
+     * Profile to file the new connection under. It is created if it does not exist. When omitted, the workspace default profile is used. Ignored on reconnect.
      */
     profileName?: string;
 }

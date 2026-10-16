@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -84,15 +84,15 @@ export interface DeleteCommentRequest {
      */
     commentId: string;
     /**
-     * Internal post id or platform-native post id. Native ids require accountId. Omit only when destinationId is passed on its own.
+     * Onepostly post id or platform-native post id. Native ids also need accountId. You can omit it when you pass destinationId.
      */
     post?: string;
     /**
-     * Required for platform-native post ids; disambiguates internal posts with several destinations.
+     * Connection id. Required with a platform-native post id, and picks the destination when a Onepostly post has several.
      */
     accountId?: string;
     /**
-     * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
+     * Destination id. It identifies one destination on its own, so post and accountId become optional.
      */
     destinationId?: string;
 }
@@ -113,15 +113,15 @@ export interface LikeCommentRequest {
 
 export interface ListCommentsRequest {
     /**
-     * Internal post id or platform-native post id. Native ids require accountId. Omit only when destinationId is passed on its own.
+     * Onepostly post id or platform-native post id. Native ids also need accountId. You can omit it when you pass destinationId.
      */
     post?: string;
     /**
-     * Required for platform-native post ids; disambiguates internal posts with several destinations.
+     * Connection id. Required with a platform-native post id, and picks the destination when a Onepostly post has several.
      */
     accountId?: string;
     /**
-     * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
+     * Destination id. It identifies one destination on its own, so post and accountId become optional.
      */
     destinationId?: string;
     /**
@@ -129,7 +129,7 @@ export interface ListCommentsRequest {
      */
     limit?: number;
     /**
-     * Requires a single resolved target
+     * Cursor from the previous response. Works only when the request points to a single destination.
      */
     cursor?: string;
 }
@@ -140,15 +140,15 @@ export interface UnlikeCommentRequest {
      */
     commentId: string;
     /**
-     * Internal post id or platform-native post id. Native ids require accountId. Omit only when destinationId is passed on its own.
+     * Onepostly post id or platform-native post id. Native ids also need accountId. You can omit it when you pass destinationId.
      */
     post?: string;
     /**
-     * Required for platform-native post ids; disambiguates internal posts with several destinations.
+     * Connection id. Required with a platform-native post id, and picks the destination when a Onepostly post has several.
      */
     accountId?: string;
     /**
-     * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
+     * Destination id. It identifies one destination on its own, so post and accountId become optional.
      */
     destinationId?: string;
 }
@@ -200,7 +200,7 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Reply to one published destination or native post.
+     * Replies to one published destination or platform-native post.
      * Create reply
      */
     async createCommentRaw(requestParameters: CreateCommentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateComment201Response>> {
@@ -211,7 +211,7 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Reply to one published destination or native post.
+     * Replies to one published destination or platform-native post.
      * Create reply
      */
     async createComment(requestParameters: CreateCommentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateComment201Response> {
@@ -261,7 +261,7 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Send a direct message in response to a comment (Instagram, Facebook). One private reply per comment, 7-day window.
+     * Sends a direct message to the author of a comment on Instagram or Facebook. You can send one private reply per comment, within 7 days of the comment.
      * Send private reply
      */
     async createPrivateReplyRaw(requestParameters: CreatePrivateReplyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreatePrivateReply201Response>> {
@@ -272,7 +272,7 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Send a direct message in response to a comment (Instagram, Facebook). One private reply per comment, 7-day window.
+     * Sends a direct message to the author of a comment on Instagram or Facebook. You can send one private reply per comment, within 7 days of the comment.
      * Send private reply
      */
     async createPrivateReply(requestParameters: CreatePrivateReplyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreatePrivateReply201Response> {
@@ -335,7 +335,7 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete a comment owned by the connected account.
+     * Deletes a comment written by the connected account.
      * Delete own comment
      */
     async deleteCommentRaw(requestParameters: DeleteCommentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DeleteComment200Response>> {
@@ -346,7 +346,7 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete a comment owned by the connected account.
+     * Deletes a comment written by the connected account.
      * Delete own comment
      */
     async deleteComment(requestParameters: DeleteCommentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DeleteComment200Response> {
@@ -396,7 +396,7 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Hide or unhide a comment on Instagram, Facebook, or Threads. Hidden comments are visible only to the commenter.
+     * Hides or unhides a comment on Instagram, Facebook or Threads. A hidden comment stays visible to the person who wrote it.
      * Hide or unhide comment
      */
     async hideCommentRaw(requestParameters: HideCommentOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<HideComment200Response>> {
@@ -407,7 +407,7 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Hide or unhide a comment on Instagram, Facebook, or Threads. Hidden comments are visible only to the commenter.
+     * Hides or unhides a comment on Instagram, Facebook or Threads. A hidden comment stays visible to the person who wrote it.
      * Hide or unhide comment
      */
     async hideComment(requestParameters: HideCommentOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<HideComment200Response> {
@@ -457,7 +457,7 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Like a comment as the connected account. Currently supported: Facebook.
+     * Likes a comment as the connected account. Supported on Facebook.
      * Like comment
      */
     async likeCommentRaw(requestParameters: LikeCommentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LikeComment200Response>> {
@@ -468,7 +468,7 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Like a comment as the connected account. Currently supported: Facebook.
+     * Likes a comment as the connected account. Supported on Facebook.
      * Like comment
      */
     async likeComment(requestParameters: LikeCommentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LikeComment200Response> {
@@ -528,7 +528,7 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Comments for every destination of a post, or for one platform-native post id.
+     * Lists comments on every destination of a post, or on one platform-native post.
      * List comments
      */
     async listCommentsRaw(requestParameters: ListCommentsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListComments200Response>> {
@@ -539,7 +539,7 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Comments for every destination of a post, or for one platform-native post id.
+     * Lists comments on every destination of a post, or on one platform-native post.
      * List comments
      */
     async listComments(requestParameters: ListCommentsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListComments200Response> {
@@ -602,7 +602,7 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Remove the connected account\'s like from a comment.
+     * Removes the connected account\'s like from a comment.
      * Unlike comment
      */
     async unlikeCommentRaw(requestParameters: UnlikeCommentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LikeComment200Response>> {
@@ -613,7 +613,7 @@ export class CommentsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Remove the connected account\'s like from a comment.
+     * Removes the connected account\'s like from a comment.
      * Unlike comment
      */
     async unlikeComment(requestParameters: UnlikeCommentRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LikeComment200Response> {

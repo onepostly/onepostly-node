@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -44,7 +44,7 @@ export interface ListInboxMessages200ResponseMessagesInner {
      */
     sentAt: string;
     /**
-     * Media attachments (Instagram and Facebook). Empty for text-only messages.
+     * Media attached to the message on Instagram and Facebook. Empty for text-only messages.
      */
     attachments: Array<ListInboxMessages200ResponseMessagesInnerAttachmentsInner>;
 }

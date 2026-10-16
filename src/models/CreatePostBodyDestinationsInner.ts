@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -35,23 +35,23 @@ import {
  */
 export interface CreatePostBodyDestinationsInner {
     /**
-     * Connection id from POST /v1/connections.
+     * Id of a connected account, from GET /v1/connections.
      */
     accountId: string;
     /**
-     * Per-destination text override. Falls back to the root text.
+     * Text for this destination only. Defaults to the post text.
      */
     text?: string;
     /**
-     * X or Bluesky only. Post id to quote. Bluesky uses an at:// URI.
+     * X, Threads, or Bluesky only. Id of the post to quote. On Bluesky, use an at:// URI.
      */
     quoteTweetId?: string;
     /**
-     * Bluesky only. Language tags for the post (e.g. ["en", "pt"]).
+     * Bluesky only. Language tags for the post, such as en or pt.
      */
     langs?: Array<string>;
     /**
-     * Bluesky and Threads only. Post to reply to: at:// URI on Bluesky, post id on Threads.
+     * Bluesky and Threads only. Post to reply to. Use an at:// URI on Bluesky and a post id on Threads.
      */
     replyToId?: string;
     /**
@@ -99,7 +99,7 @@ export interface CreatePostBodyDestinationsInner {
      */
     coverImageUrl?: string;
     /**
-     * Pinterest, Bluesky, and Facebook only. Destination link URL. Must be HTTPS; link shorteners are rejected.
+     * Pinterest, Bluesky, and Facebook only. Link for the post. Must use HTTPS, and link shorteners are rejected.
      */
     link?: string;
     /**
@@ -107,39 +107,39 @@ export interface CreatePostBodyDestinationsInner {
      */
     title?: string;
     /**
-     * Instagram, Facebook, LinkedIn, YouTube, and Threads only. Comment posted right after publish (on Threads, as a reply to the root post, max 500 characters).
+     * Instagram, Facebook, LinkedIn, YouTube, and Threads only. Comment posted right after publishing. On Threads it is a reply to the post, up to 500 characters.
      */
     firstComment?: string;
     /**
-     * Threads only. Topic tag (1-50 characters, no periods or ampersands). Overrides auto-extraction from content hashtags.
+     * Threads only. Topic tag of 1 to 50 characters, without periods or ampersands. Replaces the tag taken from the post's hashtags.
      */
     topicTag?: string;
     /**
-     * YouTube only. Video tags; combined length must stay under 500 characters.
+     * YouTube only. Video tags. Their combined length must stay under 500 characters.
      */
     tags?: Array<string>;
     /**
-     * YouTube only. Video category id (e.g. "22", "10", "20").
+     * YouTube only. Video category id, such as 22 or 10.
      */
     categoryId?: string;
     /**
-     * YouTube only. COPPA self-declared made-for-kids flag.
+     * YouTube only. Declares the video as made for kids under COPPA.
      */
     madeForKids?: boolean;
     /**
-     * YouTube only. Disclose realistic AI-generated or altered content.
+     * YouTube only. Discloses realistic content that is AI-generated or altered.
      */
     containsSyntheticMedia?: boolean;
     /**
-     * Instagram only. Tagged users; x/y required for image posts.
+     * Instagram only. Users to tag. Image posts need x and y positions for each tag.
      */
     userTags?: Array<CreatePostBodyDestinationsInnerUserTagsInner>;
     /**
-     * Instagram only. Up to 3 collaborator usernames (feed images, reels, carousels).
+     * Instagram only. Collaborator usernames. Works on feed images, reels and carousels.
      */
     collaborators?: Array<string>;
     /**
-     * Instagram reels only. Cover frame offset in ms.
+     * Instagram reels only. Cover frame position, in milliseconds.
      */
     thumbOffset?: number;
     /**
@@ -147,91 +147,91 @@ export interface CreatePostBodyDestinationsInner {
      */
     coverUrl?: string;
     /**
-     * Instagram reels only. Rename the original audio once.
+     * Instagram reels only. New name for the original audio. It can be renamed only once.
      */
     audioName?: string;
     /**
-     * Instagram reels only. true = feed + reels tab, false = reels tab only.
+     * Instagram reels only. True shows the reel in the feed and the Reels tab. False shows it in the Reels tab only.
      */
     shareToFeed?: boolean;
     /**
-     * Instagram reels only. true publishes as a trial reel (non-followers).
+     * Instagram reels only. True publishes a trial reel, shown to non-followers first.
      */
     trialReel?: boolean;
     /**
-     * Instagram reels only. Trial reel graduation strategy (default MANUAL). Requires trialReel.
+     * Instagram reels only. How a trial reel graduates. Defaults to MANUAL. Requires trialReel.
      */
     trialGraduationStrategy?: CreatePostBodyDestinationsInnerTrialGraduationStrategyEnum;
     /**
-     * Instagram reels only (single video, Facebook Login). Catalog audio id from audio search.
+     * Instagram reels only. Catalog audio id from audio search. Works on single-video reels from Facebook Login connections.
      */
     audioId?: string;
     /**
-     * Instagram reels only. Attached audio volume 1-100 (default 100). Requires audioId.
+     * Instagram reels only. Volume of the added audio. Defaults to 100. Requires audioId.
      */
     audioVolume?: number;
     /**
-     * Instagram reels only. Original video volume 1-100 (default 100). Requires audioId.
+     * Instagram reels only. Volume of the original video sound. Defaults to 100. Requires audioId.
      */
     videoVolume?: number;
     /**
-     * Instagram and Pinterest only. Self-disclosure of AI usage. Instagram sends is_ai_generated; Pinterest adds the AI-modified label. Instagram: not supported for stories.
+     * Instagram and Pinterest only. Discloses AI-generated content. Pinterest adds its AI-modified label. Not supported for Instagram stories.
      */
     isAiGenerated?: boolean;
     /**
-     * Instagram only. Facebook Page id that has location data.
+     * Instagram only. Id of a Facebook Page that has location data, used as the post location.
      */
     locationId?: string;
     /**
-     * Instagram only. Paid partnership label (Facebook Login connections).
+     * Instagram only. Adds the paid partnership label. Requires a Facebook Login connection.
      */
     isPaidPartnership?: boolean;
     /**
-     * Instagram only. Up to 2 sponsor usernames (leading @ optional) or numeric user ids. Implies the paid partnership label. Feed, reels, and carousels; not stories.
+     * Instagram only. Sponsor usernames or numeric user ids, with or without a leading @. Adds the paid partnership label. Works on feed posts, reels and carousels, not stories.
      */
     brandedContentSponsors?: Array<string>;
     /**
-     * Instagram only. false turns comments off right after publish (best-effort). Ignored for stories.
+     * Instagram only. False turns comments off right after publishing, when Instagram allows it. Ignored for stories.
      */
     commentsEnabled?: boolean;
     /**
-     * Facebook only. true creates an unpublished draft in Publishing Tools instead of publishing. Not supported for stories; firstComment is skipped for drafts.
+     * Facebook only. True saves an unpublished draft in Meta Publishing Tools instead of publishing. Not supported for stories, and firstComment is skipped.
      */
     draft?: boolean;
     /**
-     * Facebook only. Multi-link carousel cards (2-10, one per image in order). Requires multi-image with the same number of images.
+     * Facebook only. Link cards for a multi-link carousel, one per image in order. Requires mediaKind multi-image with the same number of images.
      */
     carouselCards?: Array<CreatePostBodyDestinationsInnerCarouselCardsInner>;
     /**
-     * Facebook only. Top-level See more link for the carousel end card. Only used with carouselCards.
+     * Facebook only. See more link on the carousel's end card. Used only with carouselCards.
      */
     carouselLink?: string;
     /**
-     * Facebook only. Preset id for large-text background posts (text-only feed posts).
+     * Facebook only. Preset id for a large-text background. Applies to text-only feed posts.
      */
     textFormatPresetId?: string;
     /**
-     * Facebook only. Reel title, separate from the caption. Only valid with mediaKind reel.
+     * Facebook only. Reel title, separate from the caption. Valid only when mediaKind is reel.
      */
     reelTitle?: string;
     /**
-     * Facebook only. Post to a specific Page id managed by the same organization (resolves to the matching connection).
+     * Facebook only. Id of a Page connected in this workspace. The post goes to that Page.
      */
     pageId?: string;
     /**
-     * TikTok videos only. Cover frame timestamp in ms.
+     * TikTok videos only. Cover frame position, in milliseconds.
      */
     videoCoverTimestampMs?: number;
     /**
-     * TikTok photo posts only. Cover photo index (0-based).
+     * TikTok photo posts only. Position of the cover photo, starting at 0.
      */
     photoCoverIndex?: number;
     /**
-     * TikTok photo posts only. Auto-add recommended music.
+     * TikTok photo posts only. Adds recommended music automatically.
      */
     autoAddMusic?: boolean;
     /**
-     * X only. Allowlist of up to 25 uppercase ISO 3166-1 alpha-2 country codes. Media is hidden outside these countries; the tweet text stays visible globally. Ignored for text-only tweets.
+     * X only. Uppercase two-letter country codes, such as US. Media is hidden outside these countries while the text stays visible everywhere. Ignored for text-only posts.
      */
     geoRestriction?: Array<string>;
 }

@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -46,7 +46,7 @@ export interface SyncExternal200Response {
      */
     synced: SyncExternal200ResponseSynced;
     /**
-     * 
+     * Whether the post was found. Present only when url or postId is sent.
      */
     found?: boolean;
     /**
@@ -54,7 +54,7 @@ export interface SyncExternal200Response {
      */
     post?: SyncExternal200ResponsePost | null;
     /**
-     * 
+     * The account's recent posts. Present only when url and postId are omitted.
      */
     posts?: Array<ExternalPost>;
 }

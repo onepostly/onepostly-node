@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -45,7 +45,7 @@ export interface GetMediaPresignedUrlRequest {
 
 export interface ListMediaRequest {
     /**
-     * Page size (default varies by endpoint).
+     * Number of assets per page. Defaults to 20.
      */
     limit?: number;
     /**
@@ -99,6 +99,7 @@ export class MediaApi extends runtime.BaseAPI {
     }
 
     /**
+     * Deletes a media asset from the workspace library.
      * Delete media
      */
     async deleteMediaRaw(requestParameters: DeleteMediaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
@@ -109,6 +110,7 @@ export class MediaApi extends runtime.BaseAPI {
     }
 
     /**
+     * Deletes a media asset from the workspace library.
      * Delete media
      */
     async deleteMedia(requestParameters: DeleteMediaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
@@ -157,6 +159,7 @@ export class MediaApi extends runtime.BaseAPI {
     }
 
     /**
+     * Returns a URL you upload a file to directly with a PUT request. Send the same Content-Type you declared, then use publicUrl in your post.
      * Get a presigned upload URL
      */
     async getMediaPresignedUrlRaw(requestParameters: GetMediaPresignedUrlRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PresignedUpload>> {
@@ -167,6 +170,7 @@ export class MediaApi extends runtime.BaseAPI {
     }
 
     /**
+     * Returns a URL you upload a file to directly with a PUT request. Send the same Content-Type you declared, then use publicUrl in your post.
      * Get a presigned upload URL
      */
     async getMediaPresignedUrl(requestParameters: GetMediaPresignedUrlRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PresignedUpload> {
@@ -214,6 +218,7 @@ export class MediaApi extends runtime.BaseAPI {
     }
 
     /**
+     * Lists the workspace\'s media assets, newest first. Results are paginated.
      * List media
      */
     async listMediaRaw(requestParameters: ListMediaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListMedia200Response>> {
@@ -224,6 +229,7 @@ export class MediaApi extends runtime.BaseAPI {
     }
 
     /**
+     * Lists the workspace\'s media assets, newest first. Results are paginated.
      * List media
      */
     async listMedia(requestParameters: ListMediaRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListMedia200Response> {

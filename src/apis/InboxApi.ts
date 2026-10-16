@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -61,7 +61,7 @@ export interface ListInboxConversationsRequest {
      */
     limit?: number;
     /**
-     * Pagination cursor from the previous response.
+     * Cursor from the previous response. Omit it to get the first page.
      */
     cursor?: string;
 }
@@ -80,7 +80,7 @@ export interface ListInboxMessagesRequest {
      */
     limit?: number;
     /**
-     * Pagination cursor from the previous response.
+     * Cursor from the previous response. Omit it to get the first page.
      */
     cursor?: string;
 }
@@ -139,7 +139,7 @@ export class InboxApi extends runtime.BaseAPI {
     }
 
     /**
-     * Starts a 1-1 conversation with a recipient. Accepts a platform-native user identifier (username, user id, handle, or DID). Currently supported: Bluesky, Instagram, Facebook.
+     * Starts a one-to-one conversation on Bluesky, Instagram or Facebook. Identify the recipient by their username, user id, handle or DID on that platform.
      * Create inbox conversation
      */
     async createInboxConversationRaw(requestParameters: CreateInboxConversationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateInboxConversation201Response>> {
@@ -150,7 +150,7 @@ export class InboxApi extends runtime.BaseAPI {
     }
 
     /**
-     * Starts a 1-1 conversation with a recipient. Accepts a platform-native user identifier (username, user id, handle, or DID). Currently supported: Bluesky, Instagram, Facebook.
+     * Starts a one-to-one conversation on Bluesky, Instagram or Facebook. Identify the recipient by their username, user id, handle or DID on that platform.
      * Create inbox conversation
      */
     async createInboxConversation(requestParameters: CreateInboxConversationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateInboxConversation201Response> {
@@ -209,7 +209,7 @@ export class InboxApi extends runtime.BaseAPI {
     }
 
     /**
-     * Inbox conversations for the connected account. Currently supported: Bluesky, Instagram, Facebook.
+     * Lists inbox conversations for a connected account. Supported on Bluesky, Instagram and Facebook.
      * List inbox conversations
      */
     async listInboxConversationsRaw(requestParameters: ListInboxConversationsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListInboxConversations200Response>> {
@@ -220,7 +220,7 @@ export class InboxApi extends runtime.BaseAPI {
     }
 
     /**
-     * Inbox conversations for the connected account. Currently supported: Bluesky, Instagram, Facebook.
+     * Lists inbox conversations for a connected account. Supported on Bluesky, Instagram and Facebook.
      * List inbox conversations
      */
     async listInboxConversations(requestParameters: ListInboxConversationsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListInboxConversations200Response> {
@@ -287,7 +287,7 @@ export class InboxApi extends runtime.BaseAPI {
     }
 
     /**
-     * Messages of one conversation, newest first. Currently supported: Bluesky, Instagram, Facebook.
+     * Lists the messages in one conversation, newest first. Supported on Bluesky, Instagram and Facebook.
      * List inbox messages
      */
     async listInboxMessagesRaw(requestParameters: ListInboxMessagesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListInboxMessages200Response>> {
@@ -298,7 +298,7 @@ export class InboxApi extends runtime.BaseAPI {
     }
 
     /**
-     * Messages of one conversation, newest first. Currently supported: Bluesky, Instagram, Facebook.
+     * Lists the messages in one conversation, newest first. Supported on Bluesky, Instagram and Facebook.
      * List inbox messages
      */
     async listInboxMessages(requestParameters: ListInboxMessagesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListInboxMessages200Response> {
@@ -348,7 +348,7 @@ export class InboxApi extends runtime.BaseAPI {
     }
 
     /**
-     * Sends a text message to a conversation. Currently supported: Bluesky, Instagram, Facebook. Instagram and Facebook also support quickReplies, button templates, and generic carousels.
+     * Sends a message to a conversation on Bluesky, Instagram or Facebook. Instagram and Facebook also support attachments, quick replies, buttons and carousels.
      * Send inbox message
      */
     async sendInboxMessageRaw(requestParameters: SendInboxMessageRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SendInboxMessage201Response>> {
@@ -359,7 +359,7 @@ export class InboxApi extends runtime.BaseAPI {
     }
 
     /**
-     * Sends a text message to a conversation. Currently supported: Bluesky, Instagram, Facebook. Instagram and Facebook also support quickReplies, button templates, and generic carousels.
+     * Sends a message to a conversation on Bluesky, Instagram or Facebook. Instagram and Facebook also support attachments, quick replies, buttons and carousels.
      * Send inbox message
      */
     async sendInboxMessage(requestParameters: SendInboxMessageRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SendInboxMessage201Response> {

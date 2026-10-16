@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -26,19 +26,19 @@ import {
 
 export interface GetAnalyticsRequest {
     /**
-     * Internal post id or platform-native post id. Native ids require accountId. Omit only when destinationId is passed on its own.
+     * Onepostly post id or platform-native post id. Native ids also need accountId. You can omit it when you pass destinationId.
      */
     post?: string;
     /**
-     * Required for platform-native post ids; disambiguates internal posts with several destinations. Alone (no post/destinationId) returns live account insights for Instagram and Facebook.
+     * Connection id. Required with a platform-native post id, and picks the destination when a Onepostly post has several. Passed on its own, it returns live account insights for Instagram and Facebook.
      */
     accountId?: string;
     /**
-     * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
+     * Destination id. It identifies one destination on its own, so post and accountId become optional.
      */
     destinationId?: string;
     /**
-     * Account-only: comma-separated metric names. Defaults per platform.
+     * Comma-separated metric names for account insights. Each platform has its own default set.
      */
     metrics?: string;
     /**
@@ -54,11 +54,11 @@ export interface GetAnalyticsRequest {
      */
     until?: number;
     /**
-     * Account-only, Instagram: follower_type, media_product_type, age, city, country.
+     * Instagram account insights breakdown, such as follower_type, media_product_type, age, city or country.
      */
     breakdown?: string;
     /**
-     * Account-only, Instagram demographics: this_week, this_month, last_30_days.
+     * Instagram demographics timeframe, such as this_week, this_month or last_30_days.
      */
     timeframe?: string;
     /**
@@ -69,19 +69,19 @@ export interface GetAnalyticsRequest {
 
 export interface GetAnalyticsTimelineRequest {
     /**
-     * Internal post id or platform-native post id. Native ids require accountId. Omit only when destinationId is passed on its own.
+     * Onepostly post id or platform-native post id. Native ids also need accountId. You can omit it when you pass destinationId.
      */
     post?: string;
     /**
-     * Required for platform-native post ids; disambiguates internal posts with several destinations. Alone (no post/destinationId) returns live account insights for Instagram and Facebook.
+     * Connection id. Required with a platform-native post id, and picks the destination when a Onepostly post has several. Passed on its own, it returns live account insights for Instagram and Facebook.
      */
     accountId?: string;
     /**
-     * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
+     * Destination id. It identifies one destination on its own, so post and accountId become optional.
      */
     destinationId?: string;
     /**
-     * Account-only: comma-separated metric names. Defaults per platform.
+     * Comma-separated metric names for account insights. Each platform has its own default set.
      */
     metrics?: string;
     /**
@@ -97,11 +97,11 @@ export interface GetAnalyticsTimelineRequest {
      */
     until?: number;
     /**
-     * Account-only, Instagram: follower_type, media_product_type, age, city, country.
+     * Instagram account insights breakdown, such as follower_type, media_product_type, age, city or country.
      */
     breakdown?: string;
     /**
-     * Account-only, Instagram demographics: this_week, this_month, last_30_days.
+     * Instagram demographics timeframe, such as this_week, this_month or last_30_days.
      */
     timeframe?: string;
     /**
@@ -109,11 +109,11 @@ export interface GetAnalyticsTimelineRequest {
      */
     metricType?: string;
     /**
-     * Inclusive start date (YYYY-MM-DD).
+     * First day to include, as YYYY-MM-DD.
      */
     from?: string;
     /**
-     * Inclusive end date (YYYY-MM-DD).
+     * Last day to include, as YYYY-MM-DD.
      */
     to?: string;
 }
@@ -195,7 +195,7 @@ export class AnalyticsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Normalized metrics collected automatically for a post published through Onepostly or a platform-native post id. Posts younger than 30 days refresh about hourly, older subjects about weekly. Native post ids sync on first read; each subject carries fetchedAt. If it looks stale on an older subject, read again in a few minutes. Account-only (accountId without post/destinationId): live account-level insights for Instagram and Facebook, including demographics.
+     * Returns normalized metrics for a Onepostly post or a platform-native post id. Pass only accountId to get live account insights for Instagram and Facebook.
      * Get analytics
      */
     async getAnalyticsRaw(requestParameters: GetAnalyticsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetAnalytics200Response>> {
@@ -206,7 +206,7 @@ export class AnalyticsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Normalized metrics collected automatically for a post published through Onepostly or a platform-native post id. Posts younger than 30 days refresh about hourly, older subjects about weekly. Native post ids sync on first read; each subject carries fetchedAt. If it looks stale on an older subject, read again in a few minutes. Account-only (accountId without post/destinationId): live account-level insights for Instagram and Facebook, including demographics.
+     * Returns normalized metrics for a Onepostly post or a platform-native post id. Pass only accountId to get live account insights for Instagram and Facebook.
      * Get analytics
      */
     async getAnalytics(requestParameters: GetAnalyticsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetAnalytics200Response> {
@@ -294,7 +294,7 @@ export class AnalyticsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Daily cumulative metrics per subject, captured automatically. Range defaults to the last 90 days.
+     * Returns daily cumulative metrics for each post destination. Covers the last 90 days by default.
      * Get daily analytics timeline
      */
     async getAnalyticsTimelineRaw(requestParameters: GetAnalyticsTimelineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetAnalyticsTimeline200Response>> {
@@ -305,7 +305,7 @@ export class AnalyticsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Daily cumulative metrics per subject, captured automatically. Range defaults to the last 90 days.
+     * Returns daily cumulative metrics for each post destination. Covers the last 90 days by default.
      * Get daily analytics timeline
      */
     async getAnalyticsTimeline(requestParameters: GetAnalyticsTimelineRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetAnalyticsTimeline200Response> {

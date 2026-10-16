@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -32,7 +32,7 @@ export interface ConnectionProfile {
      */
     tone: ConnectionProfileToneEnum;
     /**
-     * Live connections filed under this profile.
+     * Number of active connections filed under this profile.
      */
     connectionCount: number;
     /**

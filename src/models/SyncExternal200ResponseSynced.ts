@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -20,15 +20,15 @@ import { mapValues } from '../runtime.js';
  */
 export interface SyncExternal200ResponseSynced {
     /**
-     * 
+     * Number of posts found for this request.
      */
     postsFound: number;
     /**
-     * 
+     * Number of posts fetched from the platform and saved by this call.
      */
     postsSynced: number;
     /**
-     * 
+     * True when the account was synced in the last 15 seconds. Stored posts are returned without contacting the platform.
      */
     skipped: boolean;
 }

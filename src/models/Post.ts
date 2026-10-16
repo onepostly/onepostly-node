@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -62,11 +62,11 @@ export interface Post {
      */
     status: PostStatus;
     /**
-     * Timezone-naive local datetime in `timezone` (e.g. 2026-07-16T12:00:00).
+     * Local date and time of the schedule in the post's timezone, such as 2027-03-15T09:00:00. Null when the post is not scheduled.
      */
     scheduledFor: string | null;
     /**
-     * IANA timezone for `scheduledFor`.
+     * IANA timezone of scheduledFor.
      */
     timezone: string | null;
     /**

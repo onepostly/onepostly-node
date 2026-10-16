@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -20,11 +20,11 @@ import { mapValues } from '../runtime.js';
  */
 export interface ModelError {
     /**
-     * Human-readable message. Display-only; never branch on it.
+     * Human-readable message for display. Do not branch on it.
      */
     error: string;
     /**
-     * Stable machine-readable code.
+     * Stable machine-readable error code. Branch on this value.
      */
     code: string;
     /**

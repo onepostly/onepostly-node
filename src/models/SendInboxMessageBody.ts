@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -54,19 +54,19 @@ export interface SendInboxMessageBody {
      */
     text: string;
     /**
-     * Instagram and Facebook only. Public HTTPS media URL sent as an attachment (image, video, audio, PDF).
+     * Public HTTPS URL of an image, video, audio file or PDF to attach. Instagram and Facebook only.
      */
     attachmentUrl?: string;
     /**
-     * Instagram and Facebook only. Quick reply buttons (max 13).
+     * Quick reply buttons shown under the message. Instagram and Facebook only.
      */
     quickReplies?: Array<SendInboxMessageBodyQuickRepliesInner>;
     /**
-     * Instagram and Facebook only. Button template buttons (max 3).
+     * Buttons shown with the message. Instagram and Facebook only.
      */
     buttons?: Array<SetMessengerProfileBodyPersistentMenuInner>;
     /**
-     * Instagram and Facebook only. Generic carousel elements (max 10).
+     * Cards shown as a swipeable carousel. Instagram and Facebook only.
      */
     templateElements?: Array<SendInboxMessageBodyTemplateElementsInner>;
 }

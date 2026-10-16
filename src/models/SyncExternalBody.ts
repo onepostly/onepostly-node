@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -20,15 +20,15 @@ import { mapValues } from '../runtime.js';
  */
 export interface SyncExternalBody {
     /**
-     * Connected social account id whose posts to sync.
+     * Id of the connected account whose posts to sync.
      */
     accountId: string;
     /**
-     * Post URL to locate. Optional: provide url or postId for single-post mode, omit both for bulk refresh.
+     * URL of a single post to find. Omit both url and postId to refresh recent posts instead.
      */
     url?: string;
     /**
-     * Platform-native post/media/video id to locate, as an alternative to url.
+     * Platform id of a single post to find. Use it instead of url.
      */
     postId?: string;
 }

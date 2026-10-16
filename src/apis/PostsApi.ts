@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -55,7 +55,7 @@ export interface CreatePostRequest {
 
 export interface DeletePostDestinationRequest {
     /**
-     * 
+     * Destination id, from the destinations of a post.
      */
     destinationId: string;
 }
@@ -69,7 +69,7 @@ export interface GetPostRequest {
 
 export interface ListPostsRequest {
     /**
-     * Page size (default varies by endpoint).
+     * Number of posts per page. Defaults to 20.
      */
     limit?: number;
     /**
@@ -77,7 +77,7 @@ export interface ListPostsRequest {
      */
     page?: number;
     /**
-     * Comma-separated statuses (e.g. `scheduled,published`). Omit for all.
+     * Comma-separated post statuses to include, such as scheduled,published. Omit to include every status.
      */
     status?: string;
     /**
@@ -89,15 +89,15 @@ export interface ListPostsRequest {
      */
     accountId?: string;
     /**
-     * ISO instant; lower bound for the post's content date.
+     * Start of the date range, as an ISO 8601 time. A post's date is its scheduled time, or its creation time when it has none.
      */
     dateAfter?: Date;
     /**
-     * ISO instant; upper bound for the post's content date.
+     * End of the date range, as an ISO 8601 time.
      */
     dateBefore?: Date;
     /**
-     * Ordering. Defaults to `created_desc`. `metric:*` ranks by summed lifetime metrics and restricts to measured posts.
+     * Sort order. Defaults to created_desc. Metric sorts rank posts by lifetime totals across destinations and return only posts with metrics.
      */
     sort?: ListPostsSortEnum;
 }
@@ -154,7 +154,7 @@ export class PostsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Cancels a queued/processing/scheduled post. Does not remote-delete published content.
+     * Cancels a post that has not been published yet. Posts already published stay on the platform.
      * Cancel post
      */
     async cancelPostRaw(requestParameters: CancelPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PostResponse>> {
@@ -165,7 +165,7 @@ export class PostsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Cancels a queued/processing/scheduled post. Does not remote-delete published content.
+     * Cancels a post that has not been published yet. Posts already published stay on the platform.
      * Cancel post
      */
     async cancelPost(requestParameters: CancelPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PostResponse> {
@@ -215,8 +215,8 @@ export class PostsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Creates a post for one or more destinations. Returns `202` for immediate publish, or `201` when scheduled. X billable actions debit the workspace wallet.
-     * Create post.
+     * Creates a post for one or more connected accounts. Returns 202 when it publishes now and 201 when it is scheduled.
+     * Create post
      */
     async createPostRaw(requestParameters: CreatePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PostResponse>> {
         const requestOptions = await this.createPostRequestOpts(requestParameters);
@@ -226,8 +226,8 @@ export class PostsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Creates a post for one or more destinations. Returns `202` for immediate publish, or `201` when scheduled. X billable actions debit the workspace wallet.
-     * Create post.
+     * Creates a post for one or more connected accounts. Returns 202 when it publishes now and 201 when it is scheduled.
+     * Create post
      */
     async createPost(requestParameters: CreatePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PostResponse> {
         const response = await this.createPostRaw(requestParameters, initOverrides);
@@ -274,7 +274,7 @@ export class PostsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Deletes the published post on the platform (e.g. X). For X threads, all thread tweet ids are deleted.
+     * Deletes a published post from the platform and returns the updated post. If the destination published a thread, every post in the thread is deleted.
      * Remote-delete destination
      */
     async deletePostDestinationRaw(requestParameters: DeletePostDestinationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PostResponse>> {
@@ -285,7 +285,7 @@ export class PostsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Deletes the published post on the platform (e.g. X). For X threads, all thread tweet ids are deleted.
+     * Deletes a published post from the platform and returns the updated post. If the destination published a thread, every post in the thread is deleted.
      * Remote-delete destination
      */
     async deletePostDestination(requestParameters: DeletePostDestinationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PostResponse> {
@@ -414,6 +414,7 @@ export class PostsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Lists the workspace\'s posts, newest first by default. Results are paginated.
      * List posts
      */
     async listPostsRaw(requestParameters: ListPostsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListPosts200Response>> {
@@ -424,6 +425,7 @@ export class PostsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Lists the workspace\'s posts, newest first by default. Results are paginated.
      * List posts
      */
     async listPosts(requestParameters: ListPostsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListPosts200Response> {
@@ -473,7 +475,7 @@ export class PostsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Fetch the account\'s latest external posts (published directly on the platform, not through Onepostly) on demand. Pass accountId plus url or postId to verify one submitted post; omit both to refresh and return the account\'s recent posts. Stored posts return immediately and live fetches are debounced per account (~15s).
+     * Fetches posts that an account published directly on the platform, outside Onepostly. Pass url or postId to find one post, or omit both to refresh the account\'s recent posts.
      * Sync external posts
      */
     async syncExternalRaw(requestParameters: SyncExternalRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SyncExternal200Response>> {
@@ -484,7 +486,7 @@ export class PostsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Fetch the account\'s latest external posts (published directly on the platform, not through Onepostly) on demand. Pass accountId plus url or postId to verify one submitted post; omit both to refresh and return the account\'s recent posts. Stored posts return immediately and live fetches are debounced per account (~15s).
+     * Fetches posts that an account published directly on the platform, outside Onepostly. Pass url or postId to find one post, or omit both to refresh the account\'s recent posts.
      * Sync external posts
      */
     async syncExternal(requestParameters: SyncExternalRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SyncExternal200Response> {

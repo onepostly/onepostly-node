@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -82,7 +82,7 @@ export interface GetWebhookRequest {
 
 export interface GetWebhookDeliverySummaryRequest {
     /**
-     * Window in days (default 7, capped by plan retention).
+     * Number of days to cover. Defaults to 7. Your plan's log retention sets the maximum.
      */
     range?: GetWebhookDeliverySummaryRangeEnum;
 }
@@ -93,15 +93,15 @@ export interface ListWebhookDeliveriesRequest {
      */
     id: string;
     /**
-     * Window in days (default 7, capped by plan retention).
+     * Number of days to cover. Defaults to 7. Your plan's log retention sets the maximum.
      */
     range?: ListWebhookDeliveriesRangeEnum;
     /**
-     * Comma-separated delivery statuses (success,failed).
+     * Comma-separated delivery statuses to include, such as success or failed.
      */
     status?: string;
     /**
-     * Prefix match on event type/id within the window.
+     * Returns deliveries whose event type or event id starts with this text.
      */
     q?: string;
     /**
@@ -345,7 +345,7 @@ export class WebhooksApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delivery volume per endpoint over the window, as a fixed-length series of buckets plus totals.
+     * Returns delivery counts for each webhook over the chosen window, as a series of time buckets plus totals.
      * Get webhook delivery summary
      */
     async getWebhookDeliverySummaryRaw(requestParameters: GetWebhookDeliverySummaryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetWebhookDeliverySummary200Response>> {
@@ -356,7 +356,7 @@ export class WebhooksApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delivery volume per endpoint over the window, as a fixed-length series of buckets plus totals.
+     * Returns delivery counts for each webhook over the chosen window, as a series of time buckets plus totals.
      * Get webhook delivery summary
      */
     async getWebhookDeliverySummary(requestParameters: GetWebhookDeliverySummaryRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetWebhookDeliverySummary200Response> {

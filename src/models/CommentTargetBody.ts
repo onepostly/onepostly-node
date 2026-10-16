@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -20,7 +20,7 @@ import { mapValues } from '../runtime.js';
  */
 export interface CommentTargetBody {
     /**
-     * Internal post id or platform-native post id. Native ids require accountId. Omit only when destinationId is passed on its own.
+     * Onepostly post id or platform-native post id. Native ids also need accountId. You can omit it when you pass destinationId.
      */
     post?: string;
     /**
@@ -28,7 +28,7 @@ export interface CommentTargetBody {
      */
     accountId?: string;
     /**
-     * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
+     * Destination id. It identifies one destination on its own, so post and accountId become optional.
      */
     destinationId?: string;
     /**

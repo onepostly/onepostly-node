@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -89,7 +89,7 @@ export interface DeleteAutomationsRequest {
      */
     accountId?: string;
     /**
-     * Case-insensitive substring match on the rule name.
+     * Deletes rules whose name contains this text. Matching ignores case.
      */
     name?: string;
 }
@@ -107,22 +107,22 @@ export interface ListAutomationsRequest {
      */
     accountId?: string;
     /**
-     * Case-insensitive substring match on the rule name.
+     * Returns rules whose name contains this text. Matching ignores case.
      */
     name?: string;
 }
 
 export interface ListRetweetersRequest {
     /**
-     * Internal post id or platform-native post id. Native ids require accountId. Omit only when destinationId is passed on its own.
+     * Onepostly post id or platform-native post id. Native ids also need accountId. You can omit it when you pass destinationId.
      */
     post?: string;
     /**
-     * Required for platform-native post ids; disambiguates internal posts with several destinations.
+     * Connection id. Required with a platform-native post id, and picks the destination when a Onepostly post has several.
      */
     accountId?: string;
     /**
-     * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
+     * Destination id. It identifies one destination on its own, so post and accountId become optional.
      */
     destinationId?: string;
     /**
@@ -130,7 +130,7 @@ export interface ListRetweetersRequest {
      */
     limit?: number;
     /**
-     * Requires a single resolved target
+     * Cursor from the previous response. Works only when the request points to a single destination.
      */
     cursor?: string;
 }
@@ -144,15 +144,15 @@ export interface QuoteRequest {
 
 export interface RemoveBookmarkRequest {
     /**
-     * Internal post id or platform-native post id. Native ids require accountId. Omit only when destinationId is passed on its own.
+     * Onepostly post id or platform-native post id. Native ids also need accountId. You can omit it when you pass destinationId.
      */
     post?: string;
     /**
-     * Required for platform-native post ids; disambiguates internal posts with several destinations.
+     * Connection id. Required with a platform-native post id, and picks the destination when a Onepostly post has several.
      */
     accountId?: string;
     /**
-     * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
+     * Destination id. It identifies one destination on its own, so post and accountId become optional.
      */
     destinationId?: string;
 }
@@ -166,30 +166,30 @@ export interface RetweetRequest {
 
 export interface UndoRetweetRequest {
     /**
-     * Internal post id or platform-native post id. Native ids require accountId. Omit only when destinationId is passed on its own.
+     * Onepostly post id or platform-native post id. Native ids also need accountId. You can omit it when you pass destinationId.
      */
     post?: string;
     /**
-     * Required for platform-native post ids; disambiguates internal posts with several destinations.
+     * Connection id. Required with a platform-native post id, and picks the destination when a Onepostly post has several.
      */
     accountId?: string;
     /**
-     * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
+     * Destination id. It identifies one destination on its own, so post and accountId become optional.
      */
     destinationId?: string;
 }
 
 export interface UnlikeRequest {
     /**
-     * Internal post id or platform-native post id. Native ids require accountId. Omit only when destinationId is passed on its own.
+     * Onepostly post id or platform-native post id. Native ids also need accountId. You can omit it when you pass destinationId.
      */
     post?: string;
     /**
-     * Required for platform-native post ids; disambiguates internal posts with several destinations.
+     * Connection id. Required with a platform-native post id, and picks the destination when a Onepostly post has several.
      */
     accountId?: string;
     /**
-     * Globally unique destination id. Resolves on its own; post and accountId are optional alongside it.
+     * Destination id. It identifies one destination on its own, so post and accountId become optional.
      */
     destinationId?: string;
 }
@@ -241,7 +241,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Bookmark one published destination or native post.
+     * Bookmarks one published destination or platform-native post.
      * Bookmark
      */
     async bookmarkRaw(requestParameters: BookmarkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Like201Response>> {
@@ -252,7 +252,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Bookmark one published destination or native post.
+     * Bookmarks one published destination or platform-native post.
      * Bookmark
      */
     async bookmark(requestParameters: BookmarkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Like201Response> {
@@ -302,6 +302,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
+     * Creates a keyword auto-reply rule for an Instagram or Facebook connection.
      * Create inbox automation
      */
     async createAutomationRaw(requestParameters: CreateAutomationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateAutomation201Response>> {
@@ -312,6 +313,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
+     * Creates a keyword auto-reply rule for an Instagram or Facebook connection.
      * Create inbox automation
      */
     async createAutomation(requestParameters: CreateAutomationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateAutomation201Response> {
@@ -359,7 +361,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Deletes the rules that match accountId, name, or both. At least one filter is required; name matches rule names case-insensitively by substring.
+     * Deletes the rules that match accountId, name or both. You must pass at least one of them.
      * Delete inbox automations
      */
     async deleteAutomationsRaw(requestParameters: DeleteAutomationsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DeleteAutomations200Response>> {
@@ -370,7 +372,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Deletes the rules that match accountId, name, or both. At least one filter is required; name matches rule names case-insensitively by substring.
+     * Deletes the rules that match accountId, name or both. You must pass at least one of them.
      * Delete inbox automations
      */
     async deleteAutomations(requestParameters: DeleteAutomationsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DeleteAutomations200Response> {
@@ -420,7 +422,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Like one published destination or native post.
+     * Likes one published destination or platform-native post.
      * Like
      */
     async likeRaw(requestParameters: LikeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Like201Response>> {
@@ -431,7 +433,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Like one published destination or native post.
+     * Likes one published destination or platform-native post.
      * Like
      */
     async like(requestParameters: LikeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Like201Response> {
@@ -479,7 +481,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Keyword auto-replies per connection: comment_to_dm (private reply to comments), story_reply and welcome_dm (DM auto-reply). keywords and excludeKeywords are case-insensitive substring matches. Instagram and Facebook only. Omit accountId to list every connection; name filters by a case-insensitive substring match.
+     * Lists keyword auto-reply rules for Instagram and Facebook connections. Omit accountId to list rules for every connection.
      * List inbox automations
      */
     async listAutomationsRaw(requestParameters: ListAutomationsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListAutomations200Response>> {
@@ -490,7 +492,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Keyword auto-replies per connection: comment_to_dm (private reply to comments), story_reply and welcome_dm (DM auto-reply). keywords and excludeKeywords are case-insensitive substring matches. Instagram and Facebook only. Omit accountId to list every connection; name filters by a case-insensitive substring match.
+     * Lists keyword auto-reply rules for Instagram and Facebook connections. Omit accountId to list rules for every connection.
      * List inbox automations
      */
     async listAutomations(requestParameters: ListAutomationsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListAutomations200Response> {
@@ -550,8 +552,8 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Accounts that reposted a post, grouped per destination or native post.
-     * List retweeters
+     * Lists accounts that reposted a post, grouped by destination.
+     * List reposters
      */
     async listRetweetersRaw(requestParameters: ListRetweetersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListRetweeters200Response>> {
         const requestOptions = await this.listRetweetersRequestOpts(requestParameters);
@@ -561,8 +563,8 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Accounts that reposted a post, grouped per destination or native post.
-     * List retweeters
+     * Lists accounts that reposted a post, grouped by destination.
+     * List reposters
      */
     async listRetweeters(requestParameters: ListRetweetersRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListRetweeters200Response> {
         const response = await this.listRetweetersRaw(requestParameters, initOverrides);
@@ -611,8 +613,8 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Quote one published destination or native post with new text.
-     * Quote tweet
+     * Quotes one published destination or platform-native post with your own text.
+     * Quote post
      */
     async quoteRaw(requestParameters: QuoteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Quote201Response>> {
         const requestOptions = await this.quoteRequestOpts(requestParameters);
@@ -622,8 +624,8 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Quote one published destination or native post with new text.
-     * Quote tweet
+     * Quotes one published destination or platform-native post with your own text.
+     * Quote post
      */
     async quote(requestParameters: QuoteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Quote201Response> {
         const response = await this.quoteRaw(requestParameters, initOverrides);
@@ -674,7 +676,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Remove a bookmark from the connected account.
+     * Removes the connected account\'s bookmark from a post.
      * Remove bookmark
      */
     async removeBookmarkRaw(requestParameters: RemoveBookmarkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Like201Response>> {
@@ -685,7 +687,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Remove a bookmark from the connected account.
+     * Removes the connected account\'s bookmark from a post.
      * Remove bookmark
      */
     async removeBookmark(requestParameters: RemoveBookmarkRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Like201Response> {
@@ -735,8 +737,8 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Repost one published destination or native post.
-     * Retweet
+     * Reposts one published destination or platform-native post.
+     * Repost
      */
     async retweetRaw(requestParameters: RetweetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Retweet201Response>> {
         const requestOptions = await this.retweetRequestOpts(requestParameters);
@@ -746,8 +748,8 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Repost one published destination or native post.
-     * Retweet
+     * Reposts one published destination or platform-native post.
+     * Repost
      */
     async retweet(requestParameters: RetweetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Retweet201Response> {
         const response = await this.retweetRaw(requestParameters, initOverrides);
@@ -798,8 +800,8 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Remove a repost created by the connected account.
-     * Undo retweet
+     * Removes a repost made by the connected account.
+     * Undo repost
      */
     async undoRetweetRaw(requestParameters: UndoRetweetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UndoRetweet200Response>> {
         const requestOptions = await this.undoRetweetRequestOpts(requestParameters);
@@ -809,8 +811,8 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Remove a repost created by the connected account.
-     * Undo retweet
+     * Removes a repost made by the connected account.
+     * Undo repost
      */
     async undoRetweet(requestParameters: UndoRetweetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UndoRetweet200Response> {
         const response = await this.undoRetweetRaw(requestParameters, initOverrides);
@@ -861,7 +863,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Remove a like from the connected account.
+     * Removes the connected account\'s like from a post.
      * Unlike
      */
     async unlikeRaw(requestParameters: UnlikeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Like201Response>> {
@@ -872,7 +874,7 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Remove a like from the connected account.
+     * Removes the connected account\'s like from a post.
      * Unlike
      */
     async unlike(requestParameters: UnlikeRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Like201Response> {

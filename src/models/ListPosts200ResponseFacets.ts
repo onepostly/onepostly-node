@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -29,7 +29,7 @@ import {
 } from './ListPosts200ResponseFacetsPlatformInner.js';
 
 /**
- * 
+ * Post counts per status and per platform for the current filters.
  * @export
  * @interface ListPosts200ResponseFacets
  */

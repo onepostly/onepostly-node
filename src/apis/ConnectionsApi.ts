@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -179,11 +179,11 @@ export interface GetConnectionStatsRequest {
      */
     id: string;
     /**
-     * Facebook only, comma-separated: messenger-profile, reviews.
+     * Extra Facebook Page data to return, as a comma-separated list. Accepts messenger-profile and reviews.
      */
     include?: string;
     /**
-     * Page size for included reviews (default 20).
+     * Number of reviews to return when reviews is included. Defaults to 20.
      */
     limit?: number;
 }
@@ -201,30 +201,30 @@ export interface ListConnectionMediaRequest {
      */
     id: string;
     /**
-     * Page size (1–20, default 10).
+     * Items per page. Defaults to 10. Maximum 20.
      */
     limit?: number;
     /**
-     * Pagination cursor from the previous response.
+     * Cursor from the previous response's nextCursor. Omit it for the first page.
      */
     cursor?: string;
     /**
-     * Instagram only: stories lists active stories, audio searches catalog audio.
+     * What to list. Defaults to media. Instagram also supports stories for active stories and audio to search the audio catalog. Audio search needs an Instagram account connected through Facebook Login.
      */
     kind?: ListConnectionMediaKindEnum;
     /**
-     * Audio search query (kind=audio). Omitted = trending.
+     * Audio search text, used with kind audio. When omitted, trending audio is returned.
      */
     q?: string;
     /**
-     * 
+     * Type of audio to search, used with kind audio. Defaults to music.
      */
     audioType?: ListConnectionMediaAudioTypeEnum;
 }
 
 export interface ListConnectionsRequest {
     /**
-     * Connections per page. Defaults to 500 for this endpoint.
+     * Connections per page. Defaults to 500. Maximum 500.
      */
     limit?: number;
     /**
@@ -232,23 +232,23 @@ export interface ListConnectionsRequest {
      */
     page?: number;
     /**
-     * Case-insensitive search over display name, handle, and platform.
+     * Searches display name, handle and platform. Matching ignores case.
      */
     q?: string;
     /**
-     * Only accounts filed under this profile name. Unknown names match nothing.
+     * Returns only accounts filed under this profile name. An unknown name matches nothing.
      */
     profile?: string;
     /**
-     * Only accounts on this platform.
+     * Returns only accounts on this platform.
      */
     platform?: string;
     /**
-     * Only accounts connected within the last N days.
+     * Returns only accounts connected within the last N days.
      */
     addedWithinDays?: number;
     /**
-     * Result order. Defaults to `newest`.
+     * Sort order. Defaults to newest.
      */
     sort?: ListConnectionsSortEnum;
 }
@@ -305,23 +305,23 @@ export interface StartOAuthRequest {
      */
     platform: string;
     /**
-     * Required for API-key starts. Browser returns here after OAuth.
+     * Where the browser returns after authorization. Required when you call with an API key.
      */
     redirectUrl?: string;
     /**
-     * Existing connection id to re-authorize without consuming a plan slot.
+     * Id of an existing connection to re-authorize. Reconnecting does not use a plan slot.
      */
     reconnect?: string;
     /**
-     * Workspace profile name to file the new connection under — created if it does not exist. API-key starts that omit it fall back to the workspace default profile. Ignored on reconnect.
+     * Profile to file the new connection under. It is created if it does not exist. When omitted, the workspace default profile is used. Ignored on reconnect.
      */
     profile?: string;
     /**
-     * Selection platforms only (Facebook, Instagram via Facebook Login). When true/1, skip hosted picker and return tempToken to redirectUrl.
+     * Set to true to skip the hosted account picker. The browser then returns to redirectUrl with a tempToken, and you finish the connect with the select endpoint. Applies to Facebook and to Instagram through Facebook Login. Requires redirectUrl.
      */
     headless?: string;
     /**
-     * Instagram only. instagram_login (default, direct Business Login) or facebook_login (Page-linked account via Facebook Login, with a second account-selection step).
+     * How to connect an Instagram account. Defaults to instagram_login. Use facebook_login for an account linked to a Facebook Page, which adds a step to choose the account.
      */
     loginMethod?: StartOAuthLoginMethodEnum;
 }
@@ -384,7 +384,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Creates a Bluesky connection using handle and App Password (Settings → App Passwords).
+     * Connects a Bluesky account with its handle and an App Password. Create the App Password in Bluesky under Settings, App Passwords.
      * Connect Bluesky via App Password
      */
     async connectBlueskyRaw(requestParameters: ConnectBlueskyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ConnectBluesky200Response>> {
@@ -395,7 +395,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Creates a Bluesky connection using handle and App Password (Settings → App Passwords).
+     * Connects a Bluesky account with its handle and an App Password. Create the App Password in Bluesky under Settings, App Passwords.
      * Connect Bluesky via App Password
      */
     async connectBluesky(requestParameters: ConnectBlueskyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ConnectBluesky200Response> {
@@ -453,7 +453,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Pinterest-only. Creates a board on the connected account.
+     * Creates a board on the account. Works only on Pinterest connections.
      * Create Pinterest board
      */
     async createPinterestBoardRaw(requestParameters: CreatePinterestBoardOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreatePinterestBoard201Response>> {
@@ -464,7 +464,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Pinterest-only. Creates a board on the connected account.
+     * Creates a board on the account. Works only on Pinterest connections.
      * Create Pinterest board
      */
     async createPinterestBoard(requestParameters: CreatePinterestBoardOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreatePinterestBoard201Response> {
@@ -514,7 +514,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Creates a connection profile. The palette tone is assigned by the server so new profiles stay visually distinct.
+     * Creates a connection profile.
      * Create profile
      */
     async createProfileRaw(requestParameters: CreateProfileOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateProfile201Response>> {
@@ -525,7 +525,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Creates a connection profile. The palette tone is assigned by the server so new profiles stay visually distinct.
+     * Creates a connection profile.
      * Create profile
      */
     async createProfile(requestParameters: CreateProfileOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateProfile201Response> {
@@ -573,7 +573,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Deletes a profile. Its connections are kept and become unassigned rather than being disconnected.
+     * Deletes a profile. Its connections stay connected and are no longer filed under a profile.
      * Delete profile
      */
     async deleteProfileRaw(requestParameters: DeleteProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
@@ -584,7 +584,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Deletes a profile. Its connections are kept and become unassigned rather than being disconnected.
+     * Deletes a profile. Its connections stay connected and are no longer filed under a profile.
      * Delete profile
      */
     async deleteProfile(requestParameters: DeleteProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
@@ -631,7 +631,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Bluesky-only. Returns the account default post languages applied when a post omits langs.
+     * Returns the account\'s default post languages, used when a post sets no languages. Works only on Bluesky connections.
      * Get Bluesky account settings
      */
     async getBlueskySettingsRaw(requestParameters: GetBlueskySettingsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetBlueskySettings200Response>> {
@@ -642,7 +642,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Bluesky-only. Returns the account default post languages applied when a post omits langs.
+     * Returns the account\'s default post languages, used when a post sets no languages. Works only on Bluesky connections.
      * Get Bluesky account settings
      */
     async getBlueskySettings(requestParameters: GetBlueskySettingsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetBlueskySettings200Response> {
@@ -698,7 +698,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Live follower / following / likes / video counts when the platform supports it (e.g. TikTok, Instagram, Facebook). Facebook Pages additionally expose messenger-profile (ice breakers + persistent menu) and reviews via ?include=.
+     * Returns live account counts such as followers and likes, on platforms that support them like TikTok, Instagram and Facebook. Facebook Pages can also return their Messenger profile and reviews.
      * Get connection account stats
      */
     async getConnectionStatsRaw(requestParameters: GetConnectionStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetConnectionStats200Response>> {
@@ -709,7 +709,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Live follower / following / likes / video counts when the platform supports it (e.g. TikTok, Instagram, Facebook). Facebook Pages additionally expose messenger-profile (ice breakers + persistent menu) and reviews via ?include=.
+     * Returns live account counts such as followers and likes, on platforms that support them like TikTok, Instagram and Facebook. Facebook Pages can also return their Messenger profile and reviews.
      * Get connection account stats
      */
     async getConnectionStats(requestParameters: GetConnectionStatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetConnectionStats200Response> {
@@ -757,7 +757,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * TikTok-only. Returns privacy options and publish constraints for the connected creator.
+     * Returns the privacy options and publishing limits for a TikTok account. Works only on TikTok connections.
      * Get TikTok creator info
      */
     async getTikTokCreatorInfoRaw(requestParameters: GetTikTokCreatorInfoRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetTikTokCreatorInfo200Response>> {
@@ -768,7 +768,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * TikTok-only. Returns privacy options and publish constraints for the connected creator.
+     * Returns the privacy options and publishing limits for a TikTok account. Works only on TikTok connections.
      * Get TikTok creator info
      */
     async getTikTokCreatorInfo(requestParameters: GetTikTokCreatorInfoRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetTikTokCreatorInfo200Response> {
@@ -836,7 +836,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Paginated public creator media for platforms that support it (e.g. TikTok). Instagram additionally supports kind=stories (active 24h stories) and kind=audio (catalog audio search via q, Facebook Login only).
+     * Lists the account\'s public media on platforms that support it, such as TikTok and Instagram. Results are paginated with a cursor.
      * List creator media
      */
     async listConnectionMediaRaw(requestParameters: ListConnectionMediaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListConnectionMedia200Response>> {
@@ -847,7 +847,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Paginated public creator media for platforms that support it (e.g. TikTok). Instagram additionally supports kind=stories (active 24h stories) and kind=audio (catalog audio search via q, Facebook Login only).
+     * Lists the account\'s public media on platforms that support it, such as TikTok and Instagram. Results are paginated with a cursor.
      * List creator media
      */
     async listConnectionMedia(requestParameters: ListConnectionMediaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListConnectionMedia200Response> {
@@ -915,7 +915,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Lists the organization\'s connections, newest first. Responses are paginated: `limit` controls how many connections a page carries (default 500, max 500) and `page` selects the page starting at 1. Use `total` and `hasMore` to walk every page.
+     * Lists the workspace\'s connections, newest first. Results are paginated.
      * List connections
      */
     async listConnectionsRaw(requestParameters: ListConnectionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListConnections200Response>> {
@@ -926,7 +926,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Lists the organization\'s connections, newest first. Responses are paginated: `limit` controls how many connections a page carries (default 500, max 500) and `page` selects the page starting at 1. Use `total` and `hasMore` to walk every page.
+     * Lists the workspace\'s connections, newest first. Results are paginated.
      * List connections
      */
     async listConnections(requestParameters: ListConnectionsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListConnections200Response> {
@@ -977,7 +977,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * After Facebook OAuth, list Pages the user can select. Requires tempToken from the callback.
+     * Lists the Facebook Pages the user can connect after authorizing Facebook. Send the tempToken returned to your redirect URL.
      * List Facebook Pages for pending connect
      */
     async listFacebookPagesRaw(requestParameters: ListFacebookPagesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListFacebookPages200Response>> {
@@ -988,7 +988,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * After Facebook OAuth, list Pages the user can select. Requires tempToken from the callback.
+     * Lists the Facebook Pages the user can connect after authorizing Facebook. Send the tempToken returned to your redirect URL.
      * List Facebook Pages for pending connect
      */
     async listFacebookPages(requestParameters: ListFacebookPagesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListFacebookPages200Response> {
@@ -1039,7 +1039,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * After Instagram OAuth with loginMethod=facebook_login, list the Instagram professional accounts linked to the user\'s Pages. Requires tempToken from the callback.
+     * Lists the Instagram professional accounts linked to the user\'s Facebook Pages. Use it after connecting Instagram with loginMethod set to facebook_login, and send the tempToken returned to your redirect URL.
      * List linked Instagram accounts for pending connect
      */
     async listInstagramAccountsRaw(requestParameters: ListInstagramAccountsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListInstagramAccounts200Response>> {
@@ -1050,7 +1050,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * After Instagram OAuth with loginMethod=facebook_login, list the Instagram professional accounts linked to the user\'s Pages. Requires tempToken from the callback.
+     * Lists the Instagram professional accounts linked to the user\'s Facebook Pages. Use it after connecting Instagram with loginMethod set to facebook_login, and send the tempToken returned to your redirect URL.
      * List linked Instagram accounts for pending connect
      */
     async listInstagramAccounts(requestParameters: ListInstagramAccountsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListInstagramAccounts200Response> {
@@ -1098,7 +1098,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Pinterest-only. Boards available for pin destinations.
+     * Lists the boards you can publish pins to. Works only on Pinterest connections.
      * List Pinterest boards
      */
     async listPinterestBoardsRaw(requestParameters: ListPinterestBoardsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListPinterestBoards200Response>> {
@@ -1109,7 +1109,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Pinterest-only. Boards available for pin destinations.
+     * Lists the boards you can publish pins to. Works only on Pinterest connections.
      * List Pinterest boards
      */
     async listPinterestBoards(requestParameters: ListPinterestBoardsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListPinterestBoards200Response> {
@@ -1149,7 +1149,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Lists the workspace\'s connection profiles (the groupings connections are filed under), oldest first.
+     * Lists the workspace\'s profiles, oldest first. Profiles group connected accounts.
      * List profiles
      */
     async listProfilesRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListProfiles200Response>> {
@@ -1160,7 +1160,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Lists the workspace\'s connection profiles (the groupings connections are filed under), oldest first.
+     * Lists the workspace\'s profiles, oldest first. Profiles group connected accounts.
      * List profiles
      */
     async listProfiles(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListProfiles200Response> {
@@ -1210,6 +1210,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Connects the chosen Facebook Page and finishes the connect. Send the tempToken returned to your redirect URL.
      * Select Facebook Page and finish connect
      */
     async selectFacebookPageRaw(requestParameters: SelectFacebookPageOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SelectFacebookPage200Response>> {
@@ -1220,6 +1221,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Connects the chosen Facebook Page and finishes the connect. Send the tempToken returned to your redirect URL.
      * Select Facebook Page and finish connect
      */
     async selectFacebookPage(requestParameters: SelectFacebookPageOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SelectFacebookPage200Response> {
@@ -1269,6 +1271,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Connects the chosen Instagram account and finishes the connect. Send the tempToken returned to your redirect URL.
      * Select Instagram account and finish connect
      */
     async selectInstagramAccountRaw(requestParameters: SelectInstagramAccountOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SelectFacebookPage200Response>> {
@@ -1279,6 +1282,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
+     * Connects the chosen Instagram account and finishes the connect. Send the tempToken returned to your redirect URL.
      * Select Instagram account and finish connect
      */
     async selectInstagramAccount(requestParameters: SelectInstagramAccountOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SelectFacebookPage200Response> {
@@ -1336,7 +1340,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Facebook Page only. Set ice breakers (max 4) and/or persistent menu (max 3).
+     * Sets the ice breakers and persistent menu of a Facebook Page\'s Messenger. You can send up to 4 ice breakers and up to 3 menu items.
      * Set Messenger profile
      */
     async setConnectionMessengerProfileRaw(requestParameters: SetConnectionMessengerProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SetConnectionMessengerProfile200Response>> {
@@ -1347,7 +1351,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Facebook Page only. Set ice breakers (max 4) and/or persistent menu (max 3).
+     * Sets the ice breakers and persistent menu of a Facebook Page\'s Messenger. You can send up to 4 ice breakers and up to 3 menu items.
      * Set Messenger profile
      */
     async setConnectionMessengerProfile(requestParameters: SetConnectionMessengerProfileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SetConnectionMessengerProfile200Response> {
@@ -1415,7 +1419,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns a platform authorization URL. API keys require `redirectUrl`. Dashboard session may omit it.
+     * Returns the platform URL where the user authorizes the connection. Send redirectUrl when you call with an API key.
      * Start OAuth connect
      */
     async startOAuthRaw(requestParameters: StartOAuthRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StartOAuth200Response>> {
@@ -1426,7 +1430,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns a platform authorization URL. API keys require `redirectUrl`. Dashboard session may omit it.
+     * Returns the platform URL where the user authorizes the connection. Send redirectUrl when you call with an API key.
      * Start OAuth connect
      */
     async startOAuth(requestParameters: StartOAuthRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StartOAuth200Response> {
@@ -1484,7 +1488,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Bluesky-only. Sets or clears the account default post languages (1-3 BCP-47 codes). Explicit null clears the default.
+     * Sets or clears the account\'s default post languages. Send null to clear them. Works only on Bluesky connections.
      * Update Bluesky account settings
      */
     async updateBlueskySettingsRaw(requestParameters: UpdateBlueskySettingsOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UpdateBlueskySettings200Response>> {
@@ -1495,7 +1499,7 @@ export class ConnectionsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Bluesky-only. Sets or clears the account default post languages (1-3 BCP-47 codes). Explicit null clears the default.
+     * Sets or clears the account\'s default post languages. Send null to clear them. Works only on Bluesky connections.
      * Update Bluesky account settings
      */
     async updateBlueskySettings(requestParameters: UpdateBlueskySettingsOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UpdateBlueskySettings200Response> {

@@ -164,7 +164,7 @@ All methods take a single request-parameters object; required fields are listed 
 | Method | Description |
 | --- | --- |
 | `posts.listPosts()` | List posts |
-| `posts.createPost()` | Create post. |
+| `posts.createPost()` | Create post |
 | `posts.getPost()` | Get post |
 | `posts.cancelPost()` | Cancel post |
 | `posts.deletePostDestination()` | Remote-delete destination |
@@ -200,10 +200,10 @@ All methods take a single request-parameters object; required fields are listed 
 | `engagement.unlike()` | Unlike |
 | `engagement.bookmark()` | Bookmark |
 | `engagement.removeBookmark()` | Remove bookmark |
-| `engagement.listRetweeters()` | List retweeters |
-| `engagement.retweet()` | Retweet |
-| `engagement.undoRetweet()` | Undo retweet |
-| `engagement.quote()` | Quote tweet |
+| `engagement.listRetweeters()` | List reposters |
+| `engagement.retweet()` | Repost |
+| `engagement.undoRetweet()` | Undo repost |
+| `engagement.quote()` | Quote post |
 
 ### InboxApi
 

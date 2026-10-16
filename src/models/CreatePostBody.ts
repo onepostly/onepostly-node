@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Onepostly API
- * One API for all social media. Authenticate with a workspace API key (`op_…`).
+ * One API for all social media. Authenticate with a workspace API key, which starts with op_.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -46,7 +46,7 @@ export interface CreatePostBody {
      */
     text?: string;
     /**
-     * 
+     * X, Threads and Bluesky only. Replies published under the post, in order.
      */
     threadItems?: Array<ThreadItem>;
     /**
@@ -58,11 +58,11 @@ export interface CreatePostBody {
      */
     mediaKind: MediaKind;
     /**
-     * 
+     * Local date and time to publish, such as 2027-03-15T09:00:00, without Z or an offset. Omit to publish now.
      */
     scheduledFor?: string;
     /**
-     * IANA zone for scheduledFor. No example on purpose, see scheduledFor.
+     * IANA timezone for scheduledFor, such as America/New_York. Defaults to UTC.
      */
     timezone?: string;
     /**
