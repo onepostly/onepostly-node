@@ -294,7 +294,7 @@ export class AnalyticsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Daily cumulative metrics per subject, captured automatically by the Onepostly pipeline. Range defaults to the last 90 days.
+     * Daily cumulative metrics per subject, captured automatically. Range defaults to the last 90 days.
      * Get daily analytics timeline
      */
     async getAnalyticsTimelineRaw(requestParameters: GetAnalyticsTimelineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetAnalyticsTimeline200Response>> {
@@ -305,7 +305,7 @@ export class AnalyticsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Daily cumulative metrics per subject, captured automatically by the Onepostly pipeline. Range defaults to the last 90 days.
+     * Daily cumulative metrics per subject, captured automatically. Range defaults to the last 90 days.
      * Get daily analytics timeline
      */
     async getAnalyticsTimeline(requestParameters: GetAnalyticsTimelineRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetAnalyticsTimeline200Response> {

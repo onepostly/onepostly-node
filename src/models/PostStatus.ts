@@ -19,11 +19,12 @@
  */
 export const PostStatus = {
     Draft: 'draft',
+    Scheduled: 'scheduled',
     Queued: 'queued',
     Processing: 'processing',
+    Partial: 'partial',
     Published: 'published',
     Failed: 'failed',
-    Scheduled: 'scheduled',
     Cancelled: 'cancelled',
     Deleted: 'deleted',
 } as const;

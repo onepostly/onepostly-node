@@ -19,11 +19,11 @@
  */
 export const DestinationStatus = {
     Draft: 'draft',
+    Scheduled: 'scheduled',
     Queued: 'queued',
     Processing: 'processing',
     Published: 'published',
     Failed: 'failed',
-    Scheduled: 'scheduled',
     Cancelled: 'cancelled',
     Deleted: 'deleted',
 } as const;

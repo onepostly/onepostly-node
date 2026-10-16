@@ -32,7 +32,7 @@ export interface ListAutomations200ResponseRulesInner {
      */
     kind: ListAutomations200ResponseRulesInnerKindEnum;
     /**
-     * Case-insensitive substring triggers. Empty means every comment or message matches.
+     * Case-insensitive substring triggers. The rule fires when a comment or message contains any of them.
      */
     keywords: Array<string>;
     /**
