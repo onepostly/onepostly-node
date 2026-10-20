@@ -4,19 +4,17 @@
 import { describe, expect, it } from "vitest";
 import { BASE_PATH, Configuration, PostsApi } from "../src/index.js";
 
-const RESOLVED_API_KEY_HEADER = "x-api-key";
-
 describe("Configuration", () => {
-  it("resolves a string apiKey into a per-security-scheme getter", () => {
-    const config = new Configuration({ apiKey: "op_test" });
-    expect(config.apiKey?.(RESOLVED_API_KEY_HEADER)).toBe("op_test");
+  it("resolves a string accessToken into a bearer token getter", async () => {
+    const config = new Configuration({ accessToken: "op_test" });
+    expect(await config.accessToken?.("Bearer", [])).toBe("op_test");
   });
 
-  it("supports async apiKey getters for secret-manager lookups", async () => {
+  it("supports async accessToken getters for secret-manager lookups", async () => {
     const config = new Configuration({
-      apiKey: async () => "op_from_vault",
+      accessToken: async () => "op_from_vault",
     });
-    expect(await config.apiKey?.(RESOLVED_API_KEY_HEADER)).toBe("op_from_vault");
+    expect(await config.accessToken?.("Bearer", [])).toBe("op_from_vault");
   });
 
   it("falls back to the production base path when none is given", () => {
@@ -30,10 +28,10 @@ describe("Configuration", () => {
     expect(config.basePath).toBe("http://127.0.0.1:8787");
   });
 
-  it("is shared safely: every API class built on one config uses the same auth", () => {
-    const config = new Configuration({ apiKey: "op_shared" });
+  it("is shared safely: every API class built on one config uses the same auth", async () => {
+    const config = new Configuration({ accessToken: "op_shared" });
     const posts = new PostsApi(config);
-    expect(posts.configuration.apiKey?.(RESOLVED_API_KEY_HEADER)).toBe("op_shared");
+    expect(await posts.configuration.accessToken?.("Bearer", [])).toBe("op_shared");
     expect(posts.configuration.basePath).toBe(config.basePath);
   });
 });

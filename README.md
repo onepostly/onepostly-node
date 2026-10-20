@@ -26,88 +26,102 @@ npm install @onepostly/sdk
 
 ## Usage
 
-Every resource is its own API class built on a shared `Configuration`:
+Every resource is its own API class built on a shared `Configuration`. Create an API key in the dashboard; it is sent as `Authorization: Bearer op_…`.
 
 ```ts
-import { Configuration, PostsApi } from "@onepostly/sdk";
+import { AccountsApi, Configuration, PostsApi } from "@onepostly/sdk";
 
-const config = new Configuration({
-  apiKey: process.env.ONEPOSTLY_API_KEY, // sent as the `x-api-key` header
-});
+const config = new Configuration({ accessToken: process.env.ONEPOSTLY_API_KEY });
 
+const accounts = new AccountsApi(config);
 const posts = new PostsApi(config);
 
-const response = await posts.createPost({
+const { data } = await accounts.listAccounts();
+
+const created = await posts.createPost({
   createPostBody: {
-    text: "Hello from Onepostly",
-    mediaKind: "text",
-    destinations: [{ accountId: "…" }],
+    text: "Hello from Onepostly.",
+    accounts: [{ accountId: data[0].id }],
   },
 });
 
-const post = response.post;
-console.log(post.id, post.status); // "queued"
+// One post per account, all sharing created.groupId.
+for (const post of created.data) {
+  console.log(post.id, post.platform, post.status); // "publishing"
+}
 ```
 
-Methods return the deserialized body directly (`PostResponse`, `ListPosts200Response`, …). Pass `initOverrides` to any method to tweak the underlying `fetch` call, or use the `…Raw` variants to get `{ raw, value() }` with full access to the `Response`.
+Methods return the deserialized body directly. Pass `initOverrides` to any method to tweak the underlying `fetch` call, or use the `…Raw` variants to get `{ raw, value() }` with full access to the `Response`.
 
 ### Scheduling
 
 ```ts
 await posts.createPost({
   createPostBody: {
-    text: "Tomorrow morning",
-    scheduledFor: "2026-09-01T09:00:00", // timezone-naive local time
-    timezone: "Europe/Istanbul",
-    destinations: [{ accountId: "…" }],
+    text: "Join our product webinar next week.",
+    scheduledFor: "2027-03-15T09:00:00", // local time in `timezone`
+    timezone: "America/New_York",
+    accounts: [{ accountId: "acc_…" }],
   },
 });
 // 201 Created, status "scheduled"
+
+await posts.updatePost({ id: "pst_…", updatePostBody: { scheduledFor: "2027-03-16T09:00:00" } });
+await posts.deletePost({ id: "pst_…" }); // cancels a scheduled post
 ```
 
 ### Media
 
+Create a media item, upload the file to its `uploadUrl`, then use its id in a post:
+
 ```ts
-import { Configuration, MediaApi } from "@onepostly/sdk";
+import { readFile } from "node:fs/promises";
+import { MediaApi } from "@onepostly/sdk";
 
-const mediaApi = new MediaApi(config);
+const media = new MediaApi(config);
 
-const file = new File([buffer], "photo.jpg", { type: "image/jpeg" });
-const upload = await mediaApi.uploadMedia({ file });
-const mediaUrl = upload.media.url;
+const file = await readFile("launch.mp4");
+const item = await media.createMedia({
+  createMediaBody: { filename: "launch.mp4", contentType: "video/mp4", size: file.byteLength },
+});
+
+await fetch(item.uploadUrl, {
+  method: "PUT",
+  headers: { "Content-Type": "video/mp4" },
+  body: file,
+});
 
 await posts.createPost({
   createPostBody: {
-    text: "With an image",
-    mediaKind: "image",
-    mediaUrls: [mediaUrl],
-    destinations: [{ accountId: "…" }],
+    text: "Launch day",
+    media: [{ id: item.id }],
+    accounts: [{ accountId: "acc_…" }],
   },
 });
 ```
 
+The upload URL needs no API key and accepts exactly the declared type and size.
+
 ### Analytics
 
 ```ts
-import { AnalyticsApi, Configuration } from "@onepostly/sdk";
+import { AnalyticsApi } from "@onepostly/sdk";
 
 const analytics = new AnalyticsApi(config);
 
-const { analytics: postAnalytics } = await analytics.getAnalytics({ post: postId });
-for (const subject of postAnalytics.subjects ?? []) {
-  console.log(subject.platform, subject.metrics);
-}
+const result = await analytics.getPostAnalytics({ id: "pst_…" });
+console.log(result.status, result.metrics);
 
-const { timeline } = await analytics.getAnalyticsTimeline({
-  post: postId,
-  from: "2026-08-01", // inclusive, YYYY-MM-DD
-  to: "2026-08-28",   // inclusive, YYYY-MM-DD
+const timeline = await analytics.getPostAnalyticsTimeline({
+  id: "pst_…",
+  since: "2027-03-01T00:00:00Z",
+  until: "2027-03-29T00:00:00Z", // exclusive
 });
 ```
 
 ### Error handling
 
-Every non-2xx response throws a `ResponseError` carrying the raw `Response` and the API's machine-readable error body:
+Every non-2xx response throws a `ResponseError` carrying the raw `Response`. The body has a stable `code` to build logic on, and a `requestId` to share with support:
 
 ```ts
 import { ResponseError } from "@onepostly/sdk";
@@ -117,10 +131,12 @@ try {
 } catch (error) {
   if (error instanceof ResponseError) {
     console.log(error.response.status, await error.response.json());
-    // 402 { error: { code: "INSUFFICIENT_WALLET", message: "…" } }
+    // 400 { error: "Invalid request: …", code: "VALIDATION_ERROR", param: "accounts.0.accountId", requestId: "req_…" }
   }
 }
 ```
+
+See [Errors](https://onepostly.com/docs/error-handling) for every code.
 
 ## API reference
 
@@ -128,35 +144,52 @@ All methods take a single request-parameters object; required fields are listed 
 
 <!-- BEGIN GENERATED API REFERENCE -->
 
-### ConnectionsApi
+### AccountsApi
 
 | Method | Description |
 | --- | --- |
-| `connections.listConnections()` | List connections |
-| `connections.connectBluesky()` | Connect Bluesky via App Password |
-| `connections.startOAuth()` | Start OAuth connect |
-| `connections.listFacebookPages()` | List Facebook Pages for pending connect |
-| `connections.selectFacebookPage()` | Select Facebook Page and finish connect |
-| `connections.listInstagramAccounts()` | List linked Instagram accounts for pending connect |
-| `connections.selectInstagramAccount()` | Select Instagram account and finish connect |
-| `connections.getConnectionStats()` | Get connection account stats |
-| `connections.setConnectionMessengerProfile()` | Set Messenger profile |
-| `connections.listConnectionMedia()` | List creator media |
-| `connections.getTikTokCreatorInfo()` | Get TikTok creator info |
-| `connections.listPinterestBoards()` | List Pinterest boards |
-| `connections.createPinterestBoard()` | Create Pinterest board |
-| `connections.getBlueskySettings()` | Get Bluesky account settings |
-| `connections.updateBlueskySettings()` | Update Bluesky account settings |
-| `connections.listProfiles()` | List profiles |
-| `connections.createProfile()` | Create profile |
-| `connections.deleteProfile()` | Delete profile |
+| `accounts.listAccounts()` | List accounts |
+| `accounts.createAccount()` | Connect a Bluesky account |
+| `accounts.getAccount()` | Get account |
+| `accounts.deleteAccount()` | Disconnect account |
+| `accounts.updateAccount()` | Update account |
+| `accounts.reconnectAccount()` | Reconnect account |
+| `accounts.getAccountStats()` | Get account stats |
+| `accounts.listAccountReviews()` | List Page reviews |
+| `accounts.getMessengerProfile()` | Get Messenger profile |
+| `accounts.setMessengerProfile()` | Set Messenger profile |
+| `accounts.listAccountBoards()` | List Pinterest boards |
+| `accounts.createAccountBoard()` | Create Pinterest board |
+| `accounts.getCreatorInfo()` | Get TikTok creator info |
+| `accounts.getAccountSettings()` | Get account settings |
+| `accounts.updateAccountSettings()` | Update account settings |
+| `accounts.listAccountMedia()` | List account media |
+| `accounts.searchAccountAudio()` | Search Instagram audio |
+
+### ConnectApi
+
+| Method | Description |
+| --- | --- |
+| `connect.createConnectSession()` | Create connect session |
+| `connect.listConnectCandidates()` | List candidates |
+| `connect.selectConnectCandidate()` | Select candidate |
+
+### ProfilesApi
+
+| Method | Description |
+| --- | --- |
+| `profiles.listProfiles()` | List profiles |
+| `profiles.createProfile()` | Create profile |
+| `profiles.deleteProfile()` | Delete profile |
+| `profiles.updateProfile()` | Rename profile |
 
 ### MediaApi
 
 | Method | Description |
 | --- | --- |
-| `media.getMediaPresignedUrl()` | Get a presigned upload URL |
 | `media.listMedia()` | List media |
+| `media.createMedia()` | Create media |
+| `media.getMedia()` | Get media |
 | `media.deleteMedia()` | Delete media |
 
 ### PostsApi
@@ -166,101 +199,93 @@ All methods take a single request-parameters object; required fields are listed 
 | `posts.listPosts()` | List posts |
 | `posts.createPost()` | Create post |
 | `posts.getPost()` | Get post |
-| `posts.cancelPost()` | Cancel post |
-| `posts.deletePostDestination()` | Remote-delete destination |
-| `posts.syncExternal()` | Sync external posts |
+| `posts.deletePost()` | Delete post |
+| `posts.updatePost()` | Update post |
+| `posts.syncAccountPosts()` | Sync account posts |
 
 ### AnalyticsApi
 
 | Method | Description |
 | --- | --- |
-| `analytics.getAnalytics()` | Get analytics |
-| `analytics.getAnalyticsTimeline()` | Get daily analytics timeline |
+| `analytics.getPostAnalytics()` | Get post analytics |
+| `analytics.getPostAnalyticsTimeline()` | Get post analytics timeline |
+| `analytics.getAccountAnalytics()` | Get account analytics |
 
 ### CommentsApi
 
 | Method | Description |
 | --- | --- |
 | `comments.listComments()` | List comments |
-| `comments.createComment()` | Create reply |
-| `comments.deleteComment()` | Delete own comment |
-| `comments.hideComment()` | Hide or unhide comment |
+| `comments.createComment()` | Comment on a post |
+| `comments.replyToComment()` | Reply to a comment |
+| `comments.deleteComment()` | Delete comment |
+| `comments.hideComment()` | Hide comment |
+| `comments.unhideComment()` | Unhide comment |
 | `comments.likeComment()` | Like comment |
 | `comments.unlikeComment()` | Unlike comment |
-| `comments.createPrivateReply()` | Send private reply |
+| `comments.sendPrivateReply()` | Send private reply |
 
 ### EngagementApi
 
 | Method | Description |
 | --- | --- |
-| `engagement.listAutomations()` | List inbox automations |
-| `engagement.createAutomation()` | Create inbox automation |
-| `engagement.deleteAutomations()` | Delete inbox automations |
-| `engagement.like()` | Like |
-| `engagement.unlike()` | Unlike |
-| `engagement.bookmark()` | Bookmark |
-| `engagement.removeBookmark()` | Remove bookmark |
-| `engagement.listRetweeters()` | List reposters |
-| `engagement.retweet()` | Repost |
-| `engagement.undoRetweet()` | Undo repost |
-| `engagement.quote()` | Quote post |
+| `engagement.likePost()` | Like a post |
+| `engagement.unlikePost()` | Remove a like |
+| `engagement.bookmarkPost()` | Bookmark a post |
+| `engagement.unbookmarkPost()` | Remove a bookmark |
+| `engagement.repostPost()` | Repost a post |
+| `engagement.unrepostPost()` | Undo a repost |
+| `engagement.listReposters()` | List reposters |
 
 ### InboxApi
 
 | Method | Description |
 | --- | --- |
-| `inbox.listInboxConversations()` | List inbox conversations |
-| `inbox.createInboxConversation()` | Create inbox conversation |
-| `inbox.listInboxMessages()` | List inbox messages |
-| `inbox.sendInboxMessage()` | Send inbox message |
+| `inbox.listConversations()` | List conversations |
+| `inbox.createConversation()` | Create conversation |
+| `inbox.getConversation()` | Get conversation |
+| `inbox.listMessages()` | List messages |
+| `inbox.sendMessage()` | Send message |
+
+### AutomationsApi
+
+| Method | Description |
+| --- | --- |
+| `automations.listAutomations()` | List automations |
+| `automations.createAutomation()` | Create automation |
+| `automations.getAutomation()` | Get automation |
+| `automations.deleteAutomation()` | Delete automation |
+| `automations.updateAutomation()` | Update automation |
 
 ### WebhooksApi
 
 | Method | Description |
 | --- | --- |
-| `webhooks.listWebhookEventTypes()` | List webhook event types |
+| `webhooks.listWebhookEventTypes()` | List event types |
 | `webhooks.listWebhooks()` | List webhooks |
 | `webhooks.createWebhook()` | Create webhook |
-| `webhooks.getWebhookDeliverySummary()` | Get webhook delivery summary |
 | `webhooks.getWebhook()` | Get webhook |
 | `webhooks.deleteWebhook()` | Delete webhook |
 | `webhooks.updateWebhook()` | Update webhook |
-| `webhooks.listWebhookDeliveries()` | List webhook deliveries |
+| `webhooks.rotateWebhookSecret()` | Rotate signing secret |
+| `webhooks.listWebhookDeliveries()` | List deliveries |
+| `webhooks.getWebhookDelivery()` | Get delivery |
+| `webhooks.retryWebhookDelivery()` | Retry delivery |
 | `webhooks.testWebhook()` | Send test event |
+
+### WalletApi
+
+| Method | Description |
+| --- | --- |
+| `wallet.getWalletBalance()` | Get wallet balance |
 <!-- END GENERATED API REFERENCE -->
 
-Representative signatures:
-
-```ts
-// PostsApi — id/destination-scoped actions take { id, … }
-posts.createPost({ createPostBody })        // → PostResponse
-posts.listPosts({ limit?, offset? })        // → { posts: Post[] }
-posts.getPost({ id })                       // → PostResponse
-posts.cancelPost({ id })                    // → PostResponse
-posts.deletePostDestination({ id, destinationId }) // remote-delete, → PostResponse
-
-// EngagementApi — body-bearing actions take DestinationIdBody / QuoteBody
-engagement.retweet({ id, destinationId: { destinationId } })
-engagement.undoRetweet({ id, destinationId })
-engagement.like({ id, destinationId: { destinationId } })
-engagement.quote({ id, quoteBody: { destinationId, text } })
-engagement.listRetweeters({ id, destinationId?, limit?, cursor? })
-
-// CommentsApi
-comments.createComment({ id, createCommentBody: { destinationId, text, parentCommentId? } })
-comments.listComments({ id, destinationId?, limit?, cursor? })
-comments.deleteComment({ id, commentId, destinationId })
-
-// WebhooksApi
-webhooks.createWebhook({ createWebhookBody: { name, url, events, enabled? } })
-webhooks.updateWebhook({ id, updateWebhookBody })
-webhooks.rotateWebhookSecret({ id })
-webhooks.testWebhook({ id })
-```
+Path and query parameters are flat fields of that object, and a JSON body sits under its schema name, such as `createPostBody`. Every operation, with request and response examples in TypeScript, is in the [API Reference](https://onepostly.com/docs/api-reference).
 
 ## Links
 
 - [Documentation](https://onepostly.com/docs)
+- [API Reference](https://onepostly.com/docs/api-reference)
 - [Dashboard](https://app.onepostly.com)
 - [OpenAPI spec](https://onepostly.com/openapi.json)
 

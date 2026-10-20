@@ -5,6 +5,13 @@
 import { describe, expect, it } from "vitest";
 import { Configuration, PostsApi, RequiredError, ResponseError } from "../src/index.js";
 
+const VALIDATION_ERROR = {
+  error: "Invalid request: accounts must contain at least 1 item.",
+  code: "VALIDATION_ERROR",
+  param: "accounts",
+  requestId: "req_8f2a64c1d3b94e0f9a7c5e2b1d0f3a6c",
+};
+
 function withFetch(status: number, body: unknown, statusText = "") {
   return (async () =>
     new Response(JSON.stringify(body), {
@@ -18,10 +25,8 @@ describe("ResponseError", () => {
   it("carries the raw Response and the machine-readable error body", async () => {
     const api = new PostsApi(
       new Configuration({
-        apiKey: "op_test",
-        fetchApi: withFetch(402, {
-          error: { code: "INSUFFICIENT_WALLET", message: "Wallet balance too low" },
-        }),
+        accessToken: "op_test",
+        fetchApi: withFetch(400, VALIDATION_ERROR),
       }),
     );
 
@@ -29,8 +34,7 @@ describe("ResponseError", () => {
       .createPost({
         createPostBody: {
           text: "Hello",
-          mediaKind: "text",
-          destinations: [{ accountId: "c1" }],
+          accounts: [],
         },
       })
       .catch((e: unknown) => e);
@@ -38,21 +42,19 @@ describe("ResponseError", () => {
     expect(error).toBeInstanceOf(ResponseError);
     if (!(error instanceof ResponseError)) return;
 
-    expect(error.response.status).toBe(402);
-    expect(await error.response.json()).toEqual({
-      error: { code: "INSUFFICIENT_WALLET", message: "Wallet balance too low" },
-    });
+    expect(error.response.status).toBe(400);
+    expect(await error.response.json()).toEqual(VALIDATION_ERROR);
   });
 
   it("maps status families so callers can branch without parsing bodies", async () => {
     const statuses: [number, (api: PostsApi) => Promise<unknown>][] = [
-      [401, (api) => api.getPost({ id: "p1" })],
-      [403, (api) => api.getPost({ id: "p1" })],
-      [404, (api) => api.getPost({ id: "p1" })],
+      [401, (api) => api.getPost({ id: "pst_1" })],
+      [403, (api) => api.getPost({ id: "pst_1" })],
+      [404, (api) => api.getPost({ id: "pst_1" })],
     ];
 
     for (const [status, call] of statuses) {
-      const api = new PostsApi(new Configuration({ apiKey: "op_test", fetchApi: withFetch(status, {}) }));
+      const api = new PostsApi(new Configuration({ accessToken: "op_test", fetchApi: withFetch(status, {}) }));
       const error = await call(api).catch((e: unknown) => e);
       expect(error, `status ${status}`).toBeInstanceOf(ResponseError);
       expect((error as ResponseError).response.status, `status ${status}`).toBe(status);
@@ -71,15 +73,15 @@ describe("ResponseError", () => {
 describe("RequiredError", () => {
   it("names the missing required path parameter instead of sending a broken request", async () => {
     const api = new PostsApi(
-      new Configuration({ apiKey: "op_test", fetchApi: withFetch(201, {}) }),
+      new Configuration({ accessToken: "op_test", fetchApi: withFetch(200, {}) }),
     );
 
     const error = await api
-      .cancelPost({ id: undefined as unknown as string })
+      .deletePost({ id: undefined as unknown as string })
       .catch((e: unknown) => e);
 
     expect(error).toBeInstanceOf(RequiredError);
     expect((error as RequiredError).field).toBe("id");
-    expect((error as RequiredError).message).toContain("cancelPost()");
+    expect((error as RequiredError).message).toContain("deletePost()");
   });
 });
