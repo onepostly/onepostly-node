@@ -12,34 +12,20 @@
  * Do not edit the class manually.
  */
 
+import { mapValues } from '../runtime.js';
+/**
+ * scheduled waits for scheduledFor. publishing is on its way to the platform. published, failed, cancelled and deleted are final. New values can be added, so handle a value you do not know.
+ * @export
+ * @interface PostStatus
+ */
+export interface PostStatus {
+}
 
 /**
- * 
- * @export
+ * Check if a given object implements the PostStatus interface.
  */
-export const PostStatus = {
-    Draft: 'draft',
-    Scheduled: 'scheduled',
-    Queued: 'queued',
-    Processing: 'processing',
-    Partial: 'partial',
-    Published: 'published',
-    Failed: 'failed',
-    Cancelled: 'cancelled',
-    Deleted: 'deleted',
-} as const;
-export type PostStatus = typeof PostStatus[keyof typeof PostStatus];
-
-
-export function instanceOfPostStatus(value: any): boolean {
-    for (const key in PostStatus) {
-        if (Object.prototype.hasOwnProperty.call(PostStatus, key)) {
-            if (PostStatus[key as keyof typeof PostStatus] === value) {
-                return true;
-            }
-        }
-    }
-    return false;
+export function instanceOfPostStatus(value: object): value is PostStatus {
+    return true;
 }
 
 export function PostStatusFromJSON(json: any): PostStatus {
@@ -47,14 +33,14 @@ export function PostStatusFromJSON(json: any): PostStatus {
 }
 
 export function PostStatusFromJSONTyped(json: any, ignoreDiscriminator: boolean): PostStatus {
-    return json as PostStatus;
+    return json;
 }
 
-export function PostStatusToJSON(value?: PostStatus | null): any {
-    return value as any;
+export function PostStatusToJSON(json: any): PostStatus {
+    return PostStatusToJSONTyped(json, false);
 }
 
-export function PostStatusToJSONTyped(value: any, ignoreDiscriminator: boolean): PostStatus {
-    return value as PostStatus;
+export function PostStatusToJSONTyped(value?: PostStatus | null, ignoreDiscriminator: boolean = false): any {
+    return value;
 }
 

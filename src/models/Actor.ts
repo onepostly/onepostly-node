@@ -20,21 +20,21 @@ import { mapValues } from '../runtime.js';
  */
 export interface Actor {
     /**
-     * 
+     * The platform's id for the user.
      */
     id: string;
     /**
-     * 
+     * The user's username, without a leading @. Null when the platform does not share it.
      */
-    username?: string | null;
+    username: string | null;
     /**
      * 
      */
-    displayName?: string | null;
+    displayName: string | null;
     /**
      * 
      */
-    avatarUrl?: string | null;
+    avatarUrl: string | null;
 }
 
 /**
@@ -42,6 +42,9 @@ export interface Actor {
  */
 export function instanceOfActor(value: object): value is Actor {
     if (!('id' in value) || value['id'] === undefined) return false;
+    if (!('username' in value) || value['username'] === undefined) return false;
+    if (!('displayName' in value) || value['displayName'] === undefined) return false;
+    if (!('avatarUrl' in value) || value['avatarUrl'] === undefined) return false;
     return true;
 }
 
@@ -56,9 +59,9 @@ export function ActorFromJSONTyped(json: any, ignoreDiscriminator: boolean): Act
     return {
         
         'id': json['id'],
-        'username': json['username'] === undefined ? undefined : json['username'] === null ? null : json['username'],
-        'displayName': json['displayName'] === undefined ? undefined : json['displayName'] === null ? null : json['displayName'],
-        'avatarUrl': json['avatarUrl'] === undefined ? undefined : json['avatarUrl'] === null ? null : json['avatarUrl'],
+        'username': json['username'],
+        'displayName': json['displayName'],
+        'avatarUrl': json['avatarUrl'],
     };
 }
 

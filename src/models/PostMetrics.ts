@@ -14,7 +14,7 @@
 
 import { mapValues } from '../runtime.js';
 /**
- * Lifetime analytics for the destination. Null until the post is published and first measured.
+ * Lifetime metrics. A metric the platform does not report is null.
  * @export
  * @interface PostMetrics
  */
@@ -46,7 +46,7 @@ export interface PostMetrics {
     /**
      * 
      */
-    plays: number | null;
+    views: number | null;
     /**
      * 
      */
@@ -63,7 +63,7 @@ export function instanceOfPostMetrics(value: object): value is PostMetrics {
     if (!('comments' in value) || value['comments'] === undefined) return false;
     if (!('shares' in value) || value['shares'] === undefined) return false;
     if (!('saves' in value) || value['saves'] === undefined) return false;
-    if (!('plays' in value) || value['plays'] === undefined) return false;
+    if (!('views' in value) || value['views'] === undefined) return false;
     if (!('engagement' in value) || value['engagement'] === undefined) return false;
     return true;
 }
@@ -84,7 +84,7 @@ export function PostMetricsFromJSONTyped(json: any, ignoreDiscriminator: boolean
         'comments': json['comments'],
         'shares': json['shares'],
         'saves': json['saves'],
-        'plays': json['plays'],
+        'views': json['views'],
         'engagement': json['engagement'],
     };
 }
@@ -106,7 +106,7 @@ export function PostMetricsToJSONTyped(value?: PostMetrics | null, ignoreDiscrim
         'comments': value['comments'],
         'shares': value['shares'],
         'saves': value['saves'],
-        'plays': value['plays'],
+        'views': value['views'],
         'engagement': value['engagement'],
     };
 }

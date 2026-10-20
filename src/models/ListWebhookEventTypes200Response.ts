@@ -13,6 +13,14 @@
  */
 
 import { mapValues } from '../runtime.js';
+import type { ListWebhookEventTypes200ResponseDataInner } from './ListWebhookEventTypes200ResponseDataInner.js';
+import {
+    ListWebhookEventTypes200ResponseDataInnerFromJSON,
+    ListWebhookEventTypes200ResponseDataInnerFromJSONTyped,
+    ListWebhookEventTypes200ResponseDataInnerToJSON,
+    ListWebhookEventTypes200ResponseDataInnerToJSONTyped,
+} from './ListWebhookEventTypes200ResponseDataInner.js';
+
 /**
  * 
  * @export
@@ -22,19 +30,14 @@ export interface ListWebhookEventTypes200Response {
     /**
      * 
      */
-    events: Array<string>;
-    /**
-     * 
-     */
-    groups: Array<any>;
+    data: Array<ListWebhookEventTypes200ResponseDataInner>;
 }
 
 /**
  * Check if a given object implements the ListWebhookEventTypes200Response interface.
  */
 export function instanceOfListWebhookEventTypes200Response(value: object): value is ListWebhookEventTypes200Response {
-    if (!('events' in value) || value['events'] === undefined) return false;
-    if (!('groups' in value) || value['groups'] === undefined) return false;
+    if (!('data' in value) || value['data'] === undefined) return false;
     return true;
 }
 
@@ -48,8 +51,7 @@ export function ListWebhookEventTypes200ResponseFromJSONTyped(json: any, ignoreD
     }
     return {
         
-        'events': json['events'],
-        'groups': json['groups'],
+        'data': ((json['data'] as Array<any>).map(ListWebhookEventTypes200ResponseDataInnerFromJSON)),
     };
 }
 
@@ -64,8 +66,7 @@ export function ListWebhookEventTypes200ResponseToJSONTyped(value?: ListWebhookE
 
     return {
         
-        'events': value['events'],
-        'groups': value['groups'],
+        'data': ((value['data'] as Array<any>).map(ListWebhookEventTypes200ResponseDataInnerToJSON)),
     };
 }
 

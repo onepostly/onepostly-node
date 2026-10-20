@@ -14,25 +14,10 @@
 
 import * as runtime from '../runtime.js';
 import {
-    type CreateWebhook201Response,
-    CreateWebhook201ResponseFromJSON,
-    CreateWebhook201ResponseToJSON,
-} from '../models/CreateWebhook201Response.js';
-import {
     type CreateWebhookBody,
     CreateWebhookBodyFromJSON,
     CreateWebhookBodyToJSON,
 } from '../models/CreateWebhookBody.js';
-import {
-    type GetWebhook200Response,
-    GetWebhook200ResponseFromJSON,
-    GetWebhook200ResponseToJSON,
-} from '../models/GetWebhook200Response.js';
-import {
-    type GetWebhookDeliverySummary200Response,
-    GetWebhookDeliverySummary200ResponseFromJSON,
-    GetWebhookDeliverySummary200ResponseToJSON,
-} from '../models/GetWebhookDeliverySummary200Response.js';
 import {
     type ListWebhookDeliveries200Response,
     ListWebhookDeliveries200ResponseFromJSON,
@@ -58,12 +43,31 @@ import {
     UpdateWebhookBodyFromJSON,
     UpdateWebhookBodyToJSON,
 } from '../models/UpdateWebhookBody.js';
+import {
+    type Webhook,
+    WebhookFromJSON,
+    WebhookToJSON,
+} from '../models/Webhook.js';
+import {
+    type WebhookDeliveryDetail,
+    WebhookDeliveryDetailFromJSON,
+    WebhookDeliveryDetailToJSON,
+} from '../models/WebhookDeliveryDetail.js';
+import {
+    type WebhookWithSecret,
+    WebhookWithSecretFromJSON,
+    WebhookWithSecretToJSON,
+} from '../models/WebhookWithSecret.js';
 
 export interface CreateWebhookRequest {
     /**
      * 
      */
     createWebhookBody: CreateWebhookBody;
+    /**
+     * A unique key, such as a UUID, that makes retrying this request safe. A repeat with the same key and body within 24 hours returns the first response instead of acting again. A 429 or 5xx response is not kept, so a retry with the same key runs again.
+     */
+    idempotencyKey?: string;
 }
 
 export interface DeleteWebhookRequest {
@@ -80,11 +84,15 @@ export interface GetWebhookRequest {
     id: string;
 }
 
-export interface GetWebhookDeliverySummaryRequest {
+export interface GetWebhookDeliveryRequest {
     /**
-     * Number of days to cover. Defaults to 7. Your plan's log retention sets the maximum.
+     * 
      */
-    range?: GetWebhookDeliverySummaryRangeEnum;
+    id: string;
+    /**
+     * 
+     */
+    deliveryId: string;
 }
 
 export interface ListWebhookDeliveriesRequest {
@@ -93,25 +101,70 @@ export interface ListWebhookDeliveriesRequest {
      */
     id: string;
     /**
-     * Number of days to cover. Defaults to 7. Your plan's log retention sets the maximum.
+     * Items per page. Defaults to 50. Maximum 100.
      */
-    range?: ListWebhookDeliveriesRangeEnum;
+    limit?: number;
     /**
-     * Comma-separated delivery statuses to include, such as success or failed.
-     */
-    status?: string;
-    /**
-     * Returns deliveries whose event type or event id starts with this text.
-     */
-    q?: string;
-    /**
-     * 
+     * The nextCursor of the previous page. Omit it for the first page.
      */
     cursor?: string;
     /**
-     * 
+     * Only deliveries made at or after this time. Defaults to 7 days before until. Deliveries are kept for your plan's log retention, so an earlier time starts at the oldest kept delivery.
+     */
+    since?: Date;
+    /**
+     * Only deliveries made before this time. Defaults to now.
+     */
+    until?: Date;
+    /**
+     * Comma-separated statuses to include: pending, success, failed. Omit it for every status.
+     */
+    status?: string;
+    /**
+     * Only deliveries whose event type or event id starts with this text.
+     */
+    q?: string;
+    /**
+     * Comma-separated extras to add to the response: facets, histogram.
+     */
+    include?: string;
+}
+
+export interface ListWebhooksRequest {
+    /**
+     * Items per page. Defaults to 50. Maximum 100.
      */
     limit?: number;
+    /**
+     * The nextCursor of the previous page. Omit it for the first page.
+     */
+    cursor?: string;
+}
+
+export interface RetryWebhookDeliveryRequest {
+    /**
+     * 
+     */
+    id: string;
+    /**
+     * 
+     */
+    deliveryId: string;
+    /**
+     * A unique key, such as a UUID, that makes retrying this request safe. A repeat with the same key and body within 24 hours returns the first response instead of acting again. A 429 or 5xx response is not kept, so a retry with the same key runs again.
+     */
+    idempotencyKey?: string;
+}
+
+export interface RotateWebhookSecretRequest {
+    /**
+     * 
+     */
+    id: string;
+    /**
+     * A unique key, such as a UUID, that makes retrying this request safe. A repeat with the same key and body within 24 hours returns the first response instead of acting again. A 429 or 5xx response is not kept, so a retry with the same key runs again.
+     */
+    idempotencyKey?: string;
 }
 
 export interface TestWebhookRequest {
@@ -119,6 +172,10 @@ export interface TestWebhookRequest {
      * 
      */
     id: string;
+    /**
+     * A unique key, such as a UUID, that makes retrying this request safe. A repeat with the same key and body within 24 hours returns the first response instead of acting again. A 429 or 5xx response is not kept, so a retry with the same key runs again.
+     */
+    idempotencyKey?: string;
 }
 
 export interface UpdateWebhookRequest {
@@ -154,8 +211,8 @@ export class WebhooksApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
+        if (requestParameters['idempotencyKey'] != null) {
+            headerParameters['Idempotency-Key'] = String(requestParameters['idempotencyKey']);
         }
 
         if (this.configuration && this.configuration.accessToken) {
@@ -179,19 +236,21 @@ export class WebhooksApi extends runtime.BaseAPI {
     }
 
     /**
+     * Registers an endpoint for events. Each delivery is signed with the secret in the Onepostly-Signature header.
      * Create webhook
      */
-    async createWebhookRaw(requestParameters: CreateWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateWebhook201Response>> {
+    async createWebhookRaw(requestParameters: CreateWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<WebhookWithSecret>> {
         const requestOptions = await this.createWebhookRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => CreateWebhook201ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => WebhookWithSecretFromJSON(jsonValue));
     }
 
     /**
+     * Registers an endpoint for events. Each delivery is signed with the secret in the Onepostly-Signature header.
      * Create webhook
      */
-    async createWebhook(requestParameters: CreateWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateWebhook201Response> {
+    async createWebhook(requestParameters: CreateWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<WebhookWithSecret> {
         const response = await this.createWebhookRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -210,10 +269,6 @@ export class WebhooksApi extends runtime.BaseAPI {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
@@ -236,6 +291,7 @@ export class WebhooksApi extends runtime.BaseAPI {
     }
 
     /**
+     * Deletes a webhook and its delivery history.
      * Delete webhook
      */
     async deleteWebhookRaw(requestParameters: DeleteWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
@@ -246,6 +302,7 @@ export class WebhooksApi extends runtime.BaseAPI {
     }
 
     /**
+     * Deletes a webhook and its delivery history.
      * Delete webhook
      */
     async deleteWebhook(requestParameters: DeleteWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
@@ -266,10 +323,6 @@ export class WebhooksApi extends runtime.BaseAPI {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
@@ -294,36 +347,42 @@ export class WebhooksApi extends runtime.BaseAPI {
     /**
      * Get webhook
      */
-    async getWebhookRaw(requestParameters: GetWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetWebhook200Response>> {
+    async getWebhookRaw(requestParameters: GetWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Webhook>> {
         const requestOptions = await this.getWebhookRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => GetWebhook200ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => WebhookFromJSON(jsonValue));
     }
 
     /**
      * Get webhook
      */
-    async getWebhook(requestParameters: GetWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetWebhook200Response> {
+    async getWebhook(requestParameters: GetWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Webhook> {
         const response = await this.getWebhookRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * Creates request options for getWebhookDeliverySummary without sending the request
+     * Creates request options for getWebhookDelivery without sending the request
      */
-    async getWebhookDeliverySummaryRequestOpts(requestParameters: GetWebhookDeliverySummaryRequest): Promise<runtime.RequestOpts> {
+    async getWebhookDeliveryRequestOpts(requestParameters: GetWebhookDeliveryRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling getWebhookDelivery().'
+            );
+        }
+
+        if (requestParameters['deliveryId'] == null) {
+            throw new runtime.RequiredError(
+                'deliveryId',
+                'Required parameter "deliveryId" was null or undefined when calling getWebhookDelivery().'
+            );
+        }
+
         const queryParameters: any = {};
 
-        if (requestParameters['range'] != null) {
-            queryParameters['range'] = requestParameters['range'];
-        }
-
         const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
@@ -334,7 +393,9 @@ export class WebhooksApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/webhooks/delivery-summary`;
+        let urlPath = `/v1/webhooks/{id}/deliveries/{deliveryId}`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        urlPath = urlPath.replace('{deliveryId}', encodeURIComponent(String(requestParameters['deliveryId'])));
 
         return {
             path: urlPath,
@@ -345,22 +406,22 @@ export class WebhooksApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns delivery counts for each webhook over the chosen window, as a series of time buckets plus totals.
-     * Get webhook delivery summary
+     * Returns one delivery with the body that is sent.
+     * Get delivery
      */
-    async getWebhookDeliverySummaryRaw(requestParameters: GetWebhookDeliverySummaryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetWebhookDeliverySummary200Response>> {
-        const requestOptions = await this.getWebhookDeliverySummaryRequestOpts(requestParameters);
+    async getWebhookDeliveryRaw(requestParameters: GetWebhookDeliveryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<WebhookDeliveryDetail>> {
+        const requestOptions = await this.getWebhookDeliveryRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => GetWebhookDeliverySummary200ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => WebhookDeliveryDetailFromJSON(jsonValue));
     }
 
     /**
-     * Returns delivery counts for each webhook over the chosen window, as a series of time buckets plus totals.
-     * Get webhook delivery summary
+     * Returns one delivery with the body that is sent.
+     * Get delivery
      */
-    async getWebhookDeliverySummary(requestParameters: GetWebhookDeliverySummaryRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetWebhookDeliverySummary200Response> {
-        const response = await this.getWebhookDeliverySummaryRaw(requestParameters, initOverrides);
+    async getWebhookDelivery(requestParameters: GetWebhookDeliveryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<WebhookDeliveryDetail> {
+        const response = await this.getWebhookDeliveryRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -377,8 +438,20 @@ export class WebhooksApi extends runtime.BaseAPI {
 
         const queryParameters: any = {};
 
-        if (requestParameters['range'] != null) {
-            queryParameters['range'] = requestParameters['range'];
+        if (requestParameters['limit'] != null) {
+            queryParameters['limit'] = requestParameters['limit'];
+        }
+
+        if (requestParameters['cursor'] != null) {
+            queryParameters['cursor'] = requestParameters['cursor'];
+        }
+
+        if (requestParameters['since'] != null) {
+            queryParameters['since'] = runtime.serializeDateTime(requestParameters['since'] as any);
+        }
+
+        if (requestParameters['until'] != null) {
+            queryParameters['until'] = runtime.serializeDateTime(requestParameters['until'] as any);
         }
 
         if (requestParameters['status'] != null) {
@@ -389,19 +462,11 @@ export class WebhooksApi extends runtime.BaseAPI {
             queryParameters['q'] = requestParameters['q'];
         }
 
-        if (requestParameters['cursor'] != null) {
-            queryParameters['cursor'] = requestParameters['cursor'];
-        }
-
-        if (requestParameters['limit'] != null) {
-            queryParameters['limit'] = requestParameters['limit'];
+        if (requestParameters['include'] != null) {
+            queryParameters['include'] = requestParameters['include'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
@@ -424,7 +489,8 @@ export class WebhooksApi extends runtime.BaseAPI {
     }
 
     /**
-     * List webhook deliveries
+     * Lists a webhook\'s deliveries, newest first.
+     * List deliveries
      */
     async listWebhookDeliveriesRaw(requestParameters: ListWebhookDeliveriesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListWebhookDeliveries200Response>> {
         const requestOptions = await this.listWebhookDeliveriesRequestOpts(requestParameters);
@@ -434,7 +500,8 @@ export class WebhooksApi extends runtime.BaseAPI {
     }
 
     /**
-     * List webhook deliveries
+     * Lists a webhook\'s deliveries, newest first.
+     * List deliveries
      */
     async listWebhookDeliveries(requestParameters: ListWebhookDeliveriesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListWebhookDeliveries200Response> {
         const response = await this.listWebhookDeliveriesRaw(requestParameters, initOverrides);
@@ -448,10 +515,6 @@ export class WebhooksApi extends runtime.BaseAPI {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
@@ -473,7 +536,8 @@ export class WebhooksApi extends runtime.BaseAPI {
     }
 
     /**
-     * List webhook event types
+     * Lists every event type a webhook can subscribe to, with the group it belongs to. To receive all of them, including types added later, set events to [\"*\"].
+     * List event types
      */
     async listWebhookEventTypesRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListWebhookEventTypes200Response>> {
         const requestOptions = await this.listWebhookEventTypesRequestOpts();
@@ -483,7 +547,8 @@ export class WebhooksApi extends runtime.BaseAPI {
     }
 
     /**
-     * List webhook event types
+     * Lists every event type a webhook can subscribe to, with the group it belongs to. To receive all of them, including types added later, set events to [\"*\"].
+     * List event types
      */
     async listWebhookEventTypes(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListWebhookEventTypes200Response> {
         const response = await this.listWebhookEventTypesRaw(initOverrides);
@@ -493,14 +558,18 @@ export class WebhooksApi extends runtime.BaseAPI {
     /**
      * Creates request options for listWebhooks without sending the request
      */
-    async listWebhooksRequestOpts(): Promise<runtime.RequestOpts> {
+    async listWebhooksRequestOpts(requestParameters: ListWebhooksRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
 
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
+        if (requestParameters['limit'] != null) {
+            queryParameters['limit'] = requestParameters['limit'];
         }
+
+        if (requestParameters['cursor'] != null) {
+            queryParameters['cursor'] = requestParameters['cursor'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
@@ -522,20 +591,148 @@ export class WebhooksApi extends runtime.BaseAPI {
     }
 
     /**
+     * Lists the workspace\'s webhooks, newest first.
      * List webhooks
      */
-    async listWebhooksRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListWebhooks200Response>> {
-        const requestOptions = await this.listWebhooksRequestOpts();
+    async listWebhooksRaw(requestParameters: ListWebhooksRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListWebhooks200Response>> {
+        const requestOptions = await this.listWebhooksRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => ListWebhooks200ResponseFromJSON(jsonValue));
     }
 
     /**
+     * Lists the workspace\'s webhooks, newest first.
      * List webhooks
      */
-    async listWebhooks(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListWebhooks200Response> {
-        const response = await this.listWebhooksRaw(initOverrides);
+    async listWebhooks(requestParameters: ListWebhooksRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListWebhooks200Response> {
+        const response = await this.listWebhooksRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for retryWebhookDelivery without sending the request
+     */
+    async retryWebhookDeliveryRequestOpts(requestParameters: RetryWebhookDeliveryRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling retryWebhookDelivery().'
+            );
+        }
+
+        if (requestParameters['deliveryId'] == null) {
+            throw new runtime.RequiredError(
+                'deliveryId',
+                'Required parameter "deliveryId" was null or undefined when calling retryWebhookDelivery().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (requestParameters['idempotencyKey'] != null) {
+            headerParameters['Idempotency-Key'] = String(requestParameters['idempotencyKey']);
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("Bearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/webhooks/{id}/deliveries/{deliveryId}/retry`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        urlPath = urlPath.replace('{deliveryId}', encodeURIComponent(String(requestParameters['deliveryId'])));
+
+        return {
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Sends a finished delivery again, with the same event id and body. Use the event id to recognize a repeat.
+     * Retry delivery
+     */
+    async retryWebhookDeliveryRaw(requestParameters: RetryWebhookDeliveryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<WebhookDeliveryDetail>> {
+        const requestOptions = await this.retryWebhookDeliveryRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => WebhookDeliveryDetailFromJSON(jsonValue));
+    }
+
+    /**
+     * Sends a finished delivery again, with the same event id and body. Use the event id to recognize a repeat.
+     * Retry delivery
+     */
+    async retryWebhookDelivery(requestParameters: RetryWebhookDeliveryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<WebhookDeliveryDetail> {
+        const response = await this.retryWebhookDeliveryRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for rotateWebhookSecret without sending the request
+     */
+    async rotateWebhookSecretRequestOpts(requestParameters: RotateWebhookSecretRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling rotateWebhookSecret().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (requestParameters['idempotencyKey'] != null) {
+            headerParameters['Idempotency-Key'] = String(requestParameters['idempotencyKey']);
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("Bearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/webhooks/{id}/rotate-secret`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+
+        return {
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Replaces the webhook\'s signing secret. Deliveries are signed with the new secret right away, so update your endpoint with it.
+     * Rotate signing secret
+     */
+    async rotateWebhookSecretRaw(requestParameters: RotateWebhookSecretRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<WebhookWithSecret>> {
+        const requestOptions = await this.rotateWebhookSecretRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => WebhookWithSecretFromJSON(jsonValue));
+    }
+
+    /**
+     * Replaces the webhook\'s signing secret. Deliveries are signed with the new secret right away, so update your endpoint with it.
+     * Rotate signing secret
+     */
+    async rotateWebhookSecret(requestParameters: RotateWebhookSecretRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<WebhookWithSecret> {
+        const response = await this.rotateWebhookSecretRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -554,8 +751,8 @@ export class WebhooksApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
+        if (requestParameters['idempotencyKey'] != null) {
+            headerParameters['Idempotency-Key'] = String(requestParameters['idempotencyKey']);
         }
 
         if (this.configuration && this.configuration.accessToken) {
@@ -579,6 +776,7 @@ export class WebhooksApi extends runtime.BaseAPI {
     }
 
     /**
+     * Sends a webhook.test event to the webhook, whatever it subscribes to. Check its result in List Deliveries.
      * Send test event
      */
     async testWebhookRaw(requestParameters: TestWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TestWebhook200Response>> {
@@ -589,6 +787,7 @@ export class WebhooksApi extends runtime.BaseAPI {
     }
 
     /**
+     * Sends a webhook.test event to the webhook, whatever it subscribes to. Check its result in List Deliveries.
      * Send test event
      */
     async testWebhook(requestParameters: TestWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TestWebhook200Response> {
@@ -620,10 +819,6 @@ export class WebhooksApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
-
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
             const tokenString = await token("Bearer", []);
@@ -646,42 +841,23 @@ export class WebhooksApi extends runtime.BaseAPI {
     }
 
     /**
+     * Changes a webhook. Only the fields you send change.
      * Update webhook
      */
-    async updateWebhookRaw(requestParameters: UpdateWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetWebhook200Response>> {
+    async updateWebhookRaw(requestParameters: UpdateWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Webhook>> {
         const requestOptions = await this.updateWebhookRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => GetWebhook200ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => WebhookFromJSON(jsonValue));
     }
 
     /**
+     * Changes a webhook. Only the fields you send change.
      * Update webhook
      */
-    async updateWebhook(requestParameters: UpdateWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetWebhook200Response> {
+    async updateWebhook(requestParameters: UpdateWebhookRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Webhook> {
         const response = await this.updateWebhookRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
 }
-
-/**
- * @export
- */
-export const GetWebhookDeliverySummaryRangeEnum = {
-    _1: '1',
-    _3: '3',
-    _7: '7',
-    _30: '30',
-} as const;
-export type GetWebhookDeliverySummaryRangeEnum = typeof GetWebhookDeliverySummaryRangeEnum[keyof typeof GetWebhookDeliverySummaryRangeEnum];
-/**
- * @export
- */
-export const ListWebhookDeliveriesRangeEnum = {
-    _1: '1',
-    _3: '3',
-    _7: '7',
-    _30: '30',
-} as const;
-export type ListWebhookDeliveriesRangeEnum = typeof ListWebhookDeliveriesRangeEnum[keyof typeof ListWebhookDeliveriesRangeEnum];

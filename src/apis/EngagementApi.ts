@@ -14,184 +14,105 @@
 
 import * as runtime from '../runtime.js';
 import {
-    type CreateAutomation201Response,
-    CreateAutomation201ResponseFromJSON,
-    CreateAutomation201ResponseToJSON,
-} from '../models/CreateAutomation201Response.js';
+    type Bookmark,
+    BookmarkFromJSON,
+    BookmarkToJSON,
+} from '../models/Bookmark.js';
 import {
-    type CreateAutomationBody,
-    CreateAutomationBodyFromJSON,
-    CreateAutomationBodyToJSON,
-} from '../models/CreateAutomationBody.js';
+    type Like,
+    LikeFromJSON,
+    LikeToJSON,
+} from '../models/Like.js';
 import {
-    type DeleteAutomations200Response,
-    DeleteAutomations200ResponseFromJSON,
-    DeleteAutomations200ResponseToJSON,
-} from '../models/DeleteAutomations200Response.js';
+    type ListReposters200Response,
+    ListReposters200ResponseFromJSON,
+    ListReposters200ResponseToJSON,
+} from '../models/ListReposters200Response.js';
 import {
-    type EngagementTargetBody,
-    EngagementTargetBodyFromJSON,
-    EngagementTargetBodyToJSON,
-} from '../models/EngagementTargetBody.js';
-import {
-    type Like201Response,
-    Like201ResponseFromJSON,
-    Like201ResponseToJSON,
-} from '../models/Like201Response.js';
-import {
-    type ListAutomations200Response,
-    ListAutomations200ResponseFromJSON,
-    ListAutomations200ResponseToJSON,
-} from '../models/ListAutomations200Response.js';
-import {
-    type ListRetweeters200Response,
-    ListRetweeters200ResponseFromJSON,
-    ListRetweeters200ResponseToJSON,
-} from '../models/ListRetweeters200Response.js';
-import {
-    type Quote201Response,
-    Quote201ResponseFromJSON,
-    Quote201ResponseToJSON,
-} from '../models/Quote201Response.js';
-import {
-    type QuoteBody,
-    QuoteBodyFromJSON,
-    QuoteBodyToJSON,
-} from '../models/QuoteBody.js';
-import {
-    type Retweet201Response,
-    Retweet201ResponseFromJSON,
-    Retweet201ResponseToJSON,
-} from '../models/Retweet201Response.js';
-import {
-    type UndoRetweet200Response,
-    UndoRetweet200ResponseFromJSON,
-    UndoRetweet200ResponseToJSON,
-} from '../models/UndoRetweet200Response.js';
+    type Repost,
+    RepostFromJSON,
+    RepostToJSON,
+} from '../models/Repost.js';
 
-export interface BookmarkRequest {
+export interface BookmarkPostRequest {
     /**
      * 
      */
-    engagementTargetBody: EngagementTargetBody;
+    id: string;
+    /**
+     * The post. Send the pst_ id of one of this account's posts, or the platform's own id of any post on the account's platform. Percent-encode it in the URL, as the SDKs do, so a Bluesky at:// URI is sent as at%3A%2F%2F…
+     */
+    postId: string;
 }
 
-export interface CreateAutomationRequest {
+export interface LikePostRequest {
     /**
      * 
      */
-    createAutomationBody: CreateAutomationBody;
+    id: string;
+    /**
+     * The post. Send the pst_ id of one of this account's posts, or the platform's own id of any post on the account's platform. Percent-encode it in the URL, as the SDKs do, so a Bluesky at:// URI is sent as at%3A%2F%2F…
+     */
+    postId: string;
 }
 
-export interface DeleteAutomationsRequest {
+export interface ListRepostersRequest {
     /**
      * 
      */
-    accountId?: string;
+    id: string;
     /**
-     * Deletes rules whose name contains this text. Matching ignores case.
-     */
-    name?: string;
-}
-
-export interface LikeRequest {
-    /**
-     * 
-     */
-    engagementTargetBody: EngagementTargetBody;
-}
-
-export interface ListAutomationsRequest {
-    /**
-     * 
-     */
-    accountId?: string;
-    /**
-     * Returns rules whose name contains this text. Matching ignores case.
-     */
-    name?: string;
-}
-
-export interface ListRetweetersRequest {
-    /**
-     * Onepostly post id or platform-native post id. Native ids also need accountId. You can omit it when you pass destinationId.
-     */
-    post?: string;
-    /**
-     * Connection id. Required with a platform-native post id, and picks the destination when a Onepostly post has several.
-     */
-    accountId?: string;
-    /**
-     * Destination id. It identifies one destination on its own, so post and accountId become optional.
-     */
-    destinationId?: string;
-    /**
-     * 
+     * Items per page. Defaults to 50. Maximum 100.
      */
     limit?: number;
     /**
-     * Cursor from the previous response. Works only when the request points to a single destination.
+     * The nextCursor of the previous page. Omit it for the first page.
      */
     cursor?: string;
 }
 
-export interface QuoteRequest {
+export interface RepostPostRequest {
     /**
      * 
      */
-    quoteBody: QuoteBody;
+    id: string;
+    /**
+     * The post. Send the pst_ id of one of this account's posts, or the platform's own id of any post on the account's platform. Percent-encode it in the URL, as the SDKs do, so a Bluesky at:// URI is sent as at%3A%2F%2F…
+     */
+    postId: string;
 }
 
-export interface RemoveBookmarkRequest {
-    /**
-     * Onepostly post id or platform-native post id. Native ids also need accountId. You can omit it when you pass destinationId.
-     */
-    post?: string;
-    /**
-     * Connection id. Required with a platform-native post id, and picks the destination when a Onepostly post has several.
-     */
-    accountId?: string;
-    /**
-     * Destination id. It identifies one destination on its own, so post and accountId become optional.
-     */
-    destinationId?: string;
-}
-
-export interface RetweetRequest {
+export interface UnbookmarkPostRequest {
     /**
      * 
      */
-    engagementTargetBody: EngagementTargetBody;
+    id: string;
+    /**
+     * The post. Send the pst_ id of one of this account's posts, or the platform's own id of any post on the account's platform. Percent-encode it in the URL, as the SDKs do, so a Bluesky at:// URI is sent as at%3A%2F%2F…
+     */
+    postId: string;
 }
 
-export interface UndoRetweetRequest {
+export interface UnlikePostRequest {
     /**
-     * Onepostly post id or platform-native post id. Native ids also need accountId. You can omit it when you pass destinationId.
+     * 
      */
-    post?: string;
+    id: string;
     /**
-     * Connection id. Required with a platform-native post id, and picks the destination when a Onepostly post has several.
+     * The post. Send the pst_ id of one of this account's posts, or the platform's own id of any post on the account's platform. Percent-encode it in the URL, as the SDKs do, so a Bluesky at:// URI is sent as at%3A%2F%2F…
      */
-    accountId?: string;
-    /**
-     * Destination id. It identifies one destination on its own, so post and accountId become optional.
-     */
-    destinationId?: string;
+    postId: string;
 }
 
-export interface UnlikeRequest {
+export interface UnrepostPostRequest {
     /**
-     * Onepostly post id or platform-native post id. Native ids also need accountId. You can omit it when you pass destinationId.
+     * 
      */
-    post?: string;
+    id: string;
     /**
-     * Connection id. Required with a platform-native post id, and picks the destination when a Onepostly post has several.
+     * The post. Send the pst_ id of one of this account's posts, or the platform's own id of any post on the account's platform. Percent-encode it in the URL, as the SDKs do, so a Bluesky at:// URI is sent as at%3A%2F%2F…
      */
-    accountId?: string;
-    /**
-     * Destination id. It identifies one destination on its own, so post and accountId become optional.
-     */
-    destinationId?: string;
+    postId: string;
 }
 
 /**
@@ -200,13 +121,20 @@ export interface UnlikeRequest {
 export class EngagementApi extends runtime.BaseAPI {
 
     /**
-     * Creates request options for bookmark without sending the request
+     * Creates request options for bookmarkPost without sending the request
      */
-    async bookmarkRequestOpts(requestParameters: BookmarkRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['engagementTargetBody'] == null) {
+    async bookmarkPostRequestOpts(requestParameters: BookmarkPostRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
-                'engagementTargetBody',
-                'Required parameter "engagementTargetBody" was null or undefined when calling bookmark().'
+                'id',
+                'Required parameter "id" was null or undefined when calling bookmarkPost().'
+            );
+        }
+
+        if (requestParameters['postId'] == null) {
+            throw new runtime.RequiredError(
+                'postId',
+                'Required parameter "postId" was null or undefined when calling bookmarkPost().'
             );
         }
 
@@ -214,12 +142,6 @@ export class EngagementApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
-
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
             const tokenString = await token("Bearer", []);
@@ -229,45 +151,53 @@ export class EngagementApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/bookmarks`;
+        let urlPath = `/v1/accounts/{id}/bookmarks/{postId}`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        urlPath = urlPath.replace('{postId}', encodeURIComponent(String(requestParameters['postId'])));
 
         return {
             path: urlPath,
-            method: 'POST',
+            method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
-            body: EngagementTargetBodyToJSON(requestParameters['engagementTargetBody']),
         };
     }
 
     /**
-     * Bookmarks one published destination or platform-native post.
-     * Bookmark
+     * Bookmarks a post as the account. Supported on X and Bluesky. On X every request is charged to the wallet, a repeat included.
+     * Bookmark a post
      */
-    async bookmarkRaw(requestParameters: BookmarkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Like201Response>> {
-        const requestOptions = await this.bookmarkRequestOpts(requestParameters);
+    async bookmarkPostRaw(requestParameters: BookmarkPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Bookmark>> {
+        const requestOptions = await this.bookmarkPostRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => Like201ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => BookmarkFromJSON(jsonValue));
     }
 
     /**
-     * Bookmarks one published destination or platform-native post.
-     * Bookmark
+     * Bookmarks a post as the account. Supported on X and Bluesky. On X every request is charged to the wallet, a repeat included.
+     * Bookmark a post
      */
-    async bookmark(requestParameters: BookmarkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Like201Response> {
-        const response = await this.bookmarkRaw(requestParameters, initOverrides);
+    async bookmarkPost(requestParameters: BookmarkPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Bookmark> {
+        const response = await this.bookmarkPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * Creates request options for createAutomation without sending the request
+     * Creates request options for likePost without sending the request
      */
-    async createAutomationRequestOpts(requestParameters: CreateAutomationRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['createAutomationBody'] == null) {
+    async likePostRequestOpts(requestParameters: LikePostRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
-                'createAutomationBody',
-                'Required parameter "createAutomationBody" was null or undefined when calling createAutomation().'
+                'id',
+                'Required parameter "id" was null or undefined when calling likePost().'
+            );
+        }
+
+        if (requestParameters['postId'] == null) {
+            throw new runtime.RequiredError(
+                'postId',
+                'Required parameter "postId" was null or undefined when calling likePost().'
             );
         }
 
@@ -275,12 +205,6 @@ export class EngagementApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
-
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
             const tokenString = await token("Bearer", []);
@@ -290,233 +214,50 @@ export class EngagementApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/automations`;
+        let urlPath = `/v1/accounts/{id}/likes/{postId}`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        urlPath = urlPath.replace('{postId}', encodeURIComponent(String(requestParameters['postId'])));
 
         return {
             path: urlPath,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: CreateAutomationBodyToJSON(requestParameters['createAutomationBody']),
-        };
-    }
-
-    /**
-     * Creates a keyword auto-reply rule for an Instagram or Facebook connection.
-     * Create inbox automation
-     */
-    async createAutomationRaw(requestParameters: CreateAutomationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateAutomation201Response>> {
-        const requestOptions = await this.createAutomationRequestOpts(requestParameters);
-        const response = await this.request(requestOptions, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => CreateAutomation201ResponseFromJSON(jsonValue));
-    }
-
-    /**
-     * Creates a keyword auto-reply rule for an Instagram or Facebook connection.
-     * Create inbox automation
-     */
-    async createAutomation(requestParameters: CreateAutomationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateAutomation201Response> {
-        const response = await this.createAutomationRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Creates request options for deleteAutomations without sending the request
-     */
-    async deleteAutomationsRequestOpts(requestParameters: DeleteAutomationsRequest): Promise<runtime.RequestOpts> {
-        const queryParameters: any = {};
-
-        if (requestParameters['accountId'] != null) {
-            queryParameters['accountId'] = requestParameters['accountId'];
-        }
-
-        if (requestParameters['name'] != null) {
-            queryParameters['name'] = requestParameters['name'];
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
-
-        if (this.configuration && this.configuration.accessToken) {
-            const token = this.configuration.accessToken;
-            const tokenString = await token("Bearer", []);
-
-            if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
-            }
-        }
-
-        let urlPath = `/v1/automations`;
-
-        return {
-            path: urlPath,
-            method: 'DELETE',
+            method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
         };
     }
 
     /**
-     * Deletes the rules that match accountId, name or both. You must pass at least one of them.
-     * Delete inbox automations
+     * Likes a post as the account. Supported on X, Facebook, YouTube and Bluesky. On X every request is charged to the wallet, a repeat included.
+     * Like a post
      */
-    async deleteAutomationsRaw(requestParameters: DeleteAutomationsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DeleteAutomations200Response>> {
-        const requestOptions = await this.deleteAutomationsRequestOpts(requestParameters);
+    async likePostRaw(requestParameters: LikePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Like>> {
+        const requestOptions = await this.likePostRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => DeleteAutomations200ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => LikeFromJSON(jsonValue));
     }
 
     /**
-     * Deletes the rules that match accountId, name or both. You must pass at least one of them.
-     * Delete inbox automations
+     * Likes a post as the account. Supported on X, Facebook, YouTube and Bluesky. On X every request is charged to the wallet, a repeat included.
+     * Like a post
      */
-    async deleteAutomations(requestParameters: DeleteAutomationsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DeleteAutomations200Response> {
-        const response = await this.deleteAutomationsRaw(requestParameters, initOverrides);
+    async likePost(requestParameters: LikePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Like> {
+        const response = await this.likePostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * Creates request options for like without sending the request
+     * Creates request options for listReposters without sending the request
      */
-    async likeRequestOpts(requestParameters: LikeRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['engagementTargetBody'] == null) {
+    async listRepostersRequestOpts(requestParameters: ListRepostersRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
-                'engagementTargetBody',
-                'Required parameter "engagementTargetBody" was null or undefined when calling like().'
+                'id',
+                'Required parameter "id" was null or undefined when calling listReposters().'
             );
         }
 
         const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
-
-        if (this.configuration && this.configuration.accessToken) {
-            const token = this.configuration.accessToken;
-            const tokenString = await token("Bearer", []);
-
-            if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
-            }
-        }
-
-        let urlPath = `/v1/likes`;
-
-        return {
-            path: urlPath,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: EngagementTargetBodyToJSON(requestParameters['engagementTargetBody']),
-        };
-    }
-
-    /**
-     * Likes one published destination or platform-native post.
-     * Like
-     */
-    async likeRaw(requestParameters: LikeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Like201Response>> {
-        const requestOptions = await this.likeRequestOpts(requestParameters);
-        const response = await this.request(requestOptions, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => Like201ResponseFromJSON(jsonValue));
-    }
-
-    /**
-     * Likes one published destination or platform-native post.
-     * Like
-     */
-    async like(requestParameters: LikeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Like201Response> {
-        const response = await this.likeRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Creates request options for listAutomations without sending the request
-     */
-    async listAutomationsRequestOpts(requestParameters: ListAutomationsRequest): Promise<runtime.RequestOpts> {
-        const queryParameters: any = {};
-
-        if (requestParameters['accountId'] != null) {
-            queryParameters['accountId'] = requestParameters['accountId'];
-        }
-
-        if (requestParameters['name'] != null) {
-            queryParameters['name'] = requestParameters['name'];
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
-
-        if (this.configuration && this.configuration.accessToken) {
-            const token = this.configuration.accessToken;
-            const tokenString = await token("Bearer", []);
-
-            if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
-            }
-        }
-
-        let urlPath = `/v1/automations`;
-
-        return {
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        };
-    }
-
-    /**
-     * Lists keyword auto-reply rules for Instagram and Facebook connections. Omit accountId to list rules for every connection.
-     * List inbox automations
-     */
-    async listAutomationsRaw(requestParameters: ListAutomationsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListAutomations200Response>> {
-        const requestOptions = await this.listAutomationsRequestOpts(requestParameters);
-        const response = await this.request(requestOptions, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => ListAutomations200ResponseFromJSON(jsonValue));
-    }
-
-    /**
-     * Lists keyword auto-reply rules for Instagram and Facebook connections. Omit accountId to list rules for every connection.
-     * List inbox automations
-     */
-    async listAutomations(requestParameters: ListAutomationsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListAutomations200Response> {
-        const response = await this.listAutomationsRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Creates request options for listRetweeters without sending the request
-     */
-    async listRetweetersRequestOpts(requestParameters: ListRetweetersRequest): Promise<runtime.RequestOpts> {
-        const queryParameters: any = {};
-
-        if (requestParameters['post'] != null) {
-            queryParameters['post'] = requestParameters['post'];
-        }
-
-        if (requestParameters['accountId'] != null) {
-            queryParameters['accountId'] = requestParameters['accountId'];
-        }
-
-        if (requestParameters['destinationId'] != null) {
-            queryParameters['destinationId'] = requestParameters['destinationId'];
-        }
 
         if (requestParameters['limit'] != null) {
             queryParameters['limit'] = requestParameters['limit'];
@@ -528,10 +269,6 @@ export class EngagementApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
-
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
             const tokenString = await token("Bearer", []);
@@ -541,7 +278,8 @@ export class EngagementApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/retweets`;
+        let urlPath = `/v1/posts/{id}/reposts`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
 
         return {
             path: urlPath,
@@ -552,33 +290,40 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Lists accounts that reposted a post, grouped by destination.
+     * Lists the accounts that reposted a post. Supported on X and Bluesky.
      * List reposters
      */
-    async listRetweetersRaw(requestParameters: ListRetweetersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListRetweeters200Response>> {
-        const requestOptions = await this.listRetweetersRequestOpts(requestParameters);
+    async listRepostersRaw(requestParameters: ListRepostersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListReposters200Response>> {
+        const requestOptions = await this.listRepostersRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ListRetweeters200ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ListReposters200ResponseFromJSON(jsonValue));
     }
 
     /**
-     * Lists accounts that reposted a post, grouped by destination.
+     * Lists the accounts that reposted a post. Supported on X and Bluesky.
      * List reposters
      */
-    async listRetweeters(requestParameters: ListRetweetersRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListRetweeters200Response> {
-        const response = await this.listRetweetersRaw(requestParameters, initOverrides);
+    async listReposters(requestParameters: ListRepostersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListReposters200Response> {
+        const response = await this.listRepostersRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * Creates request options for quote without sending the request
+     * Creates request options for repostPost without sending the request
      */
-    async quoteRequestOpts(requestParameters: QuoteRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['quoteBody'] == null) {
+    async repostPostRequestOpts(requestParameters: RepostPostRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
-                'quoteBody',
-                'Required parameter "quoteBody" was null or undefined when calling quote().'
+                'id',
+                'Required parameter "id" was null or undefined when calling repostPost().'
+            );
+        }
+
+        if (requestParameters['postId'] == null) {
+            throw new runtime.RequiredError(
+                'postId',
+                'Required parameter "postId" was null or undefined when calling repostPost().'
             );
         }
 
@@ -586,12 +331,6 @@ export class EngagementApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
-
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
             const tokenString = await token("Bearer", []);
@@ -601,108 +340,53 @@ export class EngagementApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/quotes`;
+        let urlPath = `/v1/accounts/{id}/reposts/{postId}`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        urlPath = urlPath.replace('{postId}', encodeURIComponent(String(requestParameters['postId'])));
 
         return {
             path: urlPath,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: QuoteBodyToJSON(requestParameters['quoteBody']),
-        };
-    }
-
-    /**
-     * Quotes one published destination or platform-native post with your own text.
-     * Quote post
-     */
-    async quoteRaw(requestParameters: QuoteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Quote201Response>> {
-        const requestOptions = await this.quoteRequestOpts(requestParameters);
-        const response = await this.request(requestOptions, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => Quote201ResponseFromJSON(jsonValue));
-    }
-
-    /**
-     * Quotes one published destination or platform-native post with your own text.
-     * Quote post
-     */
-    async quote(requestParameters: QuoteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Quote201Response> {
-        const response = await this.quoteRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Creates request options for removeBookmark without sending the request
-     */
-    async removeBookmarkRequestOpts(requestParameters: RemoveBookmarkRequest): Promise<runtime.RequestOpts> {
-        const queryParameters: any = {};
-
-        if (requestParameters['post'] != null) {
-            queryParameters['post'] = requestParameters['post'];
-        }
-
-        if (requestParameters['accountId'] != null) {
-            queryParameters['accountId'] = requestParameters['accountId'];
-        }
-
-        if (requestParameters['destinationId'] != null) {
-            queryParameters['destinationId'] = requestParameters['destinationId'];
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
-
-        if (this.configuration && this.configuration.accessToken) {
-            const token = this.configuration.accessToken;
-            const tokenString = await token("Bearer", []);
-
-            if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
-            }
-        }
-
-        let urlPath = `/v1/bookmarks`;
-
-        return {
-            path: urlPath,
-            method: 'DELETE',
+            method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
         };
     }
 
     /**
-     * Removes the connected account\'s bookmark from a post.
-     * Remove bookmark
+     * Reposts a post as the account. Supported on X, Threads and Bluesky. On X every request is charged to the wallet, a repeat included.
+     * Repost a post
      */
-    async removeBookmarkRaw(requestParameters: RemoveBookmarkRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Like201Response>> {
-        const requestOptions = await this.removeBookmarkRequestOpts(requestParameters);
+    async repostPostRaw(requestParameters: RepostPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Repost>> {
+        const requestOptions = await this.repostPostRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => Like201ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => RepostFromJSON(jsonValue));
     }
 
     /**
-     * Removes the connected account\'s bookmark from a post.
-     * Remove bookmark
+     * Reposts a post as the account. Supported on X, Threads and Bluesky. On X every request is charged to the wallet, a repeat included.
+     * Repost a post
      */
-    async removeBookmark(requestParameters: RemoveBookmarkRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Like201Response> {
-        const response = await this.removeBookmarkRaw(requestParameters, initOverrides);
+    async repostPost(requestParameters: RepostPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Repost> {
+        const response = await this.repostPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * Creates request options for retweet without sending the request
+     * Creates request options for unbookmarkPost without sending the request
      */
-    async retweetRequestOpts(requestParameters: RetweetRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['engagementTargetBody'] == null) {
+    async unbookmarkPostRequestOpts(requestParameters: UnbookmarkPostRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
-                'engagementTargetBody',
-                'Required parameter "engagementTargetBody" was null or undefined when calling retweet().'
+                'id',
+                'Required parameter "id" was null or undefined when calling unbookmarkPost().'
+            );
+        }
+
+        if (requestParameters['postId'] == null) {
+            throw new runtime.RequiredError(
+                'postId',
+                'Required parameter "postId" was null or undefined when calling unbookmarkPost().'
             );
         }
 
@@ -710,12 +394,6 @@ export class EngagementApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
-
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
             const tokenString = await token("Bearer", []);
@@ -725,71 +403,9 @@ export class EngagementApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/retweets`;
-
-        return {
-            path: urlPath,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: EngagementTargetBodyToJSON(requestParameters['engagementTargetBody']),
-        };
-    }
-
-    /**
-     * Reposts one published destination or platform-native post.
-     * Repost
-     */
-    async retweetRaw(requestParameters: RetweetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Retweet201Response>> {
-        const requestOptions = await this.retweetRequestOpts(requestParameters);
-        const response = await this.request(requestOptions, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => Retweet201ResponseFromJSON(jsonValue));
-    }
-
-    /**
-     * Reposts one published destination or platform-native post.
-     * Repost
-     */
-    async retweet(requestParameters: RetweetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Retweet201Response> {
-        const response = await this.retweetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Creates request options for undoRetweet without sending the request
-     */
-    async undoRetweetRequestOpts(requestParameters: UndoRetweetRequest): Promise<runtime.RequestOpts> {
-        const queryParameters: any = {};
-
-        if (requestParameters['post'] != null) {
-            queryParameters['post'] = requestParameters['post'];
-        }
-
-        if (requestParameters['accountId'] != null) {
-            queryParameters['accountId'] = requestParameters['accountId'];
-        }
-
-        if (requestParameters['destinationId'] != null) {
-            queryParameters['destinationId'] = requestParameters['destinationId'];
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
-
-        if (this.configuration && this.configuration.accessToken) {
-            const token = this.configuration.accessToken;
-            const tokenString = await token("Bearer", []);
-
-            if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
-            }
-        }
-
-        let urlPath = `/v1/retweets`;
+        let urlPath = `/v1/accounts/{id}/bookmarks/{postId}`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        urlPath = urlPath.replace('{postId}', encodeURIComponent(String(requestParameters['postId'])));
 
         return {
             path: urlPath,
@@ -800,48 +416,46 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Removes a repost made by the connected account.
-     * Undo repost
+     * Remove a bookmark the account made. Name the post as you did to bookmark it, or by the postId the response returned. On X every request is charged to the wallet, a repeat included.
+     * Remove a bookmark
      */
-    async undoRetweetRaw(requestParameters: UndoRetweetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UndoRetweet200Response>> {
-        const requestOptions = await this.undoRetweetRequestOpts(requestParameters);
+    async unbookmarkPostRaw(requestParameters: UnbookmarkPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Bookmark>> {
+        const requestOptions = await this.unbookmarkPostRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => UndoRetweet200ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => BookmarkFromJSON(jsonValue));
     }
 
     /**
-     * Removes a repost made by the connected account.
-     * Undo repost
+     * Remove a bookmark the account made. Name the post as you did to bookmark it, or by the postId the response returned. On X every request is charged to the wallet, a repeat included.
+     * Remove a bookmark
      */
-    async undoRetweet(requestParameters: UndoRetweetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UndoRetweet200Response> {
-        const response = await this.undoRetweetRaw(requestParameters, initOverrides);
+    async unbookmarkPost(requestParameters: UnbookmarkPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Bookmark> {
+        const response = await this.unbookmarkPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * Creates request options for unlike without sending the request
+     * Creates request options for unlikePost without sending the request
      */
-    async unlikeRequestOpts(requestParameters: UnlikeRequest): Promise<runtime.RequestOpts> {
+    async unlikePostRequestOpts(requestParameters: UnlikePostRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling unlikePost().'
+            );
+        }
+
+        if (requestParameters['postId'] == null) {
+            throw new runtime.RequiredError(
+                'postId',
+                'Required parameter "postId" was null or undefined when calling unlikePost().'
+            );
+        }
+
         const queryParameters: any = {};
 
-        if (requestParameters['post'] != null) {
-            queryParameters['post'] = requestParameters['post'];
-        }
-
-        if (requestParameters['accountId'] != null) {
-            queryParameters['accountId'] = requestParameters['accountId'];
-        }
-
-        if (requestParameters['destinationId'] != null) {
-            queryParameters['destinationId'] = requestParameters['destinationId'];
-        }
-
         const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
@@ -852,7 +466,9 @@ export class EngagementApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/likes`;
+        let urlPath = `/v1/accounts/{id}/likes/{postId}`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        urlPath = urlPath.replace('{postId}', encodeURIComponent(String(requestParameters['postId'])));
 
         return {
             path: urlPath,
@@ -863,22 +479,85 @@ export class EngagementApi extends runtime.BaseAPI {
     }
 
     /**
-     * Removes the connected account\'s like from a post.
-     * Unlike
+     * Remove a like the account made. Name the post as you did to like it, or by the postId the response returned. On X every request is charged to the wallet, a repeat included.
+     * Remove a like
      */
-    async unlikeRaw(requestParameters: UnlikeRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Like201Response>> {
-        const requestOptions = await this.unlikeRequestOpts(requestParameters);
+    async unlikePostRaw(requestParameters: UnlikePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Like>> {
+        const requestOptions = await this.unlikePostRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => Like201ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => LikeFromJSON(jsonValue));
     }
 
     /**
-     * Removes the connected account\'s like from a post.
-     * Unlike
+     * Remove a like the account made. Name the post as you did to like it, or by the postId the response returned. On X every request is charged to the wallet, a repeat included.
+     * Remove a like
      */
-    async unlike(requestParameters: UnlikeRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Like201Response> {
-        const response = await this.unlikeRaw(requestParameters, initOverrides);
+    async unlikePost(requestParameters: UnlikePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Like> {
+        const response = await this.unlikePostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for unrepostPost without sending the request
+     */
+    async unrepostPostRequestOpts(requestParameters: UnrepostPostRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling unrepostPost().'
+            );
+        }
+
+        if (requestParameters['postId'] == null) {
+            throw new runtime.RequiredError(
+                'postId',
+                'Required parameter "postId" was null or undefined when calling unrepostPost().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("Bearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/accounts/{id}/reposts/{postId}`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        urlPath = urlPath.replace('{postId}', encodeURIComponent(String(requestParameters['postId'])));
+
+        return {
+            path: urlPath,
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Undo a repost the account made. Name the post as you did to repost it, or by the postId the response returned. On X every request is charged to the wallet, a repeat included.
+     * Undo a repost
+     */
+    async unrepostPostRaw(requestParameters: UnrepostPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Repost>> {
+        const requestOptions = await this.unrepostPostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => RepostFromJSON(jsonValue));
+    }
+
+    /**
+     * Undo a repost the account made. Name the post as you did to repost it, or by the postId the response returned. On X every request is charged to the wallet, a repeat included.
+     * Undo a repost
+     */
+    async unrepostPost(requestParameters: UnrepostPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Repost> {
+        const response = await this.unrepostPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

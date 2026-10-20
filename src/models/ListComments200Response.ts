@@ -13,13 +13,13 @@
  */
 
 import { mapValues } from '../runtime.js';
-import type { ListComments200ResponseComments } from './ListComments200ResponseComments.js';
+import type { Comment } from './Comment.js';
 import {
-    ListComments200ResponseCommentsFromJSON,
-    ListComments200ResponseCommentsFromJSONTyped,
-    ListComments200ResponseCommentsToJSON,
-    ListComments200ResponseCommentsToJSONTyped,
-} from './ListComments200ResponseComments.js';
+    CommentFromJSON,
+    CommentFromJSONTyped,
+    CommentToJSON,
+    CommentToJSONTyped,
+} from './Comment.js';
 
 /**
  * 
@@ -30,14 +30,24 @@ export interface ListComments200Response {
     /**
      * 
      */
-    comments: ListComments200ResponseComments;
+    data: Array<Comment>;
+    /**
+     * Cursor for the next page, or null on the last page.
+     */
+    nextCursor: string | null;
+    /**
+     * True when another page follows this one.
+     */
+    hasMore: boolean;
 }
 
 /**
  * Check if a given object implements the ListComments200Response interface.
  */
 export function instanceOfListComments200Response(value: object): value is ListComments200Response {
-    if (!('comments' in value) || value['comments'] === undefined) return false;
+    if (!('data' in value) || value['data'] === undefined) return false;
+    if (!('nextCursor' in value) || value['nextCursor'] === undefined) return false;
+    if (!('hasMore' in value) || value['hasMore'] === undefined) return false;
     return true;
 }
 
@@ -51,7 +61,9 @@ export function ListComments200ResponseFromJSONTyped(json: any, ignoreDiscrimina
     }
     return {
         
-        'comments': ListComments200ResponseCommentsFromJSON(json['comments']),
+        'data': ((json['data'] as Array<any>).map(CommentFromJSON)),
+        'nextCursor': json['nextCursor'],
+        'hasMore': json['hasMore'],
     };
 }
 
@@ -66,7 +78,9 @@ export function ListComments200ResponseToJSONTyped(value?: ListComments200Respon
 
     return {
         
-        'comments': ListComments200ResponseCommentsToJSON(value['comments']),
+        'data': ((value['data'] as Array<any>).map(CommentToJSON)),
+        'nextCursor': value['nextCursor'],
+        'hasMore': value['hasMore'],
     };
 }
 

@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime.js';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime.js';
 /**
  * 
  * @export
@@ -32,13 +32,21 @@ export interface Webhook {
      */
     url: string;
     /**
-     * 
+     * false while the webhook is paused. A paused webhook receives no events.
      */
-    enabled?: boolean;
+    enabled: boolean;
+    /**
+     * Event types the webhook receives, as you set them. ["*"] means every event type, including ones added later.
+     */
+    events: Array<string>;
     /**
      * 
      */
-    events?: Array<string>;
+    createdAt: Date;
+    /**
+     * 
+     */
+    updatedAt: Date;
 }
 
 /**
@@ -48,6 +56,10 @@ export function instanceOfWebhook(value: object): value is Webhook {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('name' in value) || value['name'] === undefined) return false;
     if (!('url' in value) || value['url'] === undefined) return false;
+    if (!('enabled' in value) || value['enabled'] === undefined) return false;
+    if (!('events' in value) || value['events'] === undefined) return false;
+    if (!('createdAt' in value) || value['createdAt'] === undefined) return false;
+    if (!('updatedAt' in value) || value['updatedAt'] === undefined) return false;
     return true;
 }
 
@@ -64,8 +76,10 @@ export function WebhookFromJSONTyped(json: any, ignoreDiscriminator: boolean): W
         'id': json['id'],
         'name': json['name'],
         'url': json['url'],
-        'enabled': json['enabled'] == null ? undefined : json['enabled'],
-        'events': json['events'] == null ? undefined : json['events'],
+        'enabled': json['enabled'],
+        'events': json['events'],
+        'createdAt': (json['createdAt'] == null ? json['createdAt'] : parseDateTime(json['createdAt'])),
+        'updatedAt': (json['updatedAt'] == null ? json['updatedAt'] : parseDateTime(json['updatedAt'])),
     };
 }
 
@@ -85,6 +99,8 @@ export function WebhookToJSONTyped(value?: Webhook | null, ignoreDiscriminator: 
         'url': value['url'],
         'enabled': value['enabled'],
         'events': value['events'],
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
+        'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
     };
 }
 

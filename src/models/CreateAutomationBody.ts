@@ -20,11 +20,11 @@ import { mapValues } from '../runtime.js';
  */
 export interface CreateAutomationBody {
     /**
-     * 
+     * An Instagram or Facebook account from List Accounts.
      */
     accountId: string;
     /**
-     * 
+     * comment_to_dm answers a comment with a direct message. story_reply answers a reply to a story. welcome_dm answers a message.
      */
     kind: CreateAutomationBodyKindEnum;
     /**
@@ -40,9 +40,13 @@ export interface CreateAutomationBody {
      */
     excludeKeywords?: Array<string>;
     /**
-     * 
+     * The direct message the rule sends.
      */
-    dmMessage: string;
+    message: string;
+    /**
+     * Defaults to true.
+     */
+    enabled?: boolean;
 }
 
 
@@ -65,7 +69,7 @@ export function instanceOfCreateAutomationBody(value: object): value is CreateAu
     if (!('kind' in value) || value['kind'] === undefined) return false;
     if (!('name' in value) || value['name'] === undefined) return false;
     if (!('keywords' in value) || value['keywords'] === undefined) return false;
-    if (!('dmMessage' in value) || value['dmMessage'] === undefined) return false;
+    if (!('message' in value) || value['message'] === undefined) return false;
     return true;
 }
 
@@ -84,7 +88,8 @@ export function CreateAutomationBodyFromJSONTyped(json: any, ignoreDiscriminator
         'name': json['name'],
         'keywords': json['keywords'],
         'excludeKeywords': json['excludeKeywords'] == null ? undefined : json['excludeKeywords'],
-        'dmMessage': json['dmMessage'],
+        'message': json['message'],
+        'enabled': json['enabled'] == null ? undefined : json['enabled'],
     };
 }
 
@@ -104,7 +109,8 @@ export function CreateAutomationBodyToJSONTyped(value?: CreateAutomationBody | n
         'name': value['name'],
         'keywords': value['keywords'],
         'excludeKeywords': value['excludeKeywords'],
-        'dmMessage': value['dmMessage'],
+        'message': value['message'],
+        'enabled': value['enabled'],
     };
 }
 

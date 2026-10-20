@@ -14,20 +14,36 @@
 
 import * as runtime from '../runtime.js';
 import {
+    type CreateMediaBody,
+    CreateMediaBodyFromJSON,
+    CreateMediaBodyToJSON,
+} from '../models/CreateMediaBody.js';
+import {
+    type CreatedMedia,
+    CreatedMediaFromJSON,
+    CreatedMediaToJSON,
+} from '../models/CreatedMedia.js';
+import {
     type ListMedia200Response,
     ListMedia200ResponseFromJSON,
     ListMedia200ResponseToJSON,
 } from '../models/ListMedia200Response.js';
 import {
-    type PresignMediaBody,
-    PresignMediaBodyFromJSON,
-    PresignMediaBodyToJSON,
-} from '../models/PresignMediaBody.js';
-import {
-    type PresignedUpload,
-    PresignedUploadFromJSON,
-    PresignedUploadToJSON,
-} from '../models/PresignedUpload.js';
+    type MediaAsset,
+    MediaAssetFromJSON,
+    MediaAssetToJSON,
+} from '../models/MediaAsset.js';
+
+export interface CreateMediaRequest {
+    /**
+     * 
+     */
+    createMediaBody: CreateMediaBody;
+    /**
+     * A unique key, such as a UUID, that makes retrying this request safe. A repeat with the same key and body within 24 hours returns the first response instead of acting again. A 429 or 5xx response is not kept, so a retry with the same key runs again.
+     */
+    idempotencyKey?: string;
+}
 
 export interface DeleteMediaRequest {
     /**
@@ -36,28 +52,93 @@ export interface DeleteMediaRequest {
     id: string;
 }
 
-export interface GetMediaPresignedUrlRequest {
+export interface GetMediaRequest {
     /**
      * 
      */
-    presignMediaBody: PresignMediaBody;
+    id: string;
 }
 
 export interface ListMediaRequest {
     /**
-     * Number of assets per page. Defaults to 20.
+     * Items per page. Defaults to 50. Maximum 100.
      */
     limit?: number;
     /**
-     * Page to return, starting at 1. Defaults to 1.
+     * The nextCursor of the previous page. Omit it for the first page.
      */
-    page?: number;
+    cursor?: string;
+    /**
+     * Comma-separated extras to add to the response: total.
+     */
+    include?: string;
 }
 
 /**
  * 
  */
 export class MediaApi extends runtime.BaseAPI {
+
+    /**
+     * Creates request options for createMedia without sending the request
+     */
+    async createMediaRequestOpts(requestParameters: CreateMediaRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['createMediaBody'] == null) {
+            throw new runtime.RequiredError(
+                'createMediaBody',
+                'Required parameter "createMediaBody" was null or undefined when calling createMedia().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (requestParameters['idempotencyKey'] != null) {
+            headerParameters['Idempotency-Key'] = String(requestParameters['idempotencyKey']);
+        }
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("Bearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/media`;
+
+        return {
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: CreateMediaBodyToJSON(requestParameters['createMediaBody']),
+        };
+    }
+
+    /**
+     * Creates a media asset and returns uploadUrl. PUT the file to uploadUrl with the declared Content-Type and exactly size bytes, then use the asset\'s id in a post. Files are kept for 7 days until a post uses them.
+     * Create media
+     */
+    async createMediaRaw(requestParameters: CreateMediaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreatedMedia>> {
+        const requestOptions = await this.createMediaRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => CreatedMediaFromJSON(jsonValue));
+    }
+
+    /**
+     * Creates a media asset and returns uploadUrl. PUT the file to uploadUrl with the declared Content-Type and exactly size bytes, then use the asset\'s id in a post. Files are kept for 7 days until a post uses them.
+     * Create media
+     */
+    async createMedia(requestParameters: CreateMediaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreatedMedia> {
+        const response = await this.createMediaRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      * Creates request options for deleteMedia without sending the request
@@ -73,10 +154,6 @@ export class MediaApi extends runtime.BaseAPI {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
@@ -99,7 +176,7 @@ export class MediaApi extends runtime.BaseAPI {
     }
 
     /**
-     * Deletes a media asset from the workspace library.
+     * Deletes a media asset and its file. Posts already published with it stay on the platform.
      * Delete media
      */
     async deleteMediaRaw(requestParameters: DeleteMediaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
@@ -110,7 +187,7 @@ export class MediaApi extends runtime.BaseAPI {
     }
 
     /**
-     * Deletes a media asset from the workspace library.
+     * Deletes a media asset and its file. Posts already published with it stay on the platform.
      * Delete media
      */
     async deleteMedia(requestParameters: DeleteMediaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
@@ -118,25 +195,19 @@ export class MediaApi extends runtime.BaseAPI {
     }
 
     /**
-     * Creates request options for getMediaPresignedUrl without sending the request
+     * Creates request options for getMedia without sending the request
      */
-    async getMediaPresignedUrlRequestOpts(requestParameters: GetMediaPresignedUrlRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['presignMediaBody'] == null) {
+    async getMediaRequestOpts(requestParameters: GetMediaRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
-                'presignMediaBody',
-                'Required parameter "presignMediaBody" was null or undefined when calling getMediaPresignedUrl().'
+                'id',
+                'Required parameter "id" was null or undefined when calling getMedia().'
             );
         }
 
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
@@ -147,34 +218,34 @@ export class MediaApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/media/presign`;
+        let urlPath = `/v1/media/{id}`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
 
         return {
             path: urlPath,
-            method: 'POST',
+            method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-            body: PresignMediaBodyToJSON(requestParameters['presignMediaBody']),
         };
     }
 
     /**
-     * Returns a URL you upload a file to directly with a PUT request. Send the same Content-Type you declared, then use publicUrl in your post.
-     * Get a presigned upload URL
+     * Returns one media asset. status turns ready once the upload has arrived.
+     * Get media
      */
-    async getMediaPresignedUrlRaw(requestParameters: GetMediaPresignedUrlRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PresignedUpload>> {
-        const requestOptions = await this.getMediaPresignedUrlRequestOpts(requestParameters);
+    async getMediaRaw(requestParameters: GetMediaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MediaAsset>> {
+        const requestOptions = await this.getMediaRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => PresignedUploadFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => MediaAssetFromJSON(jsonValue));
     }
 
     /**
-     * Returns a URL you upload a file to directly with a PUT request. Send the same Content-Type you declared, then use publicUrl in your post.
-     * Get a presigned upload URL
+     * Returns one media asset. status turns ready once the upload has arrived.
+     * Get media
      */
-    async getMediaPresignedUrl(requestParameters: GetMediaPresignedUrlRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PresignedUpload> {
-        const response = await this.getMediaPresignedUrlRaw(requestParameters, initOverrides);
+    async getMedia(requestParameters: GetMediaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MediaAsset> {
+        const response = await this.getMediaRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -188,15 +259,15 @@ export class MediaApi extends runtime.BaseAPI {
             queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (requestParameters['page'] != null) {
-            queryParameters['page'] = requestParameters['page'];
+        if (requestParameters['cursor'] != null) {
+            queryParameters['cursor'] = requestParameters['cursor'];
+        }
+
+        if (requestParameters['include'] != null) {
+            queryParameters['include'] = requestParameters['include'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
@@ -218,7 +289,7 @@ export class MediaApi extends runtime.BaseAPI {
     }
 
     /**
-     * Lists the workspace\'s media assets, newest first. Results are paginated.
+     * Lists the workspace\'s uploaded media, newest first.
      * List media
      */
     async listMediaRaw(requestParameters: ListMediaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListMedia200Response>> {
@@ -229,7 +300,7 @@ export class MediaApi extends runtime.BaseAPI {
     }
 
     /**
-     * Lists the workspace\'s media assets, newest first. Results are paginated.
+     * Lists the workspace\'s uploaded media, newest first.
      * List media
      */
     async listMedia(requestParameters: ListMediaRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListMedia200Response> {

@@ -8,81 +8,112 @@
 import { describe, expect, it } from "vitest";
 import { Configuration } from "../src/index.js";
 
-import { ConnectionsApi } from "../src/index.js";
+import { AccountsApi } from "../src/index.js";
+import { ConnectApi } from "../src/index.js";
+import { ProfilesApi } from "../src/index.js";
 import { MediaApi } from "../src/index.js";
 import { PostsApi } from "../src/index.js";
 import { AnalyticsApi } from "../src/index.js";
 import { CommentsApi } from "../src/index.js";
 import { InboxApi } from "../src/index.js";
 import { EngagementApi } from "../src/index.js";
+import { AutomationsApi } from "../src/index.js";
 import { WebhooksApi } from "../src/index.js";
+import { WalletApi } from "../src/index.js";
 
 const config = new Configuration({ apiKey: "op_test" });
 
 describe("spec endpoints surface as SDK methods", () => {
-  describe("ConnectionsApi", () => {
-    it("exposes connectBluesky", () => {
-      expect(typeof new ConnectionsApi(config)["connectBluesky"]).toBe("function");
+  describe("AccountsApi", () => {
+    it("exposes createAccount", () => {
+      expect(typeof new AccountsApi(config)["createAccount"]).toBe("function");
     });
-    it("exposes createPinterestBoard", () => {
-      expect(typeof new ConnectionsApi(config)["createPinterestBoard"]).toBe("function");
+    it("exposes createAccountBoard", () => {
+      expect(typeof new AccountsApi(config)["createAccountBoard"]).toBe("function");
     });
+    it("exposes deleteAccount", () => {
+      expect(typeof new AccountsApi(config)["deleteAccount"]).toBe("function");
+    });
+    it("exposes getAccount", () => {
+      expect(typeof new AccountsApi(config)["getAccount"]).toBe("function");
+    });
+    it("exposes getAccountSettings", () => {
+      expect(typeof new AccountsApi(config)["getAccountSettings"]).toBe("function");
+    });
+    it("exposes getAccountStats", () => {
+      expect(typeof new AccountsApi(config)["getAccountStats"]).toBe("function");
+    });
+    it("exposes getCreatorInfo", () => {
+      expect(typeof new AccountsApi(config)["getCreatorInfo"]).toBe("function");
+    });
+    it("exposes getMessengerProfile", () => {
+      expect(typeof new AccountsApi(config)["getMessengerProfile"]).toBe("function");
+    });
+    it("exposes listAccountBoards", () => {
+      expect(typeof new AccountsApi(config)["listAccountBoards"]).toBe("function");
+    });
+    it("exposes listAccountMedia", () => {
+      expect(typeof new AccountsApi(config)["listAccountMedia"]).toBe("function");
+    });
+    it("exposes listAccountReviews", () => {
+      expect(typeof new AccountsApi(config)["listAccountReviews"]).toBe("function");
+    });
+    it("exposes listAccounts", () => {
+      expect(typeof new AccountsApi(config)["listAccounts"]).toBe("function");
+    });
+    it("exposes reconnectAccount", () => {
+      expect(typeof new AccountsApi(config)["reconnectAccount"]).toBe("function");
+    });
+    it("exposes searchAccountAudio", () => {
+      expect(typeof new AccountsApi(config)["searchAccountAudio"]).toBe("function");
+    });
+    it("exposes setMessengerProfile", () => {
+      expect(typeof new AccountsApi(config)["setMessengerProfile"]).toBe("function");
+    });
+    it("exposes updateAccount", () => {
+      expect(typeof new AccountsApi(config)["updateAccount"]).toBe("function");
+    });
+    it("exposes updateAccountSettings", () => {
+      expect(typeof new AccountsApi(config)["updateAccountSettings"]).toBe("function");
+    });
+  });
+
+  describe("ConnectApi", () => {
+    it("exposes createConnectSession", () => {
+      expect(typeof new ConnectApi(config)["createConnectSession"]).toBe("function");
+    });
+    it("exposes listConnectCandidates", () => {
+      expect(typeof new ConnectApi(config)["listConnectCandidates"]).toBe("function");
+    });
+    it("exposes selectConnectCandidate", () => {
+      expect(typeof new ConnectApi(config)["selectConnectCandidate"]).toBe("function");
+    });
+  });
+
+  describe("ProfilesApi", () => {
     it("exposes createProfile", () => {
-      expect(typeof new ConnectionsApi(config)["createProfile"]).toBe("function");
+      expect(typeof new ProfilesApi(config)["createProfile"]).toBe("function");
     });
     it("exposes deleteProfile", () => {
-      expect(typeof new ConnectionsApi(config)["deleteProfile"]).toBe("function");
-    });
-    it("exposes getBlueskySettings", () => {
-      expect(typeof new ConnectionsApi(config)["getBlueskySettings"]).toBe("function");
-    });
-    it("exposes getConnectionStats", () => {
-      expect(typeof new ConnectionsApi(config)["getConnectionStats"]).toBe("function");
-    });
-    it("exposes getTikTokCreatorInfo", () => {
-      expect(typeof new ConnectionsApi(config)["getTikTokCreatorInfo"]).toBe("function");
-    });
-    it("exposes listConnectionMedia", () => {
-      expect(typeof new ConnectionsApi(config)["listConnectionMedia"]).toBe("function");
-    });
-    it("exposes listConnections", () => {
-      expect(typeof new ConnectionsApi(config)["listConnections"]).toBe("function");
-    });
-    it("exposes listFacebookPages", () => {
-      expect(typeof new ConnectionsApi(config)["listFacebookPages"]).toBe("function");
-    });
-    it("exposes listInstagramAccounts", () => {
-      expect(typeof new ConnectionsApi(config)["listInstagramAccounts"]).toBe("function");
-    });
-    it("exposes listPinterestBoards", () => {
-      expect(typeof new ConnectionsApi(config)["listPinterestBoards"]).toBe("function");
+      expect(typeof new ProfilesApi(config)["deleteProfile"]).toBe("function");
     });
     it("exposes listProfiles", () => {
-      expect(typeof new ConnectionsApi(config)["listProfiles"]).toBe("function");
+      expect(typeof new ProfilesApi(config)["listProfiles"]).toBe("function");
     });
-    it("exposes selectFacebookPage", () => {
-      expect(typeof new ConnectionsApi(config)["selectFacebookPage"]).toBe("function");
-    });
-    it("exposes selectInstagramAccount", () => {
-      expect(typeof new ConnectionsApi(config)["selectInstagramAccount"]).toBe("function");
-    });
-    it("exposes setConnectionMessengerProfile", () => {
-      expect(typeof new ConnectionsApi(config)["setConnectionMessengerProfile"]).toBe("function");
-    });
-    it("exposes startOAuth", () => {
-      expect(typeof new ConnectionsApi(config)["startOAuth"]).toBe("function");
-    });
-    it("exposes updateBlueskySettings", () => {
-      expect(typeof new ConnectionsApi(config)["updateBlueskySettings"]).toBe("function");
+    it("exposes updateProfile", () => {
+      expect(typeof new ProfilesApi(config)["updateProfile"]).toBe("function");
     });
   });
 
   describe("MediaApi", () => {
+    it("exposes createMedia", () => {
+      expect(typeof new MediaApi(config)["createMedia"]).toBe("function");
+    });
     it("exposes deleteMedia", () => {
       expect(typeof new MediaApi(config)["deleteMedia"]).toBe("function");
     });
-    it("exposes getMediaPresignedUrl", () => {
-      expect(typeof new MediaApi(config)["getMediaPresignedUrl"]).toBe("function");
+    it("exposes getMedia", () => {
+      expect(typeof new MediaApi(config)["getMedia"]).toBe("function");
     });
     it("exposes listMedia", () => {
       expect(typeof new MediaApi(config)["listMedia"]).toBe("function");
@@ -90,14 +121,11 @@ describe("spec endpoints surface as SDK methods", () => {
   });
 
   describe("PostsApi", () => {
-    it("exposes cancelPost", () => {
-      expect(typeof new PostsApi(config)["cancelPost"]).toBe("function");
-    });
     it("exposes createPost", () => {
       expect(typeof new PostsApi(config)["createPost"]).toBe("function");
     });
-    it("exposes deletePostDestination", () => {
-      expect(typeof new PostsApi(config)["deletePostDestination"]).toBe("function");
+    it("exposes deletePost", () => {
+      expect(typeof new PostsApi(config)["deletePost"]).toBe("function");
     });
     it("exposes getPost", () => {
       expect(typeof new PostsApi(config)["getPost"]).toBe("function");
@@ -105,26 +133,29 @@ describe("spec endpoints surface as SDK methods", () => {
     it("exposes listPosts", () => {
       expect(typeof new PostsApi(config)["listPosts"]).toBe("function");
     });
-    it("exposes syncExternal", () => {
-      expect(typeof new PostsApi(config)["syncExternal"]).toBe("function");
+    it("exposes syncAccountPosts", () => {
+      expect(typeof new PostsApi(config)["syncAccountPosts"]).toBe("function");
+    });
+    it("exposes updatePost", () => {
+      expect(typeof new PostsApi(config)["updatePost"]).toBe("function");
     });
   });
 
   describe("AnalyticsApi", () => {
-    it("exposes getAnalytics", () => {
-      expect(typeof new AnalyticsApi(config)["getAnalytics"]).toBe("function");
+    it("exposes getAccountAnalytics", () => {
+      expect(typeof new AnalyticsApi(config)["getAccountAnalytics"]).toBe("function");
     });
-    it("exposes getAnalyticsTimeline", () => {
-      expect(typeof new AnalyticsApi(config)["getAnalyticsTimeline"]).toBe("function");
+    it("exposes getPostAnalytics", () => {
+      expect(typeof new AnalyticsApi(config)["getPostAnalytics"]).toBe("function");
+    });
+    it("exposes getPostAnalyticsTimeline", () => {
+      expect(typeof new AnalyticsApi(config)["getPostAnalyticsTimeline"]).toBe("function");
     });
   });
 
   describe("CommentsApi", () => {
     it("exposes createComment", () => {
       expect(typeof new CommentsApi(config)["createComment"]).toBe("function");
-    });
-    it("exposes createPrivateReply", () => {
-      expect(typeof new CommentsApi(config)["createPrivateReply"]).toBe("function");
     });
     it("exposes deleteComment", () => {
       expect(typeof new CommentsApi(config)["deleteComment"]).toBe("function");
@@ -138,59 +169,77 @@ describe("spec endpoints surface as SDK methods", () => {
     it("exposes listComments", () => {
       expect(typeof new CommentsApi(config)["listComments"]).toBe("function");
     });
+    it("exposes replyToComment", () => {
+      expect(typeof new CommentsApi(config)["replyToComment"]).toBe("function");
+    });
+    it("exposes sendPrivateReply", () => {
+      expect(typeof new CommentsApi(config)["sendPrivateReply"]).toBe("function");
+    });
+    it("exposes unhideComment", () => {
+      expect(typeof new CommentsApi(config)["unhideComment"]).toBe("function");
+    });
     it("exposes unlikeComment", () => {
       expect(typeof new CommentsApi(config)["unlikeComment"]).toBe("function");
     });
   });
 
   describe("InboxApi", () => {
-    it("exposes createInboxConversation", () => {
-      expect(typeof new InboxApi(config)["createInboxConversation"]).toBe("function");
+    it("exposes createConversation", () => {
+      expect(typeof new InboxApi(config)["createConversation"]).toBe("function");
     });
-    it("exposes listInboxConversations", () => {
-      expect(typeof new InboxApi(config)["listInboxConversations"]).toBe("function");
+    it("exposes getConversation", () => {
+      expect(typeof new InboxApi(config)["getConversation"]).toBe("function");
     });
-    it("exposes listInboxMessages", () => {
-      expect(typeof new InboxApi(config)["listInboxMessages"]).toBe("function");
+    it("exposes listConversations", () => {
+      expect(typeof new InboxApi(config)["listConversations"]).toBe("function");
     });
-    it("exposes sendInboxMessage", () => {
-      expect(typeof new InboxApi(config)["sendInboxMessage"]).toBe("function");
+    it("exposes listMessages", () => {
+      expect(typeof new InboxApi(config)["listMessages"]).toBe("function");
+    });
+    it("exposes sendMessage", () => {
+      expect(typeof new InboxApi(config)["sendMessage"]).toBe("function");
     });
   });
 
   describe("EngagementApi", () => {
-    it("exposes bookmark", () => {
-      expect(typeof new EngagementApi(config)["bookmark"]).toBe("function");
+    it("exposes bookmarkPost", () => {
+      expect(typeof new EngagementApi(config)["bookmarkPost"]).toBe("function");
     });
+    it("exposes likePost", () => {
+      expect(typeof new EngagementApi(config)["likePost"]).toBe("function");
+    });
+    it("exposes listReposters", () => {
+      expect(typeof new EngagementApi(config)["listReposters"]).toBe("function");
+    });
+    it("exposes repostPost", () => {
+      expect(typeof new EngagementApi(config)["repostPost"]).toBe("function");
+    });
+    it("exposes unbookmarkPost", () => {
+      expect(typeof new EngagementApi(config)["unbookmarkPost"]).toBe("function");
+    });
+    it("exposes unlikePost", () => {
+      expect(typeof new EngagementApi(config)["unlikePost"]).toBe("function");
+    });
+    it("exposes unrepostPost", () => {
+      expect(typeof new EngagementApi(config)["unrepostPost"]).toBe("function");
+    });
+  });
+
+  describe("AutomationsApi", () => {
     it("exposes createAutomation", () => {
-      expect(typeof new EngagementApi(config)["createAutomation"]).toBe("function");
+      expect(typeof new AutomationsApi(config)["createAutomation"]).toBe("function");
     });
-    it("exposes deleteAutomations", () => {
-      expect(typeof new EngagementApi(config)["deleteAutomations"]).toBe("function");
+    it("exposes deleteAutomation", () => {
+      expect(typeof new AutomationsApi(config)["deleteAutomation"]).toBe("function");
     });
-    it("exposes like", () => {
-      expect(typeof new EngagementApi(config)["like"]).toBe("function");
+    it("exposes getAutomation", () => {
+      expect(typeof new AutomationsApi(config)["getAutomation"]).toBe("function");
     });
     it("exposes listAutomations", () => {
-      expect(typeof new EngagementApi(config)["listAutomations"]).toBe("function");
+      expect(typeof new AutomationsApi(config)["listAutomations"]).toBe("function");
     });
-    it("exposes listRetweeters", () => {
-      expect(typeof new EngagementApi(config)["listRetweeters"]).toBe("function");
-    });
-    it("exposes quote", () => {
-      expect(typeof new EngagementApi(config)["quote"]).toBe("function");
-    });
-    it("exposes removeBookmark", () => {
-      expect(typeof new EngagementApi(config)["removeBookmark"]).toBe("function");
-    });
-    it("exposes retweet", () => {
-      expect(typeof new EngagementApi(config)["retweet"]).toBe("function");
-    });
-    it("exposes undoRetweet", () => {
-      expect(typeof new EngagementApi(config)["undoRetweet"]).toBe("function");
-    });
-    it("exposes unlike", () => {
-      expect(typeof new EngagementApi(config)["unlike"]).toBe("function");
+    it("exposes updateAutomation", () => {
+      expect(typeof new AutomationsApi(config)["updateAutomation"]).toBe("function");
     });
   });
 
@@ -204,8 +253,8 @@ describe("spec endpoints surface as SDK methods", () => {
     it("exposes getWebhook", () => {
       expect(typeof new WebhooksApi(config)["getWebhook"]).toBe("function");
     });
-    it("exposes getWebhookDeliverySummary", () => {
-      expect(typeof new WebhooksApi(config)["getWebhookDeliverySummary"]).toBe("function");
+    it("exposes getWebhookDelivery", () => {
+      expect(typeof new WebhooksApi(config)["getWebhookDelivery"]).toBe("function");
     });
     it("exposes listWebhookDeliveries", () => {
       expect(typeof new WebhooksApi(config)["listWebhookDeliveries"]).toBe("function");
@@ -216,11 +265,23 @@ describe("spec endpoints surface as SDK methods", () => {
     it("exposes listWebhooks", () => {
       expect(typeof new WebhooksApi(config)["listWebhooks"]).toBe("function");
     });
+    it("exposes retryWebhookDelivery", () => {
+      expect(typeof new WebhooksApi(config)["retryWebhookDelivery"]).toBe("function");
+    });
+    it("exposes rotateWebhookSecret", () => {
+      expect(typeof new WebhooksApi(config)["rotateWebhookSecret"]).toBe("function");
+    });
     it("exposes testWebhook", () => {
       expect(typeof new WebhooksApi(config)["testWebhook"]).toBe("function");
     });
     it("exposes updateWebhook", () => {
       expect(typeof new WebhooksApi(config)["updateWebhook"]).toBe("function");
+    });
+  });
+
+  describe("WalletApi", () => {
+    it("exposes getWalletBalance", () => {
+      expect(typeof new WalletApi(config)["getWalletBalance"]).toBe("function");
     });
   });
 

@@ -12,7 +12,15 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime.js';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime.js';
+import type { Platform } from './Platform.js';
+import {
+    PlatformFromJSON,
+    PlatformFromJSONTyped,
+    PlatformToJSON,
+    PlatformToJSONTyped,
+} from './Platform.js';
+
 /**
  * 
  * @export
@@ -20,33 +28,49 @@ import { mapValues } from '../runtime.js';
  */
 export interface Comment {
     /**
-     * 
+     * The comment's id. Use it to reply to, hide, like or delete the comment.
      */
     id: string;
+    /**
+     * The post the comment is on.
+     */
+    postId: string;
+    /**
+     * The account that published the post.
+     */
+    accountId: string;
+    /**
+     * 
+     */
+    platform: Platform;
+    /**
+     * The platform's own id for the comment.
+     */
+    platformCommentId: string;
+    /**
+     * The comment this one replies to, or null for a comment on the post.
+     */
+    parentId: string | null;
     /**
      * 
      */
     text: string;
     /**
-     * 
+     * The author's username, without a leading @. Null when the platform does not share it.
      */
-    username?: string | null;
+    username: string | null;
     /**
-     * 
+     * Likes on the comment. Null when the platform does not report it.
      */
-    likeCount?: number | null;
+    likeCount: number | null;
     /**
-     * 
+     * When the comment was posted. Null when the platform does not report it.
      */
-    timestamp?: string | null;
+    createdAt: Date | null;
     /**
-     * 
+     * Replies, on platforms that return them with the comment.
      */
-    parentId?: string | null;
-    /**
-     * 
-     */
-    replies?: Array<Comment>;
+    replies: Array<Comment>;
 }
 
 /**
@@ -54,7 +78,16 @@ export interface Comment {
  */
 export function instanceOfComment(value: object): value is Comment {
     if (!('id' in value) || value['id'] === undefined) return false;
+    if (!('postId' in value) || value['postId'] === undefined) return false;
+    if (!('accountId' in value) || value['accountId'] === undefined) return false;
+    if (!('platform' in value) || value['platform'] === undefined) return false;
+    if (!('platformCommentId' in value) || value['platformCommentId'] === undefined) return false;
+    if (!('parentId' in value) || value['parentId'] === undefined) return false;
     if (!('text' in value) || value['text'] === undefined) return false;
+    if (!('username' in value) || value['username'] === undefined) return false;
+    if (!('likeCount' in value) || value['likeCount'] === undefined) return false;
+    if (!('createdAt' in value) || value['createdAt'] === undefined) return false;
+    if (!('replies' in value) || value['replies'] === undefined) return false;
     return true;
 }
 
@@ -69,12 +102,16 @@ export function CommentFromJSONTyped(json: any, ignoreDiscriminator: boolean): C
     return {
         
         'id': json['id'],
+        'postId': json['postId'],
+        'accountId': json['accountId'],
+        'platform': PlatformFromJSON(json['platform']),
+        'platformCommentId': json['platformCommentId'],
+        'parentId': json['parentId'],
         'text': json['text'],
-        'username': json['username'] === undefined ? undefined : json['username'] === null ? null : json['username'],
-        'likeCount': json['likeCount'] === undefined ? undefined : json['likeCount'] === null ? null : json['likeCount'],
-        'timestamp': json['timestamp'] === undefined ? undefined : json['timestamp'] === null ? null : json['timestamp'],
-        'parentId': json['parentId'] === undefined ? undefined : json['parentId'] === null ? null : json['parentId'],
-        'replies': json['replies'] == null ? undefined : ((json['replies'] as Array<any>).map(CommentFromJSON)),
+        'username': json['username'],
+        'likeCount': json['likeCount'],
+        'createdAt': (json['createdAt'] == null ? null : parseDateTime(json['createdAt'])),
+        'replies': ((json['replies'] as Array<any>).map(CommentFromJSON)),
     };
 }
 
@@ -90,12 +127,16 @@ export function CommentToJSONTyped(value?: Comment | null, ignoreDiscriminator: 
     return {
         
         'id': value['id'],
+        'postId': value['postId'],
+        'accountId': value['accountId'],
+        'platform': PlatformToJSON(value['platform']),
+        'platformCommentId': value['platformCommentId'],
+        'parentId': value['parentId'],
         'text': value['text'],
         'username': value['username'],
         'likeCount': value['likeCount'],
-        'timestamp': value['timestamp'],
-        'parentId': value['parentId'],
-        'replies': value['replies'] == null ? undefined : ((value['replies'] as Array<any>).map(CommentToJSON)),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
+        'replies': ((value['replies'] as Array<any>).map(CommentToJSON)),
     };
 }
 

@@ -14,108 +14,76 @@
 
 import * as runtime from '../runtime.js';
 import {
-    type GetAnalytics200Response,
-    GetAnalytics200ResponseFromJSON,
-    GetAnalytics200ResponseToJSON,
-} from '../models/GetAnalytics200Response.js';
+    type AccountAnalytics,
+    AccountAnalyticsFromJSON,
+    AccountAnalyticsToJSON,
+} from '../models/AccountAnalytics.js';
 import {
-    type GetAnalyticsTimeline200Response,
-    GetAnalyticsTimeline200ResponseFromJSON,
-    GetAnalyticsTimeline200ResponseToJSON,
-} from '../models/GetAnalyticsTimeline200Response.js';
+    type PostAnalytics,
+    PostAnalyticsFromJSON,
+    PostAnalyticsToJSON,
+} from '../models/PostAnalytics.js';
+import {
+    type PostAnalyticsTimeline,
+    PostAnalyticsTimelineFromJSON,
+    PostAnalyticsTimelineToJSON,
+} from '../models/PostAnalyticsTimeline.js';
 
-export interface GetAnalyticsRequest {
+export interface GetAccountAnalyticsRequest {
     /**
-     * Onepostly post id or platform-native post id. Native ids also need accountId. You can omit it when you pass destinationId.
+     * 
      */
-    post?: string;
+    id: string;
     /**
-     * Connection id. Required with a platform-native post id, and picks the destination when a Onepostly post has several. Passed on its own, it returns live account insights for Instagram and Facebook.
-     */
-    accountId?: string;
-    /**
-     * Destination id. It identifies one destination on its own, so post and accountId become optional.
-     */
-    destinationId?: string;
-    /**
-     * Comma-separated metric names for account insights. Each platform has its own default set.
+     * Comma-separated metric names. Instagram defaults to views, reach, accounts_engaged and total_interactions. Facebook defaults to page_media_view, page_total_media_view_unique, page_post_engagements, page_follows and page_daily_follows_unique.
      */
     metrics?: string;
     /**
-     * 
+     * Aggregation period. Defaults to day.
      */
-    period?: GetAnalyticsPeriodEnum;
+    period?: GetAccountAnalyticsPeriodEnum;
     /**
-     * 
+     * Start of the range.
      */
-    since?: number;
+    since?: Date;
     /**
-     * 
+     * End of the range.
      */
-    until?: number;
+    until?: Date;
     /**
-     * Instagram account insights breakdown, such as follower_type, media_product_type, age, city or country.
+     * Instagram: breakdown for demographic metrics, such as age, city, country or gender.
      */
     breakdown?: string;
     /**
-     * Instagram demographics timeframe, such as this_week, this_month or last_30_days.
+     * Instagram: timeframe for demographic metrics, such as this_month or this_week.
      */
     timeframe?: string;
     /**
-     * 
+     * Instagram: total_value for one total over the period, time_series for daily values. When omitted, each metric is read the way Instagram reports it.
      */
-    metricType?: string;
+    metricType?: GetAccountAnalyticsMetricTypeEnum;
 }
 
-export interface GetAnalyticsTimelineRequest {
-    /**
-     * Onepostly post id or platform-native post id. Native ids also need accountId. You can omit it when you pass destinationId.
-     */
-    post?: string;
-    /**
-     * Connection id. Required with a platform-native post id, and picks the destination when a Onepostly post has several. Passed on its own, it returns live account insights for Instagram and Facebook.
-     */
-    accountId?: string;
-    /**
-     * Destination id. It identifies one destination on its own, so post and accountId become optional.
-     */
-    destinationId?: string;
-    /**
-     * Comma-separated metric names for account insights. Each platform has its own default set.
-     */
-    metrics?: string;
+export interface GetPostAnalyticsRequest {
     /**
      * 
      */
-    period?: GetAnalyticsTimelinePeriodEnum;
+    id: string;
+}
+
+export interface GetPostAnalyticsTimelineRequest {
     /**
      * 
      */
-    since?: number;
+    id: string;
     /**
-     * 
+     * Start of the range. The first day covered is the UTC day it falls on. Defaults to 90 days before until.
      */
-    until?: number;
+    since?: Date;
     /**
-     * Instagram account insights breakdown, such as follower_type, media_product_type, age, city or country.
+     * End of the range. The last day covered is the UTC day the range ends in. Defaults to now.
      */
-    breakdown?: string;
-    /**
-     * Instagram demographics timeframe, such as this_week, this_month or last_30_days.
-     */
-    timeframe?: string;
-    /**
-     * 
-     */
-    metricType?: string;
-    /**
-     * First day to include, as YYYY-MM-DD.
-     */
-    from?: string;
-    /**
-     * Last day to include, as YYYY-MM-DD.
-     */
-    to?: string;
+    until?: Date;
 }
 
 /**
@@ -124,22 +92,17 @@ export interface GetAnalyticsTimelineRequest {
 export class AnalyticsApi extends runtime.BaseAPI {
 
     /**
-     * Creates request options for getAnalytics without sending the request
+     * Creates request options for getAccountAnalytics without sending the request
      */
-    async getAnalyticsRequestOpts(requestParameters: GetAnalyticsRequest): Promise<runtime.RequestOpts> {
+    async getAccountAnalyticsRequestOpts(requestParameters: GetAccountAnalyticsRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling getAccountAnalytics().'
+            );
+        }
+
         const queryParameters: any = {};
-
-        if (requestParameters['post'] != null) {
-            queryParameters['post'] = requestParameters['post'];
-        }
-
-        if (requestParameters['accountId'] != null) {
-            queryParameters['accountId'] = requestParameters['accountId'];
-        }
-
-        if (requestParameters['destinationId'] != null) {
-            queryParameters['destinationId'] = requestParameters['destinationId'];
-        }
 
         if (requestParameters['metrics'] != null) {
             queryParameters['metrics'] = requestParameters['metrics'];
@@ -150,11 +113,11 @@ export class AnalyticsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['since'] != null) {
-            queryParameters['since'] = requestParameters['since'];
+            queryParameters['since'] = runtime.serializeDateTime(requestParameters['since'] as any);
         }
 
         if (requestParameters['until'] != null) {
-            queryParameters['until'] = requestParameters['until'];
+            queryParameters['until'] = runtime.serializeDateTime(requestParameters['until'] as any);
         }
 
         if (requestParameters['breakdown'] != null) {
@@ -171,10 +134,6 @@ export class AnalyticsApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
-
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
             const tokenString = await token("Bearer", []);
@@ -184,7 +143,8 @@ export class AnalyticsApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/analytics`;
+        let urlPath = `/v1/accounts/{id}/analytics`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
 
         return {
             path: urlPath,
@@ -195,84 +155,39 @@ export class AnalyticsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns normalized metrics for a Onepostly post or a platform-native post id. Pass only accountId to get live account insights for Instagram and Facebook.
-     * Get analytics
+     * Returns account-level insights, read live from the platform. Available for Instagram professional accounts and Facebook Pages.
+     * Get account analytics
      */
-    async getAnalyticsRaw(requestParameters: GetAnalyticsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetAnalytics200Response>> {
-        const requestOptions = await this.getAnalyticsRequestOpts(requestParameters);
+    async getAccountAnalyticsRaw(requestParameters: GetAccountAnalyticsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AccountAnalytics>> {
+        const requestOptions = await this.getAccountAnalyticsRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => GetAnalytics200ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => AccountAnalyticsFromJSON(jsonValue));
     }
 
     /**
-     * Returns normalized metrics for a Onepostly post or a platform-native post id. Pass only accountId to get live account insights for Instagram and Facebook.
-     * Get analytics
+     * Returns account-level insights, read live from the platform. Available for Instagram professional accounts and Facebook Pages.
+     * Get account analytics
      */
-    async getAnalytics(requestParameters: GetAnalyticsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetAnalytics200Response> {
-        const response = await this.getAnalyticsRaw(requestParameters, initOverrides);
+    async getAccountAnalytics(requestParameters: GetAccountAnalyticsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<AccountAnalytics> {
+        const response = await this.getAccountAnalyticsRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * Creates request options for getAnalyticsTimeline without sending the request
+     * Creates request options for getPostAnalytics without sending the request
      */
-    async getAnalyticsTimelineRequestOpts(requestParameters: GetAnalyticsTimelineRequest): Promise<runtime.RequestOpts> {
+    async getPostAnalyticsRequestOpts(requestParameters: GetPostAnalyticsRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling getPostAnalytics().'
+            );
+        }
+
         const queryParameters: any = {};
 
-        if (requestParameters['post'] != null) {
-            queryParameters['post'] = requestParameters['post'];
-        }
-
-        if (requestParameters['accountId'] != null) {
-            queryParameters['accountId'] = requestParameters['accountId'];
-        }
-
-        if (requestParameters['destinationId'] != null) {
-            queryParameters['destinationId'] = requestParameters['destinationId'];
-        }
-
-        if (requestParameters['metrics'] != null) {
-            queryParameters['metrics'] = requestParameters['metrics'];
-        }
-
-        if (requestParameters['period'] != null) {
-            queryParameters['period'] = requestParameters['period'];
-        }
-
-        if (requestParameters['since'] != null) {
-            queryParameters['since'] = requestParameters['since'];
-        }
-
-        if (requestParameters['until'] != null) {
-            queryParameters['until'] = requestParameters['until'];
-        }
-
-        if (requestParameters['breakdown'] != null) {
-            queryParameters['breakdown'] = requestParameters['breakdown'];
-        }
-
-        if (requestParameters['timeframe'] != null) {
-            queryParameters['timeframe'] = requestParameters['timeframe'];
-        }
-
-        if (requestParameters['metricType'] != null) {
-            queryParameters['metricType'] = requestParameters['metricType'];
-        }
-
-        if (requestParameters['from'] != null) {
-            queryParameters['from'] = requestParameters['from'];
-        }
-
-        if (requestParameters['to'] != null) {
-            queryParameters['to'] = requestParameters['to'];
-        }
-
         const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
@@ -283,7 +198,8 @@ export class AnalyticsApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/analytics/timeline`;
+        let urlPath = `/v1/posts/{id}/analytics`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
 
         return {
             path: urlPath,
@@ -294,22 +210,85 @@ export class AnalyticsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns daily cumulative metrics for each post destination. Covers the last 90 days by default.
-     * Get daily analytics timeline
+     * Returns a post\'s lifetime metrics. Metrics refresh about hourly for posts under 30 days old and about weekly after that. X metrics are read when you ask and charged to the wallet, at most once per post and UTC day. Later requests that day return the same reading at no charge.
+     * Get post analytics
      */
-    async getAnalyticsTimelineRaw(requestParameters: GetAnalyticsTimelineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetAnalyticsTimeline200Response>> {
-        const requestOptions = await this.getAnalyticsTimelineRequestOpts(requestParameters);
+    async getPostAnalyticsRaw(requestParameters: GetPostAnalyticsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PostAnalytics>> {
+        const requestOptions = await this.getPostAnalyticsRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => GetAnalyticsTimeline200ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => PostAnalyticsFromJSON(jsonValue));
     }
 
     /**
-     * Returns daily cumulative metrics for each post destination. Covers the last 90 days by default.
-     * Get daily analytics timeline
+     * Returns a post\'s lifetime metrics. Metrics refresh about hourly for posts under 30 days old and about weekly after that. X metrics are read when you ask and charged to the wallet, at most once per post and UTC day. Later requests that day return the same reading at no charge.
+     * Get post analytics
      */
-    async getAnalyticsTimeline(requestParameters: GetAnalyticsTimelineRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetAnalyticsTimeline200Response> {
-        const response = await this.getAnalyticsTimelineRaw(requestParameters, initOverrides);
+    async getPostAnalytics(requestParameters: GetPostAnalyticsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PostAnalytics> {
+        const response = await this.getPostAnalyticsRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for getPostAnalyticsTimeline without sending the request
+     */
+    async getPostAnalyticsTimelineRequestOpts(requestParameters: GetPostAnalyticsTimelineRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling getPostAnalyticsTimeline().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters['since'] != null) {
+            queryParameters['since'] = runtime.serializeDateTime(requestParameters['since'] as any);
+        }
+
+        if (requestParameters['until'] != null) {
+            queryParameters['until'] = runtime.serializeDateTime(requestParameters['until'] as any);
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("Bearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/posts/{id}/analytics/timeline`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+
+        return {
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Returns a post\'s metrics day by day, one point per UTC day. Covers the last 90 days by default, and at most 90 days. Not available for X posts.
+     * Get post analytics timeline
+     */
+    async getPostAnalyticsTimelineRaw(requestParameters: GetPostAnalyticsTimelineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PostAnalyticsTimeline>> {
+        const requestOptions = await this.getPostAnalyticsTimelineRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => PostAnalyticsTimelineFromJSON(jsonValue));
+    }
+
+    /**
+     * Returns a post\'s metrics day by day, one point per UTC day. Covers the last 90 days by default, and at most 90 days. Not available for X posts.
+     * Get post analytics timeline
+     */
+    async getPostAnalyticsTimeline(requestParameters: GetPostAnalyticsTimelineRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PostAnalyticsTimeline> {
+        const response = await this.getPostAnalyticsTimelineRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -318,20 +297,18 @@ export class AnalyticsApi extends runtime.BaseAPI {
 /**
  * @export
  */
-export const GetAnalyticsPeriodEnum = {
+export const GetAccountAnalyticsPeriodEnum = {
     Day: 'day',
     Week: 'week',
     Days28: 'days_28',
     Lifetime: 'lifetime',
 } as const;
-export type GetAnalyticsPeriodEnum = typeof GetAnalyticsPeriodEnum[keyof typeof GetAnalyticsPeriodEnum];
+export type GetAccountAnalyticsPeriodEnum = typeof GetAccountAnalyticsPeriodEnum[keyof typeof GetAccountAnalyticsPeriodEnum];
 /**
  * @export
  */
-export const GetAnalyticsTimelinePeriodEnum = {
-    Day: 'day',
-    Week: 'week',
-    Days28: 'days_28',
-    Lifetime: 'lifetime',
+export const GetAccountAnalyticsMetricTypeEnum = {
+    TotalValue: 'total_value',
+    TimeSeries: 'time_series',
 } as const;
-export type GetAnalyticsTimelinePeriodEnum = typeof GetAnalyticsTimelinePeriodEnum[keyof typeof GetAnalyticsTimelinePeriodEnum];
+export type GetAccountAnalyticsMetricTypeEnum = typeof GetAccountAnalyticsMetricTypeEnum[keyof typeof GetAccountAnalyticsMetricTypeEnum];

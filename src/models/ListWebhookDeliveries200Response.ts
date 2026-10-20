@@ -13,13 +13,6 @@
  */
 
 import { mapValues } from '../runtime.js';
-import type { ListWebhookDeliveries200ResponseDeliveriesInner } from './ListWebhookDeliveries200ResponseDeliveriesInner.js';
-import {
-    ListWebhookDeliveries200ResponseDeliveriesInnerFromJSON,
-    ListWebhookDeliveries200ResponseDeliveriesInnerFromJSONTyped,
-    ListWebhookDeliveries200ResponseDeliveriesInnerToJSON,
-    ListWebhookDeliveries200ResponseDeliveriesInnerToJSONTyped,
-} from './ListWebhookDeliveries200ResponseDeliveriesInner.js';
 import type { ListWebhookDeliveries200ResponseHistogramInner } from './ListWebhookDeliveries200ResponseHistogramInner.js';
 import {
     ListWebhookDeliveries200ResponseHistogramInnerFromJSON,
@@ -34,6 +27,13 @@ import {
     ListWebhookDeliveries200ResponseFacetsToJSON,
     ListWebhookDeliveries200ResponseFacetsToJSONTyped,
 } from './ListWebhookDeliveries200ResponseFacets.js';
+import type { WebhookDelivery } from './WebhookDelivery.js';
+import {
+    WebhookDeliveryFromJSON,
+    WebhookDeliveryFromJSONTyped,
+    WebhookDeliveryToJSON,
+    WebhookDeliveryToJSONTyped,
+} from './WebhookDelivery.js';
 
 /**
  * 
@@ -44,29 +44,32 @@ export interface ListWebhookDeliveries200Response {
     /**
      * 
      */
-    deliveries: Array<ListWebhookDeliveries200ResponseDeliveriesInner>;
+    data: Array<WebhookDelivery>;
     /**
-     * 
+     * Cursor for the next page, or null on the last page.
      */
     nextCursor: string | null;
     /**
-     * 
+     * True when another page follows this one.
      */
-    facets: ListWebhookDeliveries200ResponseFacets;
+    hasMore: boolean;
     /**
      * 
      */
-    histogram: Array<ListWebhookDeliveries200ResponseHistogramInner>;
+    facets?: ListWebhookDeliveries200ResponseFacets;
+    /**
+     * Successes and failures over time. Present when include has histogram.
+     */
+    histogram?: Array<ListWebhookDeliveries200ResponseHistogramInner>;
 }
 
 /**
  * Check if a given object implements the ListWebhookDeliveries200Response interface.
  */
 export function instanceOfListWebhookDeliveries200Response(value: object): value is ListWebhookDeliveries200Response {
-    if (!('deliveries' in value) || value['deliveries'] === undefined) return false;
+    if (!('data' in value) || value['data'] === undefined) return false;
     if (!('nextCursor' in value) || value['nextCursor'] === undefined) return false;
-    if (!('facets' in value) || value['facets'] === undefined) return false;
-    if (!('histogram' in value) || value['histogram'] === undefined) return false;
+    if (!('hasMore' in value) || value['hasMore'] === undefined) return false;
     return true;
 }
 
@@ -80,10 +83,11 @@ export function ListWebhookDeliveries200ResponseFromJSONTyped(json: any, ignoreD
     }
     return {
         
-        'deliveries': ((json['deliveries'] as Array<any>).map(ListWebhookDeliveries200ResponseDeliveriesInnerFromJSON)),
+        'data': ((json['data'] as Array<any>).map(WebhookDeliveryFromJSON)),
         'nextCursor': json['nextCursor'],
-        'facets': ListWebhookDeliveries200ResponseFacetsFromJSON(json['facets']),
-        'histogram': ((json['histogram'] as Array<any>).map(ListWebhookDeliveries200ResponseHistogramInnerFromJSON)),
+        'hasMore': json['hasMore'],
+        'facets': json['facets'] == null ? undefined : ListWebhookDeliveries200ResponseFacetsFromJSON(json['facets']),
+        'histogram': json['histogram'] == null ? undefined : ((json['histogram'] as Array<any>).map(ListWebhookDeliveries200ResponseHistogramInnerFromJSON)),
     };
 }
 
@@ -98,10 +102,11 @@ export function ListWebhookDeliveries200ResponseToJSONTyped(value?: ListWebhookD
 
     return {
         
-        'deliveries': ((value['deliveries'] as Array<any>).map(ListWebhookDeliveries200ResponseDeliveriesInnerToJSON)),
+        'data': ((value['data'] as Array<any>).map(WebhookDeliveryToJSON)),
         'nextCursor': value['nextCursor'],
+        'hasMore': value['hasMore'],
         'facets': ListWebhookDeliveries200ResponseFacetsToJSON(value['facets']),
-        'histogram': ((value['histogram'] as Array<any>).map(ListWebhookDeliveries200ResponseHistogramInnerToJSON)),
+        'histogram': value['histogram'] == null ? undefined : ((value['histogram'] as Array<any>).map(ListWebhookDeliveries200ResponseHistogramInnerToJSON)),
     };
 }
 

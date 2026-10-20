@@ -13,6 +13,21 @@
  */
 
 import { mapValues } from '../runtime.js';
+import type { Platform } from './Platform.js';
+import {
+    PlatformFromJSON,
+    PlatformFromJSONTyped,
+    PlatformToJSON,
+    PlatformToJSONTyped,
+} from './Platform.js';
+import type { ErrorCode } from './ErrorCode.js';
+import {
+    ErrorCodeFromJSON,
+    ErrorCodeFromJSONTyped,
+    ErrorCodeToJSON,
+    ErrorCodeToJSONTyped,
+} from './ErrorCode.js';
+
 /**
  * 
  * @export
@@ -24,9 +39,9 @@ export interface ModelError {
      */
     error: string;
     /**
-     * Stable machine-readable error code. Branch on this value.
+     * 
      */
-    code: string;
+    code: ErrorCode;
     /**
      * Request field at fault, when applicable.
      */
@@ -38,7 +53,11 @@ export interface ModelError {
     /**
      * Upstream platform that rejected the request, when applicable.
      */
-    platform?: string;
+    platform?: Platform;
+    /**
+     * Id of this request, also sent as the Request-Id header. Quote it when you contact support.
+     */
+    requestId?: string;
 }
 
 /**
@@ -61,10 +80,11 @@ export function ModelErrorFromJSONTyped(json: any, ignoreDiscriminator: boolean)
     return {
         
         'error': json['error'],
-        'code': json['code'],
+        'code': ErrorCodeFromJSON(json['code']),
         'param': json['param'] == null ? undefined : json['param'],
         'details': json['details'] == null ? undefined : json['details'],
-        'platform': json['platform'] == null ? undefined : json['platform'],
+        'platform': json['platform'] == null ? undefined : PlatformFromJSON(json['platform']),
+        'requestId': json['requestId'] == null ? undefined : json['requestId'],
     };
 }
 
@@ -80,10 +100,11 @@ export function ModelErrorToJSONTyped(value?: ModelError | null, ignoreDiscrimin
     return {
         
         'error': value['error'],
-        'code': value['code'],
+        'code': ErrorCodeToJSON(value['code']),
         'param': value['param'],
         'details': value['details'],
-        'platform': value['platform'],
+        'platform': PlatformToJSON(value['platform']),
+        'requestId': value['requestId'],
     };
 }
 

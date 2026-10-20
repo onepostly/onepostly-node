@@ -12,7 +12,15 @@
  * Do not edit the class manually.
  */
 
-import { mapValues } from '../runtime.js';
+import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime.js';
+import type { MediaAssetStatus } from './MediaAssetStatus.js';
+import {
+    MediaAssetStatusFromJSON,
+    MediaAssetStatusFromJSONTyped,
+    MediaAssetStatusToJSON,
+    MediaAssetStatusToJSONTyped,
+} from './MediaAssetStatus.js';
+
 /**
  * 
  * @export
@@ -20,21 +28,33 @@ import { mapValues } from '../runtime.js';
  */
 export interface MediaAsset {
     /**
-     * 
+     * Pass it in a post's media as { id }.
      */
     id: string;
     /**
-     * 
+     * Public URL of the file. It never changes, and serves the file once status is ready.
      */
     url: string;
     /**
-     * 
+     * MIME type of the file.
      */
     contentType: string;
     /**
+     * File size in bytes. Null until status is ready.
+     */
+    sizeBytes: number | null;
+    /**
+     * The filename sent to Create Media. Null for a file added without one.
+     */
+    filename: string | null;
+    /**
      * 
      */
-    sizeBytes?: number;
+    status: MediaAssetStatus;
+    /**
+     * 
+     */
+    createdAt: Date;
 }
 
 /**
@@ -44,6 +64,10 @@ export function instanceOfMediaAsset(value: object): value is MediaAsset {
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('url' in value) || value['url'] === undefined) return false;
     if (!('contentType' in value) || value['contentType'] === undefined) return false;
+    if (!('sizeBytes' in value) || value['sizeBytes'] === undefined) return false;
+    if (!('filename' in value) || value['filename'] === undefined) return false;
+    if (!('status' in value) || value['status'] === undefined) return false;
+    if (!('createdAt' in value) || value['createdAt'] === undefined) return false;
     return true;
 }
 
@@ -60,7 +84,10 @@ export function MediaAssetFromJSONTyped(json: any, ignoreDiscriminator: boolean)
         'id': json['id'],
         'url': json['url'],
         'contentType': json['contentType'],
-        'sizeBytes': json['sizeBytes'] == null ? undefined : json['sizeBytes'],
+        'sizeBytes': json['sizeBytes'],
+        'filename': json['filename'],
+        'status': MediaAssetStatusFromJSON(json['status']),
+        'createdAt': (json['createdAt'] == null ? json['createdAt'] : parseDateTime(json['createdAt'])),
     };
 }
 
@@ -79,6 +106,9 @@ export function MediaAssetToJSONTyped(value?: MediaAsset | null, ignoreDiscrimin
         'url': value['url'],
         'contentType': value['contentType'],
         'sizeBytes': value['sizeBytes'],
+        'filename': value['filename'],
+        'status': MediaAssetStatusToJSON(value['status']),
+        'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
     };
 }
 

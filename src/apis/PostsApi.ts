@@ -19,45 +19,52 @@ import {
     CreatePostBodyToJSON,
 } from '../models/CreatePostBody.js';
 import {
+    type CreatedPosts,
+    CreatedPostsFromJSON,
+    CreatedPostsToJSON,
+} from '../models/CreatedPosts.js';
+import {
     type ListPosts200Response,
     ListPosts200ResponseFromJSON,
     ListPosts200ResponseToJSON,
 } from '../models/ListPosts200Response.js';
 import {
-    type PostResponse,
-    PostResponseFromJSON,
-    PostResponseToJSON,
-} from '../models/PostResponse.js';
+    type Post,
+    PostFromJSON,
+    PostToJSON,
+} from '../models/Post.js';
 import {
-    type SyncExternal200Response,
-    SyncExternal200ResponseFromJSON,
-    SyncExternal200ResponseToJSON,
-} from '../models/SyncExternal200Response.js';
+    type SyncAccountPosts200Response,
+    SyncAccountPosts200ResponseFromJSON,
+    SyncAccountPosts200ResponseToJSON,
+} from '../models/SyncAccountPosts200Response.js';
 import {
-    type SyncExternalBody,
-    SyncExternalBodyFromJSON,
-    SyncExternalBodyToJSON,
-} from '../models/SyncExternalBody.js';
-
-export interface CancelPostRequest {
-    /**
-     * 
-     */
-    id: string;
-}
+    type SyncAccountPostsBody,
+    SyncAccountPostsBodyFromJSON,
+    SyncAccountPostsBodyToJSON,
+} from '../models/SyncAccountPostsBody.js';
+import {
+    type UpdatePostBody,
+    UpdatePostBodyFromJSON,
+    UpdatePostBodyToJSON,
+} from '../models/UpdatePostBody.js';
 
 export interface CreatePostRequest {
     /**
      * 
      */
     createPostBody: CreatePostBody;
+    /**
+     * A unique key, such as a UUID, that makes retrying this request safe. A repeat with the same key and body within 24 hours returns the first response instead of acting again. A 429 or 5xx response is not kept, so a retry with the same key runs again.
+     */
+    idempotencyKey?: string;
 }
 
-export interface DeletePostDestinationRequest {
+export interface DeletePostRequest {
     /**
-     * Destination id, from the destinations of a post.
+     * 
      */
-    destinationId: string;
+    id: string;
 }
 
 export interface GetPostRequest {
@@ -69,109 +76,85 @@ export interface GetPostRequest {
 
 export interface ListPostsRequest {
     /**
-     * Number of posts per page. Defaults to 20.
+     * Items per page. Defaults to 50. Maximum 100.
      */
     limit?: number;
     /**
-     * Page to return, starting at 1. Defaults to 1.
+     * The nextCursor of the previous page. Omit it for the first page.
      */
-    page?: number;
+    cursor?: string;
     /**
-     * Comma-separated post statuses to include, such as scheduled,published. Omit to include every status.
+     * Comma-separated statuses to include, such as scheduled,published. Any of scheduled, publishing, published, failed, cancelled, deleted.
      */
     status?: string;
     /**
-     * Only posts with at least one destination on this platform.
+     * Only posts on this platform.
      */
     platform?: string;
     /**
-     * Only posts with at least one destination on this account.
+     * Only posts of this account.
      */
     accountId?: string;
     /**
-     * Start of the date range, as an ISO 8601 time. A post's date is its scheduled time, or its creation time when it has none.
+     * Only posts of accounts filed under the profile with this name. Letter case does not matter. Use none for accounts without a profile.
      */
-    dateAfter?: Date;
+    profile?: string;
     /**
-     * End of the date range, as an ISO 8601 time.
+     * Only the posts one Create Post request made.
      */
-    dateBefore?: Date;
+    groupId?: string;
     /**
-     * Sort order. Defaults to created_desc. Metric sorts rank posts by lifetime totals across destinations and return only posts with metrics.
+     * onepostly for posts made through Onepostly, external for posts made on the platform.
+     */
+    source?: ListPostsSourceEnum;
+    /**
+     * Only posts dated at or after this time. A post's date is its schedule, else its publish time, else its creation time.
+     */
+    since?: Date;
+    /**
+     * Only posts dated before this time.
+     */
+    until?: Date;
+    /**
+     * Order of the list. Defaults to created_desc. metric:<name> ranks measured posts by a lifetime metric, highest first.
      */
     sort?: ListPostsSortEnum;
+    /**
+     * Comma-separated extras to add to the response: total, facets.
+     */
+    include?: string;
 }
 
-export interface SyncExternalRequest {
+export interface SyncAccountPostsRequest {
     /**
      * 
      */
-    syncExternalBody: SyncExternalBody;
+    id: string;
+    /**
+     * A unique key, such as a UUID, that makes retrying this request safe. A repeat with the same key and body within 24 hours returns the first response instead of acting again. A 429 or 5xx response is not kept, so a retry with the same key runs again.
+     */
+    idempotencyKey?: string;
+    /**
+     * 
+     */
+    syncAccountPostsBody?: SyncAccountPostsBody;
+}
+
+export interface UpdatePostRequest {
+    /**
+     * 
+     */
+    id: string;
+    /**
+     * 
+     */
+    updatePostBody: UpdatePostBody;
 }
 
 /**
  * 
  */
 export class PostsApi extends runtime.BaseAPI {
-
-    /**
-     * Creates request options for cancelPost without sending the request
-     */
-    async cancelPostRequestOpts(requestParameters: CancelPostRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['id'] == null) {
-            throw new runtime.RequiredError(
-                'id',
-                'Required parameter "id" was null or undefined when calling cancelPost().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
-
-        if (this.configuration && this.configuration.accessToken) {
-            const token = this.configuration.accessToken;
-            const tokenString = await token("Bearer", []);
-
-            if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
-            }
-        }
-
-        let urlPath = `/v1/posts/{id}`;
-        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
-
-        return {
-            path: urlPath,
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        };
-    }
-
-    /**
-     * Cancels a post that has not been published yet. Posts already published stay on the platform.
-     * Cancel post
-     */
-    async cancelPostRaw(requestParameters: CancelPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PostResponse>> {
-        const requestOptions = await this.cancelPostRequestOpts(requestParameters);
-        const response = await this.request(requestOptions, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => PostResponseFromJSON(jsonValue));
-    }
-
-    /**
-     * Cancels a post that has not been published yet. Posts already published stay on the platform.
-     * Cancel post
-     */
-    async cancelPost(requestParameters: CancelPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PostResponse> {
-        const response = await this.cancelPostRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
 
     /**
      * Creates request options for createPost without sending the request
@@ -190,8 +173,8 @@ export class PostsApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
+        if (requestParameters['idempotencyKey'] != null) {
+            headerParameters['Idempotency-Key'] = String(requestParameters['idempotencyKey']);
         }
 
         if (this.configuration && this.configuration.accessToken) {
@@ -215,43 +198,39 @@ export class PostsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Creates a post for one or more connected accounts. Returns 202 when it publishes now and 201 when it is scheduled.
+     * Publishes or schedules a post on one or more accounts. Each account gets its own post, and the posts of one request share a groupId. If any account cannot take the post, nothing is created.
      * Create post
      */
-    async createPostRaw(requestParameters: CreatePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PostResponse>> {
+    async createPostRaw(requestParameters: CreatePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreatedPosts>> {
         const requestOptions = await this.createPostRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => PostResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => CreatedPostsFromJSON(jsonValue));
     }
 
     /**
-     * Creates a post for one or more connected accounts. Returns 202 when it publishes now and 201 when it is scheduled.
+     * Publishes or schedules a post on one or more accounts. Each account gets its own post, and the posts of one request share a groupId. If any account cannot take the post, nothing is created.
      * Create post
      */
-    async createPost(requestParameters: CreatePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PostResponse> {
+    async createPost(requestParameters: CreatePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreatedPosts> {
         const response = await this.createPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * Creates request options for deletePostDestination without sending the request
+     * Creates request options for deletePost without sending the request
      */
-    async deletePostDestinationRequestOpts(requestParameters: DeletePostDestinationRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['destinationId'] == null) {
+    async deletePostRequestOpts(requestParameters: DeletePostRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
-                'destinationId',
-                'Required parameter "destinationId" was null or undefined when calling deletePostDestination().'
+                'id',
+                'Required parameter "id" was null or undefined when calling deletePost().'
             );
         }
 
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
@@ -262,8 +241,8 @@ export class PostsApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/destinations/{destinationId}`;
-        urlPath = urlPath.replace('{destinationId}', encodeURIComponent(String(requestParameters['destinationId'])));
+        let urlPath = `/v1/posts/{id}`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
 
         return {
             path: urlPath,
@@ -274,22 +253,22 @@ export class PostsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Deletes a published post from the platform and returns the updated post. If the destination published a thread, every post in the thread is deleted.
-     * Remote-delete destination
+     * Cancels a post that has not been published yet, or deletes a published post from the platform, all posts of its thread included. The post stays in Onepostly with status cancelled or deleted. Deleting an X post is charged to the wallet.
+     * Delete post
      */
-    async deletePostDestinationRaw(requestParameters: DeletePostDestinationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PostResponse>> {
-        const requestOptions = await this.deletePostDestinationRequestOpts(requestParameters);
+    async deletePostRaw(requestParameters: DeletePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Post>> {
+        const requestOptions = await this.deletePostRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => PostResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => PostFromJSON(jsonValue));
     }
 
     /**
-     * Deletes a published post from the platform and returns the updated post. If the destination published a thread, every post in the thread is deleted.
-     * Remote-delete destination
+     * Cancels a post that has not been published yet, or deletes a published post from the platform, all posts of its thread included. The post stays in Onepostly with status cancelled or deleted. Deleting an X post is charged to the wallet.
+     * Delete post
      */
-    async deletePostDestination(requestParameters: DeletePostDestinationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PostResponse> {
-        const response = await this.deletePostDestinationRaw(requestParameters, initOverrides);
+    async deletePost(requestParameters: DeletePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Post> {
+        const response = await this.deletePostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -307,10 +286,6 @@ export class PostsApi extends runtime.BaseAPI {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
@@ -335,17 +310,17 @@ export class PostsApi extends runtime.BaseAPI {
     /**
      * Get post
      */
-    async getPostRaw(requestParameters: GetPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PostResponse>> {
+    async getPostRaw(requestParameters: GetPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Post>> {
         const requestOptions = await this.getPostRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => PostResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => PostFromJSON(jsonValue));
     }
 
     /**
      * Get post
      */
-    async getPost(requestParameters: GetPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PostResponse> {
+    async getPost(requestParameters: GetPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Post> {
         const response = await this.getPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -360,8 +335,8 @@ export class PostsApi extends runtime.BaseAPI {
             queryParameters['limit'] = requestParameters['limit'];
         }
 
-        if (requestParameters['page'] != null) {
-            queryParameters['page'] = requestParameters['page'];
+        if (requestParameters['cursor'] != null) {
+            queryParameters['cursor'] = requestParameters['cursor'];
         }
 
         if (requestParameters['status'] != null) {
@@ -376,23 +351,35 @@ export class PostsApi extends runtime.BaseAPI {
             queryParameters['accountId'] = requestParameters['accountId'];
         }
 
-        if (requestParameters['dateAfter'] != null) {
-            queryParameters['dateAfter'] = runtime.serializeDateTime(requestParameters['dateAfter'] as any);
+        if (requestParameters['profile'] != null) {
+            queryParameters['profile'] = requestParameters['profile'];
         }
 
-        if (requestParameters['dateBefore'] != null) {
-            queryParameters['dateBefore'] = runtime.serializeDateTime(requestParameters['dateBefore'] as any);
+        if (requestParameters['groupId'] != null) {
+            queryParameters['groupId'] = requestParameters['groupId'];
+        }
+
+        if (requestParameters['source'] != null) {
+            queryParameters['source'] = requestParameters['source'];
+        }
+
+        if (requestParameters['since'] != null) {
+            queryParameters['since'] = runtime.serializeDateTime(requestParameters['since'] as any);
+        }
+
+        if (requestParameters['until'] != null) {
+            queryParameters['until'] = runtime.serializeDateTime(requestParameters['until'] as any);
         }
 
         if (requestParameters['sort'] != null) {
             queryParameters['sort'] = requestParameters['sort'];
         }
 
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
+        if (requestParameters['include'] != null) {
+            queryParameters['include'] = requestParameters['include'];
         }
+
+        const headerParameters: runtime.HTTPHeaders = {};
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
@@ -414,7 +401,7 @@ export class PostsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Lists the workspace\'s posts, newest first by default. Results are paginated.
+     * Lists the workspace\'s posts, newest first: posts made through Onepostly, and posts the accounts made on the platform that a sync found.
      * List posts
      */
     async listPostsRaw(requestParameters: ListPostsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListPosts200Response>> {
@@ -425,7 +412,7 @@ export class PostsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Lists the workspace\'s posts, newest first by default. Results are paginated.
+     * Lists the workspace\'s posts, newest first: posts made through Onepostly, and posts the accounts made on the platform that a sync found.
      * List posts
      */
     async listPosts(requestParameters: ListPostsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListPosts200Response> {
@@ -434,13 +421,13 @@ export class PostsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Creates request options for syncExternal without sending the request
+     * Creates request options for syncAccountPosts without sending the request
      */
-    async syncExternalRequestOpts(requestParameters: SyncExternalRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['syncExternalBody'] == null) {
+    async syncAccountPostsRequestOpts(requestParameters: SyncAccountPostsRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
-                'syncExternalBody',
-                'Required parameter "syncExternalBody" was null or undefined when calling syncExternal().'
+                'id',
+                'Required parameter "id" was null or undefined when calling syncAccountPosts().'
             );
         }
 
@@ -450,8 +437,8 @@ export class PostsApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
+        if (requestParameters['idempotencyKey'] != null) {
+            headerParameters['Idempotency-Key'] = String(requestParameters['idempotencyKey']);
         }
 
         if (this.configuration && this.configuration.accessToken) {
@@ -463,34 +450,100 @@ export class PostsApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/posts/sync-external`;
+        let urlPath = `/v1/accounts/{id}/sync`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
 
         return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: SyncExternalBodyToJSON(requestParameters['syncExternalBody']),
+            body: SyncAccountPostsBodyToJSON(requestParameters['syncAccountPostsBody']),
         };
     }
 
     /**
-     * Fetches posts that an account published directly on the platform, outside Onepostly. Pass url or postId to find one post, or omit both to refresh the account\'s recent posts.
-     * Sync external posts
+     * Finds posts the account published on the platform, outside Onepostly, and adds them to your posts with source external. Send url or platformPostId to find one post, or neither to sync the account\'s 20 most recent posts.
+     * Sync account posts
      */
-    async syncExternalRaw(requestParameters: SyncExternalRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SyncExternal200Response>> {
-        const requestOptions = await this.syncExternalRequestOpts(requestParameters);
+    async syncAccountPostsRaw(requestParameters: SyncAccountPostsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SyncAccountPosts200Response>> {
+        const requestOptions = await this.syncAccountPostsRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => SyncExternal200ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => SyncAccountPosts200ResponseFromJSON(jsonValue));
     }
 
     /**
-     * Fetches posts that an account published directly on the platform, outside Onepostly. Pass url or postId to find one post, or omit both to refresh the account\'s recent posts.
-     * Sync external posts
+     * Finds posts the account published on the platform, outside Onepostly, and adds them to your posts with source external. Send url or platformPostId to find one post, or neither to sync the account\'s 20 most recent posts.
+     * Sync account posts
      */
-    async syncExternal(requestParameters: SyncExternalRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SyncExternal200Response> {
-        const response = await this.syncExternalRaw(requestParameters, initOverrides);
+    async syncAccountPosts(requestParameters: SyncAccountPostsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SyncAccountPosts200Response> {
+        const response = await this.syncAccountPostsRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for updatePost without sending the request
+     */
+    async updatePostRequestOpts(requestParameters: UpdatePostRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling updatePost().'
+            );
+        }
+
+        if (requestParameters['updatePostBody'] == null) {
+            throw new runtime.RequiredError(
+                'updatePostBody',
+                'Required parameter "updatePostBody" was null or undefined when calling updatePost().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("Bearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/posts/{id}`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+
+        return {
+            path: urlPath,
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: UpdatePostBodyToJSON(requestParameters['updatePostBody']),
+        };
+    }
+
+    /**
+     * Edits a scheduled post. Only the fields you send change, and the result is checked like a new post. Editing a post that shares its group with posts on other accounts gives it a groupId of its own.
+     * Update post
+     */
+    async updatePostRaw(requestParameters: UpdatePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Post>> {
+        const requestOptions = await this.updatePostRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => PostFromJSON(jsonValue));
+    }
+
+    /**
+     * Edits a scheduled post. Only the fields you send change, and the result is checked like a new post. Editing a post that shares its group with posts on other accounts gives it a groupId of its own.
+     * Update post
+     */
+    async updatePost(requestParameters: UpdatePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Post> {
+        const response = await this.updatePostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -499,13 +552,21 @@ export class PostsApi extends runtime.BaseAPI {
 /**
  * @export
  */
+export const ListPostsSourceEnum = {
+    Onepostly: 'onepostly',
+    External: 'external',
+} as const;
+export type ListPostsSourceEnum = typeof ListPostsSourceEnum[keyof typeof ListPostsSourceEnum];
+/**
+ * @export
+ */
 export const ListPostsSortEnum = {
     CreatedDesc: 'created_desc',
     CreatedAsc: 'created_asc',
+    PublishedDesc: 'published_desc',
+    PublishedAsc: 'published_asc',
     ScheduledDesc: 'scheduled_desc',
     ScheduledAsc: 'scheduled_asc',
-    Status: 'status',
-    Platform: 'platform',
     MetricEngagement: 'metric:engagement',
     MetricLikes: 'metric:likes',
     MetricComments: 'metric:comments',

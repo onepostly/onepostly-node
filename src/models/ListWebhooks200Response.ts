@@ -30,14 +30,24 @@ export interface ListWebhooks200Response {
     /**
      * 
      */
-    webhooks: Array<Webhook>;
+    data: Array<Webhook>;
+    /**
+     * Cursor for the next page, or null on the last page.
+     */
+    nextCursor: string | null;
+    /**
+     * True when another page follows this one.
+     */
+    hasMore: boolean;
 }
 
 /**
  * Check if a given object implements the ListWebhooks200Response interface.
  */
 export function instanceOfListWebhooks200Response(value: object): value is ListWebhooks200Response {
-    if (!('webhooks' in value) || value['webhooks'] === undefined) return false;
+    if (!('data' in value) || value['data'] === undefined) return false;
+    if (!('nextCursor' in value) || value['nextCursor'] === undefined) return false;
+    if (!('hasMore' in value) || value['hasMore'] === undefined) return false;
     return true;
 }
 
@@ -51,7 +61,9 @@ export function ListWebhooks200ResponseFromJSONTyped(json: any, ignoreDiscrimina
     }
     return {
         
-        'webhooks': ((json['webhooks'] as Array<any>).map(WebhookFromJSON)),
+        'data': ((json['data'] as Array<any>).map(WebhookFromJSON)),
+        'nextCursor': json['nextCursor'],
+        'hasMore': json['hasMore'],
     };
 }
 
@@ -66,7 +78,9 @@ export function ListWebhooks200ResponseToJSONTyped(value?: ListWebhooks200Respon
 
     return {
         
-        'webhooks': ((value['webhooks'] as Array<any>).map(WebhookToJSON)),
+        'data': ((value['data'] as Array<any>).map(WebhookToJSON)),
+        'nextCursor': value['nextCursor'],
+        'hasMore': value['hasMore'],
     };
 }
 

@@ -13,16 +13,16 @@
  */
 
 import { mapValues } from '../runtime.js';
-import type { ListPosts200ResponseFacetsStatusInner } from './ListPosts200ResponseFacetsStatusInner.js';
+import type { ListWebhookDeliveries200ResponseFacetsStatusInner } from './ListWebhookDeliveries200ResponseFacetsStatusInner.js';
 import {
-    ListPosts200ResponseFacetsStatusInnerFromJSON,
-    ListPosts200ResponseFacetsStatusInnerFromJSONTyped,
-    ListPosts200ResponseFacetsStatusInnerToJSON,
-    ListPosts200ResponseFacetsStatusInnerToJSONTyped,
-} from './ListPosts200ResponseFacetsStatusInner.js';
+    ListWebhookDeliveries200ResponseFacetsStatusInnerFromJSON,
+    ListWebhookDeliveries200ResponseFacetsStatusInnerFromJSONTyped,
+    ListWebhookDeliveries200ResponseFacetsStatusInnerToJSON,
+    ListWebhookDeliveries200ResponseFacetsStatusInnerToJSONTyped,
+} from './ListWebhookDeliveries200ResponseFacetsStatusInner.js';
 
 /**
- * 
+ * Counts per status. Present when include has facets.
  * @export
  * @interface ListWebhookDeliveries200ResponseFacets
  */
@@ -30,7 +30,7 @@ export interface ListWebhookDeliveries200ResponseFacets {
     /**
      * 
      */
-    status: Array<ListPosts200ResponseFacetsStatusInner>;
+    status: Array<ListWebhookDeliveries200ResponseFacetsStatusInner>;
 }
 
 /**
@@ -51,7 +51,7 @@ export function ListWebhookDeliveries200ResponseFacetsFromJSONTyped(json: any, i
     }
     return {
         
-        'status': ((json['status'] as Array<any>).map(ListPosts200ResponseFacetsStatusInnerFromJSON)),
+        'status': ((json['status'] as Array<any>).map(ListWebhookDeliveries200ResponseFacetsStatusInnerFromJSON)),
     };
 }
 
@@ -66,7 +66,7 @@ export function ListWebhookDeliveries200ResponseFacetsToJSONTyped(value?: ListWe
 
     return {
         
-        'status': ((value['status'] as Array<any>).map(ListPosts200ResponseFacetsStatusInnerToJSON)),
+        'status': ((value['status'] as Array<any>).map(ListWebhookDeliveries200ResponseFacetsStatusInnerToJSON)),
     };
 }
 

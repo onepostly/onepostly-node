@@ -35,11 +35,11 @@ import {
  */
 export interface SetMessengerProfileBody {
     /**
-     * 
+     * Up to 4 questions shown when a conversation starts.
      */
     iceBreakers?: Array<SetMessengerProfileBodyIceBreakersInner>;
     /**
-     * 
+     * Up to 3 menu items. web_url items need url, postback items need payload.
      */
     persistentMenu?: Array<SetMessengerProfileBodyPersistentMenuInner>;
 }

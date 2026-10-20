@@ -13,13 +13,13 @@
  */
 
 import { mapValues } from '../runtime.js';
-import type { ConnectionProfile } from './ConnectionProfile.js';
+import type { Profile } from './Profile.js';
 import {
-    ConnectionProfileFromJSON,
-    ConnectionProfileFromJSONTyped,
-    ConnectionProfileToJSON,
-    ConnectionProfileToJSONTyped,
-} from './ConnectionProfile.js';
+    ProfileFromJSON,
+    ProfileFromJSONTyped,
+    ProfileToJSON,
+    ProfileToJSONTyped,
+} from './Profile.js';
 
 /**
  * 
@@ -30,14 +30,24 @@ export interface ListProfiles200Response {
     /**
      * 
      */
-    profiles: Array<ConnectionProfile>;
+    data: Array<Profile>;
+    /**
+     * Cursor for the next page, or null on the last page.
+     */
+    nextCursor: string | null;
+    /**
+     * True when another page follows this one.
+     */
+    hasMore: boolean;
 }
 
 /**
  * Check if a given object implements the ListProfiles200Response interface.
  */
 export function instanceOfListProfiles200Response(value: object): value is ListProfiles200Response {
-    if (!('profiles' in value) || value['profiles'] === undefined) return false;
+    if (!('data' in value) || value['data'] === undefined) return false;
+    if (!('nextCursor' in value) || value['nextCursor'] === undefined) return false;
+    if (!('hasMore' in value) || value['hasMore'] === undefined) return false;
     return true;
 }
 
@@ -51,7 +61,9 @@ export function ListProfiles200ResponseFromJSONTyped(json: any, ignoreDiscrimina
     }
     return {
         
-        'profiles': ((json['profiles'] as Array<any>).map(ConnectionProfileFromJSON)),
+        'data': ((json['data'] as Array<any>).map(ProfileFromJSON)),
+        'nextCursor': json['nextCursor'],
+        'hasMore': json['hasMore'],
     };
 }
 
@@ -66,7 +78,9 @@ export function ListProfiles200ResponseToJSONTyped(value?: ListProfiles200Respon
 
     return {
         
-        'profiles': ((value['profiles'] as Array<any>).map(ConnectionProfileToJSON)),
+        'data': ((value['data'] as Array<any>).map(ProfileToJSON)),
+        'nextCursor': value['nextCursor'],
+        'hasMore': value['hasMore'],
     };
 }
 

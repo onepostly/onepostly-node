@@ -12,32 +12,20 @@
  * Do not edit the class manually.
  */
 
+import { mapValues } from '../runtime.js';
+/**
+ * What the media is. New values can be added, so handle a value you do not know.
+ * @export
+ * @interface MediaKind
+ */
+export interface MediaKind {
+}
 
 /**
- * 
- * @export
+ * Check if a given object implements the MediaKind interface.
  */
-export const MediaKind = {
-    Text: 'text',
-    Image: 'image',
-    MultiImage: 'multi-image',
-    Video: 'video',
-    Reel: 'reel',
-    Document: 'document',
-    Stories: 'stories',
-} as const;
-export type MediaKind = typeof MediaKind[keyof typeof MediaKind];
-
-
-export function instanceOfMediaKind(value: any): boolean {
-    for (const key in MediaKind) {
-        if (Object.prototype.hasOwnProperty.call(MediaKind, key)) {
-            if (MediaKind[key as keyof typeof MediaKind] === value) {
-                return true;
-            }
-        }
-    }
-    return false;
+export function instanceOfMediaKind(value: object): value is MediaKind {
+    return true;
 }
 
 export function MediaKindFromJSON(json: any): MediaKind {
@@ -45,14 +33,14 @@ export function MediaKindFromJSON(json: any): MediaKind {
 }
 
 export function MediaKindFromJSONTyped(json: any, ignoreDiscriminator: boolean): MediaKind {
-    return json as MediaKind;
+    return json;
 }
 
-export function MediaKindToJSON(value?: MediaKind | null): any {
-    return value as any;
+export function MediaKindToJSON(json: any): MediaKind {
+    return MediaKindToJSONTyped(json, false);
 }
 
-export function MediaKindToJSONTyped(value: any, ignoreDiscriminator: boolean): MediaKind {
-    return value as MediaKind;
+export function MediaKindToJSONTyped(value?: MediaKind | null, ignoreDiscriminator: boolean = false): any {
+    return value;
 }
 

@@ -24,22 +24,62 @@ export interface CreateWebhookBody {
      */
     name: string;
     /**
-     * 
+     * HTTPS URL that receives the events.
      */
     url: string;
     /**
-     * 
+     * Signing secret to use. One is generated when you leave it out.
      */
     secret?: string;
     /**
-     * 
+     * Event types to receive, from List Event Types. ["*"] receives every event type, including ones added later. "*" must be the only item, or the request returns VALIDATION_ERROR.
      */
-    events: Array<string>;
+    events: Array<CreateWebhookBodyEventsEnum>;
     /**
-     * 
+     * false creates the webhook paused.
      */
     enabled?: boolean;
 }
+
+
+/**
+ * @export
+ */
+export const CreateWebhookBodyEventsEnum = {
+    Star: '*',
+    PostScheduled: 'post.scheduled',
+    PostPublished: 'post.published',
+    PostFailed: 'post.failed',
+    PostCancelled: 'post.cancelled',
+    PostDeleted: 'post.deleted',
+    PostUpdated: 'post.updated',
+    PostCreated: 'post.created',
+    CommentCreated: 'comment.created',
+    CommentDeleted: 'comment.deleted',
+    CommentReceived: 'comment.received',
+    MessageReceived: 'message.received',
+    MessageSent: 'message.sent',
+    MessageDelivered: 'message.delivered',
+    MessageRead: 'message.read',
+    MessageDeleted: 'message.deleted',
+    MessageReaction: 'message.reaction',
+    MessagePostback: 'message.postback',
+    ReviewReceived: 'review.received',
+    EngagementLiked: 'engagement.liked',
+    EngagementUnliked: 'engagement.unliked',
+    EngagementBookmarked: 'engagement.bookmarked',
+    EngagementUnbookmarked: 'engagement.unbookmarked',
+    EngagementReposted: 'engagement.reposted',
+    EngagementUnreposted: 'engagement.unreposted',
+    AccountConnected: 'account.connected',
+    AccountDisconnected: 'account.disconnected',
+    AccountExpiring: 'account.expiring',
+    AccountExpired: 'account.expired',
+    AccountRevoked: 'account.revoked',
+    WebhookTest: 'webhook.test',
+} as const;
+export type CreateWebhookBodyEventsEnum = typeof CreateWebhookBodyEventsEnum[keyof typeof CreateWebhookBodyEventsEnum];
+
 
 /**
  * Check if a given object implements the CreateWebhookBody interface.

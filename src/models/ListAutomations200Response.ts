@@ -13,13 +13,13 @@
  */
 
 import { mapValues } from '../runtime.js';
-import type { ListAutomations200ResponseRulesInner } from './ListAutomations200ResponseRulesInner.js';
+import type { Automation } from './Automation.js';
 import {
-    ListAutomations200ResponseRulesInnerFromJSON,
-    ListAutomations200ResponseRulesInnerFromJSONTyped,
-    ListAutomations200ResponseRulesInnerToJSON,
-    ListAutomations200ResponseRulesInnerToJSONTyped,
-} from './ListAutomations200ResponseRulesInner.js';
+    AutomationFromJSON,
+    AutomationFromJSONTyped,
+    AutomationToJSON,
+    AutomationToJSONTyped,
+} from './Automation.js';
 
 /**
  * 
@@ -30,14 +30,24 @@ export interface ListAutomations200Response {
     /**
      * 
      */
-    rules: Array<ListAutomations200ResponseRulesInner>;
+    data: Array<Automation>;
+    /**
+     * Cursor for the next page, or null on the last page.
+     */
+    nextCursor: string | null;
+    /**
+     * True when another page follows this one.
+     */
+    hasMore: boolean;
 }
 
 /**
  * Check if a given object implements the ListAutomations200Response interface.
  */
 export function instanceOfListAutomations200Response(value: object): value is ListAutomations200Response {
-    if (!('rules' in value) || value['rules'] === undefined) return false;
+    if (!('data' in value) || value['data'] === undefined) return false;
+    if (!('nextCursor' in value) || value['nextCursor'] === undefined) return false;
+    if (!('hasMore' in value) || value['hasMore'] === undefined) return false;
     return true;
 }
 
@@ -51,7 +61,9 @@ export function ListAutomations200ResponseFromJSONTyped(json: any, ignoreDiscrim
     }
     return {
         
-        'rules': ((json['rules'] as Array<any>).map(ListAutomations200ResponseRulesInnerFromJSON)),
+        'data': ((json['data'] as Array<any>).map(AutomationFromJSON)),
+        'nextCursor': json['nextCursor'],
+        'hasMore': json['hasMore'],
     };
 }
 
@@ -66,7 +78,9 @@ export function ListAutomations200ResponseToJSONTyped(value?: ListAutomations200
 
     return {
         
-        'rules': ((value['rules'] as Array<any>).map(ListAutomations200ResponseRulesInnerToJSON)),
+        'data': ((value['data'] as Array<any>).map(AutomationToJSON)),
+        'nextCursor': value['nextCursor'],
+        'hasMore': value['hasMore'],
     };
 }
 

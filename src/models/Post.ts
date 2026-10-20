@@ -13,13 +13,27 @@
  */
 
 import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime.js';
-import type { PostDestination } from './PostDestination.js';
+import type { MediaFile } from './MediaFile.js';
 import {
-    PostDestinationFromJSON,
-    PostDestinationFromJSONTyped,
-    PostDestinationToJSON,
-    PostDestinationToJSONTyped,
-} from './PostDestination.js';
+    MediaFileFromJSON,
+    MediaFileFromJSONTyped,
+    MediaFileToJSON,
+    MediaFileToJSONTyped,
+} from './MediaFile.js';
+import type { Platform } from './Platform.js';
+import {
+    PlatformFromJSON,
+    PlatformFromJSONTyped,
+    PlatformToJSON,
+    PlatformToJSONTyped,
+} from './Platform.js';
+import type { PostMetrics } from './PostMetrics.js';
+import {
+    PostMetricsFromJSON,
+    PostMetricsFromJSONTyped,
+    PostMetricsToJSON,
+    PostMetricsToJSONTyped,
+} from './PostMetrics.js';
 import type { MediaKind } from './MediaKind.js';
 import {
     MediaKindFromJSON,
@@ -27,6 +41,27 @@ import {
     MediaKindToJSON,
     MediaKindToJSONTyped,
 } from './MediaKind.js';
+import type { PostOptions } from './PostOptions.js';
+import {
+    PostOptionsFromJSON,
+    PostOptionsFromJSONTyped,
+    PostOptionsToJSON,
+    PostOptionsToJSONTyped,
+} from './PostOptions.js';
+import type { PostThreadInner } from './PostThreadInner.js';
+import {
+    PostThreadInnerFromJSON,
+    PostThreadInnerFromJSONTyped,
+    PostThreadInnerToJSON,
+    PostThreadInnerToJSONTyped,
+} from './PostThreadInner.js';
+import type { PostError } from './PostError.js';
+import {
+    PostErrorFromJSON,
+    PostErrorFromJSONTyped,
+    PostErrorToJSON,
+    PostErrorToJSONTyped,
+} from './PostError.js';
 import type { PostStatus } from './PostStatus.js';
 import {
     PostStatusFromJSON,
@@ -46,33 +81,73 @@ export interface Post {
      */
     id: string;
     /**
-     * 
+     * Shared by the posts one Create Post request made. Null for posts published outside Onepostly.
      */
-    text: string;
+    groupId: string | null;
     /**
      * 
      */
-    mediaUrls: Array<string>;
+    accountId: string;
     /**
      * 
      */
-    mediaKind: MediaKind;
+    platform: Platform;
+    /**
+     * external for a post the account published outside Onepostly.
+     */
+    source: PostSourceEnum;
     /**
      * 
      */
     status: PostStatus;
     /**
-     * Local date and time of the schedule in the post's timezone, such as 2027-03-15T09:00:00. Null when the post is not scheduled.
+     * The post's text. Null for posts published outside Onepostly.
+     */
+    text: string | null;
+    /**
+     * What the post is. An Instagram video post reads reel, because Instagram publishes it as a reel.
+     */
+    mediaKind: MediaKind;
+    /**
+     * The post's media files, in order.
+     */
+    media: Array<MediaFile>;
+    /**
+     * Replies published under the first post, in order.
+     */
+    thread: Array<PostThreadInner>;
+    /**
+     * Local date and time of the schedule in timezone. Null when not scheduled.
      */
     scheduledFor: string | null;
     /**
-     * IANA timezone of scheduledFor.
+     * IANA timezone of scheduledFor. Null when not scheduled.
      */
     timezone: string | null;
     /**
      * 
      */
-    destinations: Array<PostDestination>;
+    options: PostOptions;
+    /**
+     * The platform's own id for the post. Null until it is published.
+     */
+    platformPostId: string | null;
+    /**
+     * Public link to the post on the platform.
+     */
+    url: string | null;
+    /**
+     * 
+     */
+    error: PostError | null;
+    /**
+     * When the post went live on the platform. Null until then.
+     */
+    publishedAt: Date | null;
+    /**
+     * Lifetime metrics, or null before the first reading.
+     */
+    metrics: PostMetrics | null;
     /**
      * 
      */
@@ -84,19 +159,38 @@ export interface Post {
 }
 
 
+/**
+ * @export
+ */
+export const PostSourceEnum = {
+    Onepostly: 'onepostly',
+    External: 'external',
+} as const;
+export type PostSourceEnum = typeof PostSourceEnum[keyof typeof PostSourceEnum];
+
 
 /**
  * Check if a given object implements the Post interface.
  */
 export function instanceOfPost(value: object): value is Post {
     if (!('id' in value) || value['id'] === undefined) return false;
-    if (!('text' in value) || value['text'] === undefined) return false;
-    if (!('mediaUrls' in value) || value['mediaUrls'] === undefined) return false;
-    if (!('mediaKind' in value) || value['mediaKind'] === undefined) return false;
+    if (!('groupId' in value) || value['groupId'] === undefined) return false;
+    if (!('accountId' in value) || value['accountId'] === undefined) return false;
+    if (!('platform' in value) || value['platform'] === undefined) return false;
+    if (!('source' in value) || value['source'] === undefined) return false;
     if (!('status' in value) || value['status'] === undefined) return false;
+    if (!('text' in value) || value['text'] === undefined) return false;
+    if (!('mediaKind' in value) || value['mediaKind'] === undefined) return false;
+    if (!('media' in value) || value['media'] === undefined) return false;
+    if (!('thread' in value) || value['thread'] === undefined) return false;
     if (!('scheduledFor' in value) || value['scheduledFor'] === undefined) return false;
     if (!('timezone' in value) || value['timezone'] === undefined) return false;
-    if (!('destinations' in value) || value['destinations'] === undefined) return false;
+    if (!('options' in value) || value['options'] === undefined) return false;
+    if (!('platformPostId' in value) || value['platformPostId'] === undefined) return false;
+    if (!('url' in value) || value['url'] === undefined) return false;
+    if (!('error' in value) || value['error'] === undefined) return false;
+    if (!('publishedAt' in value) || value['publishedAt'] === undefined) return false;
+    if (!('metrics' in value) || value['metrics'] === undefined) return false;
     if (!('createdAt' in value) || value['createdAt'] === undefined) return false;
     if (!('updatedAt' in value) || value['updatedAt'] === undefined) return false;
     return true;
@@ -113,13 +207,23 @@ export function PostFromJSONTyped(json: any, ignoreDiscriminator: boolean): Post
     return {
         
         'id': json['id'],
-        'text': json['text'],
-        'mediaUrls': json['mediaUrls'],
-        'mediaKind': MediaKindFromJSON(json['mediaKind']),
+        'groupId': json['groupId'],
+        'accountId': json['accountId'],
+        'platform': PlatformFromJSON(json['platform']),
+        'source': json['source'],
         'status': PostStatusFromJSON(json['status']),
+        'text': json['text'],
+        'mediaKind': MediaKindFromJSON(json['mediaKind']),
+        'media': ((json['media'] as Array<any>).map(MediaFileFromJSON)),
+        'thread': ((json['thread'] as Array<any>).map(PostThreadInnerFromJSON)),
         'scheduledFor': json['scheduledFor'],
         'timezone': json['timezone'],
-        'destinations': ((json['destinations'] as Array<any>).map(PostDestinationFromJSON)),
+        'options': PostOptionsFromJSON(json['options']),
+        'platformPostId': json['platformPostId'],
+        'url': json['url'],
+        'error': PostErrorFromJSON(json['error']),
+        'publishedAt': (json['publishedAt'] == null ? null : parseDateTime(json['publishedAt'])),
+        'metrics': PostMetricsFromJSON(json['metrics']),
         'createdAt': (json['createdAt'] == null ? json['createdAt'] : parseDateTime(json['createdAt'])),
         'updatedAt': (json['updatedAt'] == null ? json['updatedAt'] : parseDateTime(json['updatedAt'])),
     };
@@ -137,13 +241,23 @@ export function PostToJSONTyped(value?: Post | null, ignoreDiscriminator: boolea
     return {
         
         'id': value['id'],
-        'text': value['text'],
-        'mediaUrls': value['mediaUrls'],
-        'mediaKind': MediaKindToJSON(value['mediaKind']),
+        'groupId': value['groupId'],
+        'accountId': value['accountId'],
+        'platform': PlatformToJSON(value['platform']),
+        'source': value['source'],
         'status': PostStatusToJSON(value['status']),
+        'text': value['text'],
+        'mediaKind': MediaKindToJSON(value['mediaKind']),
+        'media': ((value['media'] as Array<any>).map(MediaFileToJSON)),
+        'thread': ((value['thread'] as Array<any>).map(PostThreadInnerToJSON)),
         'scheduledFor': value['scheduledFor'],
         'timezone': value['timezone'],
-        'destinations': ((value['destinations'] as Array<any>).map(PostDestinationToJSON)),
+        'options': PostOptionsToJSON(value['options']),
+        'platformPostId': value['platformPostId'],
+        'url': value['url'],
+        'error': PostErrorToJSON(value['error']),
+        'publishedAt': value['publishedAt'] == null ? value['publishedAt'] : serializeDateTime(value['publishedAt']),
+        'metrics': PostMetricsToJSON(value['metrics']),
         'createdAt': value['createdAt'] == null ? value['createdAt'] : serializeDateTime(value['createdAt']),
         'updatedAt': value['updatedAt'] == null ? value['updatedAt'] : serializeDateTime(value['updatedAt']),
     };

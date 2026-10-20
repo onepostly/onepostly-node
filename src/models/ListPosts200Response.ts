@@ -20,13 +20,13 @@ import {
     PostToJSON,
     PostToJSONTyped,
 } from './Post.js';
-import type { ListPosts200ResponseFacets } from './ListPosts200ResponseFacets.js';
+import type { PostFacets } from './PostFacets.js';
 import {
-    ListPosts200ResponseFacetsFromJSON,
-    ListPosts200ResponseFacetsFromJSONTyped,
-    ListPosts200ResponseFacetsToJSON,
-    ListPosts200ResponseFacetsToJSONTyped,
-} from './ListPosts200ResponseFacets.js';
+    PostFacetsFromJSON,
+    PostFacetsFromJSONTyped,
+    PostFacetsToJSON,
+    PostFacetsToJSONTyped,
+} from './PostFacets.js';
 
 /**
  * 
@@ -37,34 +37,32 @@ export interface ListPosts200Response {
     /**
      * 
      */
-    posts: Array<Post>;
+    data: Array<Post>;
     /**
-     * Total posts that match the filters, across all pages.
+     * Cursor for the next page, or null on the last page.
      */
-    total: number;
+    nextCursor: string | null;
     /**
-     * Page number of this response, starting at 1.
-     */
-    page: number;
-    /**
-     * True when more posts follow this page. Request the next page to get them.
+     * True when another page follows this one.
      */
     hasMore: boolean;
     /**
+     * Posts matching the filters. Present when include has total.
+     */
+    total?: number;
+    /**
      * 
      */
-    facets: ListPosts200ResponseFacets;
+    facets?: PostFacets;
 }
 
 /**
  * Check if a given object implements the ListPosts200Response interface.
  */
 export function instanceOfListPosts200Response(value: object): value is ListPosts200Response {
-    if (!('posts' in value) || value['posts'] === undefined) return false;
-    if (!('total' in value) || value['total'] === undefined) return false;
-    if (!('page' in value) || value['page'] === undefined) return false;
+    if (!('data' in value) || value['data'] === undefined) return false;
+    if (!('nextCursor' in value) || value['nextCursor'] === undefined) return false;
     if (!('hasMore' in value) || value['hasMore'] === undefined) return false;
-    if (!('facets' in value) || value['facets'] === undefined) return false;
     return true;
 }
 
@@ -78,11 +76,11 @@ export function ListPosts200ResponseFromJSONTyped(json: any, ignoreDiscriminator
     }
     return {
         
-        'posts': ((json['posts'] as Array<any>).map(PostFromJSON)),
-        'total': json['total'],
-        'page': json['page'],
+        'data': ((json['data'] as Array<any>).map(PostFromJSON)),
+        'nextCursor': json['nextCursor'],
         'hasMore': json['hasMore'],
-        'facets': ListPosts200ResponseFacetsFromJSON(json['facets']),
+        'total': json['total'] == null ? undefined : json['total'],
+        'facets': json['facets'] == null ? undefined : PostFacetsFromJSON(json['facets']),
     };
 }
 
@@ -97,11 +95,11 @@ export function ListPosts200ResponseToJSONTyped(value?: ListPosts200Response | n
 
     return {
         
-        'posts': ((value['posts'] as Array<any>).map(PostToJSON)),
-        'total': value['total'],
-        'page': value['page'],
+        'data': ((value['data'] as Array<any>).map(PostToJSON)),
+        'nextCursor': value['nextCursor'],
         'hasMore': value['hasMore'],
-        'facets': ListPosts200ResponseFacetsToJSON(value['facets']),
+        'total': value['total'],
+        'facets': PostFacetsToJSON(value['facets']),
     };
 }
 

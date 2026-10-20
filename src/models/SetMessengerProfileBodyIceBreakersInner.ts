@@ -20,11 +20,11 @@ import { mapValues } from '../runtime.js';
  */
 export interface SetMessengerProfileBodyIceBreakersInner {
     /**
-     * 
+     * Question shown when a conversation starts, up to 80 characters.
      */
     question: string;
     /**
-     * 
+     * Value sent to the Page when the question is tapped, up to 1,000 characters.
      */
     payload: string;
 }

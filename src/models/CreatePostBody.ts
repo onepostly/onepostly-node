@@ -13,27 +13,27 @@
  */
 
 import { mapValues } from '../runtime.js';
-import type { ThreadItem } from './ThreadItem.js';
+import type { AccountTarget } from './AccountTarget.js';
 import {
-    ThreadItemFromJSON,
-    ThreadItemFromJSONTyped,
-    ThreadItemToJSON,
-    ThreadItemToJSONTyped,
-} from './ThreadItem.js';
-import type { CreatePostBodyDestinationsInner } from './CreatePostBodyDestinationsInner.js';
+    AccountTargetFromJSON,
+    AccountTargetFromJSONTyped,
+    AccountTargetToJSON,
+    AccountTargetToJSONTyped,
+} from './AccountTarget.js';
+import type { ThreadItemInput } from './ThreadItemInput.js';
 import {
-    CreatePostBodyDestinationsInnerFromJSON,
-    CreatePostBodyDestinationsInnerFromJSONTyped,
-    CreatePostBodyDestinationsInnerToJSON,
-    CreatePostBodyDestinationsInnerToJSONTyped,
-} from './CreatePostBodyDestinationsInner.js';
-import type { MediaKind } from './MediaKind.js';
+    ThreadItemInputFromJSON,
+    ThreadItemInputFromJSONTyped,
+    ThreadItemInputToJSON,
+    ThreadItemInputToJSONTyped,
+} from './ThreadItemInput.js';
+import type { MediaRef } from './MediaRef.js';
 import {
-    MediaKindFromJSON,
-    MediaKindFromJSONTyped,
-    MediaKindToJSON,
-    MediaKindToJSONTyped,
-} from './MediaKind.js';
+    MediaRefFromJSON,
+    MediaRefFromJSONTyped,
+    MediaRefToJSON,
+    MediaRefToJSONTyped,
+} from './MediaRef.js';
 
 /**
  * 
@@ -42,43 +42,56 @@ import {
  */
 export interface CreatePostBody {
     /**
-     * 
+     * The post text. Each account's platform limit applies, such as 500 characters on Threads. A longer text returns VALIDATION_ERROR.
      */
     text?: string;
     /**
-     * X, Threads and Bluesky only. Replies published under the post, in order.
+     * What the media is. Optional for text posts and for one image, video or document, where the file shows its kind. Required for stories and for a Facebook reel. On Instagram, video and reel both publish a reel.
      */
-    threadItems?: Array<ThreadItem>;
+    mediaKind?: CreatePostBodyMediaKindEnum;
     /**
-     * 
+     * Media files, in order. Each platform's own cap on the number of files applies.
      */
-    mediaUrls?: Array<string>;
+    media?: Array<MediaRef>;
     /**
-     * 
+     * X, Threads and Bluesky. Posts published as replies under the first one, in order.
      */
-    mediaKind: MediaKind;
+    thread?: Array<ThreadItemInput>;
     /**
-     * Local date and time to publish, such as 2027-03-15T09:00:00, without Z or an offset. Omit to publish now.
+     * Local date and time to publish, such as 2027-03-15T09:00:00, without Z or an offset. Omit it to publish now.
      */
     scheduledFor?: string;
     /**
-     * IANA timezone for scheduledFor, such as America/New_York. Defaults to UTC.
+     * IANA timezone of scheduledFor, such as America/New_York. Defaults to UTC.
      */
     timezone?: string;
     /**
-     * 
+     * Accounts to publish to, up to 50. Each account gets its own post.
      */
-    destinations: Array<CreatePostBodyDestinationsInner>;
+    accounts: Array<AccountTarget>;
 }
 
+
+/**
+ * @export
+ */
+export const CreatePostBodyMediaKindEnum = {
+    Text: 'text',
+    Image: 'image',
+    MultiImage: 'multi_image',
+    Video: 'video',
+    Reel: 'reel',
+    Document: 'document',
+    Stories: 'stories',
+} as const;
+export type CreatePostBodyMediaKindEnum = typeof CreatePostBodyMediaKindEnum[keyof typeof CreatePostBodyMediaKindEnum];
 
 
 /**
  * Check if a given object implements the CreatePostBody interface.
  */
 export function instanceOfCreatePostBody(value: object): value is CreatePostBody {
-    if (!('mediaKind' in value) || value['mediaKind'] === undefined) return false;
-    if (!('destinations' in value) || value['destinations'] === undefined) return false;
+    if (!('accounts' in value) || value['accounts'] === undefined) return false;
     return true;
 }
 
@@ -93,12 +106,12 @@ export function CreatePostBodyFromJSONTyped(json: any, ignoreDiscriminator: bool
     return {
         
         'text': json['text'] == null ? undefined : json['text'],
-        'threadItems': json['threadItems'] == null ? undefined : ((json['threadItems'] as Array<any>).map(ThreadItemFromJSON)),
-        'mediaUrls': json['mediaUrls'] == null ? undefined : json['mediaUrls'],
-        'mediaKind': MediaKindFromJSON(json['mediaKind']),
+        'mediaKind': json['mediaKind'] == null ? undefined : json['mediaKind'],
+        'media': json['media'] == null ? undefined : ((json['media'] as Array<any>).map(MediaRefFromJSON)),
+        'thread': json['thread'] == null ? undefined : ((json['thread'] as Array<any>).map(ThreadItemInputFromJSON)),
         'scheduledFor': json['scheduledFor'] == null ? undefined : json['scheduledFor'],
         'timezone': json['timezone'] == null ? undefined : json['timezone'],
-        'destinations': ((json['destinations'] as Array<any>).map(CreatePostBodyDestinationsInnerFromJSON)),
+        'accounts': ((json['accounts'] as Array<any>).map(AccountTargetFromJSON)),
     };
 }
 
@@ -114,12 +127,12 @@ export function CreatePostBodyToJSONTyped(value?: CreatePostBody | null, ignoreD
     return {
         
         'text': value['text'],
-        'threadItems': value['threadItems'] == null ? undefined : ((value['threadItems'] as Array<any>).map(ThreadItemToJSON)),
-        'mediaUrls': value['mediaUrls'],
-        'mediaKind': MediaKindToJSON(value['mediaKind']),
+        'mediaKind': value['mediaKind'],
+        'media': value['media'] == null ? undefined : ((value['media'] as Array<any>).map(MediaRefToJSON)),
+        'thread': value['thread'] == null ? undefined : ((value['thread'] as Array<any>).map(ThreadItemInputToJSON)),
         'scheduledFor': value['scheduledFor'],
         'timezone': value['timezone'],
-        'destinations': ((value['destinations'] as Array<any>).map(CreatePostBodyDestinationsInnerToJSON)),
+        'accounts': ((value['accounts'] as Array<any>).map(AccountTargetToJSON)),
     };
 }
 

@@ -30,28 +30,27 @@ export interface ListMedia200Response {
     /**
      * 
      */
-    media: Array<MediaAsset>;
+    data: Array<MediaAsset>;
     /**
-     * Total media assets across all pages.
+     * Cursor for the next page, or null on the last page.
      */
-    total: number;
+    nextCursor: string | null;
     /**
-     * Page number of this response, starting at 1.
-     */
-    page: number;
-    /**
-     * True when more assets follow this page. Request the next page to get them.
+     * True when another page follows this one.
      */
     hasMore: boolean;
+    /**
+     * Items matching the filters across every page. Present when include has total.
+     */
+    total?: number;
 }
 
 /**
  * Check if a given object implements the ListMedia200Response interface.
  */
 export function instanceOfListMedia200Response(value: object): value is ListMedia200Response {
-    if (!('media' in value) || value['media'] === undefined) return false;
-    if (!('total' in value) || value['total'] === undefined) return false;
-    if (!('page' in value) || value['page'] === undefined) return false;
+    if (!('data' in value) || value['data'] === undefined) return false;
+    if (!('nextCursor' in value) || value['nextCursor'] === undefined) return false;
     if (!('hasMore' in value) || value['hasMore'] === undefined) return false;
     return true;
 }
@@ -66,10 +65,10 @@ export function ListMedia200ResponseFromJSONTyped(json: any, ignoreDiscriminator
     }
     return {
         
-        'media': ((json['media'] as Array<any>).map(MediaAssetFromJSON)),
-        'total': json['total'],
-        'page': json['page'],
+        'data': ((json['data'] as Array<any>).map(MediaAssetFromJSON)),
+        'nextCursor': json['nextCursor'],
         'hasMore': json['hasMore'],
+        'total': json['total'] == null ? undefined : json['total'],
     };
 }
 
@@ -84,10 +83,10 @@ export function ListMedia200ResponseToJSONTyped(value?: ListMedia200Response | n
 
     return {
         
-        'media': ((value['media'] as Array<any>).map(MediaAssetToJSON)),
-        'total': value['total'],
-        'page': value['page'],
+        'data': ((value['data'] as Array<any>).map(MediaAssetToJSON)),
+        'nextCursor': value['nextCursor'],
         'hasMore': value['hasMore'],
+        'total': value['total'],
     };
 }
 

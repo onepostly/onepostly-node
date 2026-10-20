@@ -14,82 +14,113 @@
 
 import * as runtime from '../runtime.js';
 import {
-    type CreateInboxConversation201Response,
-    CreateInboxConversation201ResponseFromJSON,
-    CreateInboxConversation201ResponseToJSON,
-} from '../models/CreateInboxConversation201Response.js';
+    type Conversation,
+    ConversationFromJSON,
+    ConversationToJSON,
+} from '../models/Conversation.js';
 import {
-    type CreateInboxConversationBody,
-    CreateInboxConversationBodyFromJSON,
-    CreateInboxConversationBodyToJSON,
-} from '../models/CreateInboxConversationBody.js';
+    type CreateConversationBody,
+    CreateConversationBodyFromJSON,
+    CreateConversationBodyToJSON,
+} from '../models/CreateConversationBody.js';
 import {
-    type ListInboxConversations200Response,
-    ListInboxConversations200ResponseFromJSON,
-    ListInboxConversations200ResponseToJSON,
-} from '../models/ListInboxConversations200Response.js';
+    type ListConversations200Response,
+    ListConversations200ResponseFromJSON,
+    ListConversations200ResponseToJSON,
+} from '../models/ListConversations200Response.js';
 import {
-    type ListInboxMessages200Response,
-    ListInboxMessages200ResponseFromJSON,
-    ListInboxMessages200ResponseToJSON,
-} from '../models/ListInboxMessages200Response.js';
+    type ListMessages200Response,
+    ListMessages200ResponseFromJSON,
+    ListMessages200ResponseToJSON,
+} from '../models/ListMessages200Response.js';
 import {
-    type SendInboxMessage201Response,
-    SendInboxMessage201ResponseFromJSON,
-    SendInboxMessage201ResponseToJSON,
-} from '../models/SendInboxMessage201Response.js';
+    type Message,
+    MessageFromJSON,
+    MessageToJSON,
+} from '../models/Message.js';
 import {
-    type SendInboxMessageBody,
-    SendInboxMessageBodyFromJSON,
-    SendInboxMessageBodyToJSON,
-} from '../models/SendInboxMessageBody.js';
+    type SendMessageBody,
+    SendMessageBodyFromJSON,
+    SendMessageBodyToJSON,
+} from '../models/SendMessageBody.js';
 
-export interface CreateInboxConversationRequest {
+export interface CreateConversationRequest {
     /**
      * 
      */
-    createInboxConversationBody: CreateInboxConversationBody;
+    id: string;
+    /**
+     * 
+     */
+    createConversationBody: CreateConversationBody;
+    /**
+     * A unique key, such as a UUID, that makes retrying this request safe. A repeat with the same key and body within 24 hours returns the first response instead of acting again. A 429 or 5xx response is not kept, so a retry with the same key runs again.
+     */
+    idempotencyKey?: string;
 }
 
-export interface ListInboxConversationsRequest {
-    /**
-     * Connection id.
-     */
-    accountId: string;
+export interface GetConversationRequest {
     /**
      * 
+     */
+    id: string;
+    /**
+     * A conversation id from List Conversations, Create Conversation or an inbox webhook. It only works in the workspace that received it.
+     */
+    conversationId: string;
+}
+
+export interface ListConversationsRequest {
+    /**
+     * 
+     */
+    id: string;
+    /**
+     * Items per page. Defaults to 50. Maximum 100.
      */
     limit?: number;
     /**
-     * Cursor from the previous response. Omit it to get the first page.
+     * The nextCursor of the previous page. Omit it for the first page.
      */
     cursor?: string;
 }
 
-export interface ListInboxMessagesRequest {
+export interface ListMessagesRequest {
     /**
      * 
      */
-    convoId: string;
+    id: string;
     /**
-     * Connection id.
+     * A conversation id from List Conversations, Create Conversation or an inbox webhook. It only works in the workspace that received it.
      */
-    accountId: string;
+    conversationId: string;
     /**
-     * 
+     * Items per page. Defaults to 50. Maximum 100.
      */
     limit?: number;
     /**
-     * Cursor from the previous response. Omit it to get the first page.
+     * The nextCursor of the previous page. Omit it for the first page.
      */
     cursor?: string;
 }
 
-export interface SendInboxMessageRequest {
+export interface SendMessageRequest {
     /**
      * 
      */
-    sendInboxMessageBody: SendInboxMessageBody;
+    id: string;
+    /**
+     * A conversation id from List Conversations, Create Conversation or an inbox webhook. It only works in the workspace that received it.
+     */
+    conversationId: string;
+    /**
+     * 
+     */
+    sendMessageBody: SendMessageBody;
+    /**
+     * A unique key, such as a UUID, that makes retrying this request safe. A repeat with the same key and body within 24 hours returns the first response instead of acting again. A 429 or 5xx response is not kept, so a retry with the same key runs again.
+     */
+    idempotencyKey?: string;
 }
 
 /**
@@ -98,13 +129,20 @@ export interface SendInboxMessageRequest {
 export class InboxApi extends runtime.BaseAPI {
 
     /**
-     * Creates request options for createInboxConversation without sending the request
+     * Creates request options for createConversation without sending the request
      */
-    async createInboxConversationRequestOpts(requestParameters: CreateInboxConversationRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['createInboxConversationBody'] == null) {
+    async createConversationRequestOpts(requestParameters: CreateConversationRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
-                'createInboxConversationBody',
-                'Required parameter "createInboxConversationBody" was null or undefined when calling createInboxConversation().'
+                'id',
+                'Required parameter "id" was null or undefined when calling createConversation().'
+            );
+        }
+
+        if (requestParameters['createConversationBody'] == null) {
+            throw new runtime.RequiredError(
+                'createConversationBody',
+                'Required parameter "createConversationBody" was null or undefined when calling createConversation().'
             );
         }
 
@@ -114,8 +152,8 @@ export class InboxApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
+        if (requestParameters['idempotencyKey'] != null) {
+            headerParameters['Idempotency-Key'] = String(requestParameters['idempotencyKey']);
         }
 
         if (this.configuration && this.configuration.accessToken) {
@@ -127,53 +165,113 @@ export class InboxApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/inbox/conversations`;
+        let urlPath = `/v1/accounts/{id}/conversations`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
 
         return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: CreateInboxConversationBodyToJSON(requestParameters['createInboxConversationBody']),
+            body: CreateConversationBodyToJSON(requestParameters['createConversationBody']),
         };
     }
 
     /**
-     * Starts a one-to-one conversation on Bluesky, Instagram or Facebook. Identify the recipient by their username, user id, handle or DID on that platform.
-     * Create inbox conversation
+     * Starts a one-to-one conversation. On Instagram and Facebook it can be read once it has a message. Supported on Bluesky, Instagram and Facebook.
+     * Create conversation
      */
-    async createInboxConversationRaw(requestParameters: CreateInboxConversationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateInboxConversation201Response>> {
-        const requestOptions = await this.createInboxConversationRequestOpts(requestParameters);
+    async createConversationRaw(requestParameters: CreateConversationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Conversation>> {
+        const requestOptions = await this.createConversationRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => CreateInboxConversation201ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ConversationFromJSON(jsonValue));
     }
 
     /**
-     * Starts a one-to-one conversation on Bluesky, Instagram or Facebook. Identify the recipient by their username, user id, handle or DID on that platform.
-     * Create inbox conversation
+     * Starts a one-to-one conversation. On Instagram and Facebook it can be read once it has a message. Supported on Bluesky, Instagram and Facebook.
+     * Create conversation
      */
-    async createInboxConversation(requestParameters: CreateInboxConversationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateInboxConversation201Response> {
-        const response = await this.createInboxConversationRaw(requestParameters, initOverrides);
+    async createConversation(requestParameters: CreateConversationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Conversation> {
+        const response = await this.createConversationRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * Creates request options for listInboxConversations without sending the request
+     * Creates request options for getConversation without sending the request
      */
-    async listInboxConversationsRequestOpts(requestParameters: ListInboxConversationsRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['accountId'] == null) {
+    async getConversationRequestOpts(requestParameters: GetConversationRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
-                'accountId',
-                'Required parameter "accountId" was null or undefined when calling listInboxConversations().'
+                'id',
+                'Required parameter "id" was null or undefined when calling getConversation().'
+            );
+        }
+
+        if (requestParameters['conversationId'] == null) {
+            throw new runtime.RequiredError(
+                'conversationId',
+                'Required parameter "conversationId" was null or undefined when calling getConversation().'
             );
         }
 
         const queryParameters: any = {};
 
-        if (requestParameters['accountId'] != null) {
-            queryParameters['accountId'] = requestParameters['accountId'];
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("Bearer", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
         }
+
+        let urlPath = `/v1/accounts/{id}/conversations/{conversationId}`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        urlPath = urlPath.replace('{conversationId}', encodeURIComponent(String(requestParameters['conversationId'])));
+
+        return {
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Supported on Bluesky, Instagram and Facebook.
+     * Get conversation
+     */
+    async getConversationRaw(requestParameters: GetConversationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Conversation>> {
+        const requestOptions = await this.getConversationRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ConversationFromJSON(jsonValue));
+    }
+
+    /**
+     * Supported on Bluesky, Instagram and Facebook.
+     * Get conversation
+     */
+    async getConversation(requestParameters: GetConversationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Conversation> {
+        const response = await this.getConversationRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for listConversations without sending the request
+     */
+    async listConversationsRequestOpts(requestParameters: ListConversationsRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling listConversations().'
+            );
+        }
+
+        const queryParameters: any = {};
 
         if (requestParameters['limit'] != null) {
             queryParameters['limit'] = requestParameters['limit'];
@@ -185,10 +283,6 @@ export class InboxApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
-
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
             const tokenString = await token("Bearer", []);
@@ -198,7 +292,8 @@ export class InboxApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/inbox/conversations`;
+        let urlPath = `/v1/accounts/{id}/conversations`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
 
         return {
             path: urlPath,
@@ -209,48 +304,44 @@ export class InboxApi extends runtime.BaseAPI {
     }
 
     /**
-     * Lists inbox conversations for a connected account. Supported on Bluesky, Instagram and Facebook.
-     * List inbox conversations
+     * Lists the account\'s direct message conversations, most recent first. Supported on Bluesky, Instagram and Facebook.
+     * List conversations
      */
-    async listInboxConversationsRaw(requestParameters: ListInboxConversationsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListInboxConversations200Response>> {
-        const requestOptions = await this.listInboxConversationsRequestOpts(requestParameters);
+    async listConversationsRaw(requestParameters: ListConversationsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListConversations200Response>> {
+        const requestOptions = await this.listConversationsRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ListInboxConversations200ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ListConversations200ResponseFromJSON(jsonValue));
     }
 
     /**
-     * Lists inbox conversations for a connected account. Supported on Bluesky, Instagram and Facebook.
-     * List inbox conversations
+     * Lists the account\'s direct message conversations, most recent first. Supported on Bluesky, Instagram and Facebook.
+     * List conversations
      */
-    async listInboxConversations(requestParameters: ListInboxConversationsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListInboxConversations200Response> {
-        const response = await this.listInboxConversationsRaw(requestParameters, initOverrides);
+    async listConversations(requestParameters: ListConversationsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListConversations200Response> {
+        const response = await this.listConversationsRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * Creates request options for listInboxMessages without sending the request
+     * Creates request options for listMessages without sending the request
      */
-    async listInboxMessagesRequestOpts(requestParameters: ListInboxMessagesRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['convoId'] == null) {
+    async listMessagesRequestOpts(requestParameters: ListMessagesRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
-                'convoId',
-                'Required parameter "convoId" was null or undefined when calling listInboxMessages().'
+                'id',
+                'Required parameter "id" was null or undefined when calling listMessages().'
             );
         }
 
-        if (requestParameters['accountId'] == null) {
+        if (requestParameters['conversationId'] == null) {
             throw new runtime.RequiredError(
-                'accountId',
-                'Required parameter "accountId" was null or undefined when calling listInboxMessages().'
+                'conversationId',
+                'Required parameter "conversationId" was null or undefined when calling listMessages().'
             );
         }
 
         const queryParameters: any = {};
-
-        if (requestParameters['accountId'] != null) {
-            queryParameters['accountId'] = requestParameters['accountId'];
-        }
 
         if (requestParameters['limit'] != null) {
             queryParameters['limit'] = requestParameters['limit'];
@@ -262,10 +353,6 @@ export class InboxApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
-        }
-
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
             const tokenString = await token("Bearer", []);
@@ -275,8 +362,9 @@ export class InboxApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/inbox/conversations/{convoId}/messages`;
-        urlPath = urlPath.replace('{convoId}', encodeURIComponent(String(requestParameters['convoId'])));
+        let urlPath = `/v1/accounts/{id}/conversations/{conversationId}/messages`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        urlPath = urlPath.replace('{conversationId}', encodeURIComponent(String(requestParameters['conversationId'])));
 
         return {
             path: urlPath,
@@ -287,33 +375,47 @@ export class InboxApi extends runtime.BaseAPI {
     }
 
     /**
-     * Lists the messages in one conversation, newest first. Supported on Bluesky, Instagram and Facebook.
-     * List inbox messages
+     * Lists the messages of a conversation, newest first. Supported on Bluesky, Instagram and Facebook.
+     * List messages
      */
-    async listInboxMessagesRaw(requestParameters: ListInboxMessagesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListInboxMessages200Response>> {
-        const requestOptions = await this.listInboxMessagesRequestOpts(requestParameters);
+    async listMessagesRaw(requestParameters: ListMessagesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListMessages200Response>> {
+        const requestOptions = await this.listMessagesRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ListInboxMessages200ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ListMessages200ResponseFromJSON(jsonValue));
     }
 
     /**
-     * Lists the messages in one conversation, newest first. Supported on Bluesky, Instagram and Facebook.
-     * List inbox messages
+     * Lists the messages of a conversation, newest first. Supported on Bluesky, Instagram and Facebook.
+     * List messages
      */
-    async listInboxMessages(requestParameters: ListInboxMessagesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListInboxMessages200Response> {
-        const response = await this.listInboxMessagesRaw(requestParameters, initOverrides);
+    async listMessages(requestParameters: ListMessagesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListMessages200Response> {
+        const response = await this.listMessagesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * Creates request options for sendInboxMessage without sending the request
+     * Creates request options for sendMessage without sending the request
      */
-    async sendInboxMessageRequestOpts(requestParameters: SendInboxMessageRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['sendInboxMessageBody'] == null) {
+    async sendMessageRequestOpts(requestParameters: SendMessageRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
-                'sendInboxMessageBody',
-                'Required parameter "sendInboxMessageBody" was null or undefined when calling sendInboxMessage().'
+                'id',
+                'Required parameter "id" was null or undefined when calling sendMessage().'
+            );
+        }
+
+        if (requestParameters['conversationId'] == null) {
+            throw new runtime.RequiredError(
+                'conversationId',
+                'Required parameter "conversationId" was null or undefined when calling sendMessage().'
+            );
+        }
+
+        if (requestParameters['sendMessageBody'] == null) {
+            throw new runtime.RequiredError(
+                'sendMessageBody',
+                'Required parameter "sendMessageBody" was null or undefined when calling sendMessage().'
             );
         }
 
@@ -323,8 +425,8 @@ export class InboxApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["x-api-key"] = await this.configuration.apiKey("x-api-key"); // ApiKey authentication
+        if (requestParameters['idempotencyKey'] != null) {
+            headerParameters['Idempotency-Key'] = String(requestParameters['idempotencyKey']);
         }
 
         if (this.configuration && this.configuration.accessToken) {
@@ -336,34 +438,36 @@ export class InboxApi extends runtime.BaseAPI {
             }
         }
 
-        let urlPath = `/v1/inbox/messages`;
+        let urlPath = `/v1/accounts/{id}/conversations/{conversationId}/messages`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+        urlPath = urlPath.replace('{conversationId}', encodeURIComponent(String(requestParameters['conversationId'])));
 
         return {
             path: urlPath,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: SendInboxMessageBodyToJSON(requestParameters['sendInboxMessageBody']),
+            body: SendMessageBodyToJSON(requestParameters['sendMessageBody']),
         };
     }
 
     /**
-     * Sends a message to a conversation on Bluesky, Instagram or Facebook. Instagram and Facebook also support attachments, quick replies, buttons and carousels.
-     * Send inbox message
+     * Sends a message in a conversation. Instagram and Facebook also take attachments, quick replies, buttons and cards, within 24 hours of the person\'s last message. Supported on Bluesky, Instagram and Facebook.
+     * Send message
      */
-    async sendInboxMessageRaw(requestParameters: SendInboxMessageRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SendInboxMessage201Response>> {
-        const requestOptions = await this.sendInboxMessageRequestOpts(requestParameters);
+    async sendMessageRaw(requestParameters: SendMessageRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Message>> {
+        const requestOptions = await this.sendMessageRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => SendInboxMessage201ResponseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => MessageFromJSON(jsonValue));
     }
 
     /**
-     * Sends a message to a conversation on Bluesky, Instagram or Facebook. Instagram and Facebook also support attachments, quick replies, buttons and carousels.
-     * Send inbox message
+     * Sends a message in a conversation. Instagram and Facebook also take attachments, quick replies, buttons and cards, within 24 hours of the person\'s last message. Supported on Bluesky, Instagram and Facebook.
+     * Send message
      */
-    async sendInboxMessage(requestParameters: SendInboxMessageRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SendInboxMessage201Response> {
-        const response = await this.sendInboxMessageRaw(requestParameters, initOverrides);
+    async sendMessage(requestParameters: SendMessageRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Message> {
+        const response = await this.sendMessageRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

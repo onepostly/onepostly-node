@@ -20,19 +20,19 @@ import { mapValues } from '../runtime.js';
  */
 export interface SetMessengerProfileBodyPersistentMenuInner {
     /**
-     * 
+     * web_url opens url. postback sends payload to the Page.
      */
     type: SetMessengerProfileBodyPersistentMenuInnerTypeEnum;
     /**
-     * 
+     * Text shown on the menu item, up to 20 characters.
      */
     title: string;
     /**
-     * 
+     * Link a web_url item opens. Required for web_url.
      */
     url?: string;
     /**
-     * 
+     * Value a postback item sends, up to 1,000 characters. Required for postback.
      */
     payload?: string;
 }

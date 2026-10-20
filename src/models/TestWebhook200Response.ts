@@ -20,16 +20,16 @@ import { mapValues } from '../runtime.js';
  */
 export interface TestWebhook200Response {
     /**
-     * 
+     * false when the event could not be queued.
      */
-    ok: boolean;
+    sent: boolean;
 }
 
 /**
  * Check if a given object implements the TestWebhook200Response interface.
  */
 export function instanceOfTestWebhook200Response(value: object): value is TestWebhook200Response {
-    if (!('ok' in value) || value['ok'] === undefined) return false;
+    if (!('sent' in value) || value['sent'] === undefined) return false;
     return true;
 }
 
@@ -43,7 +43,7 @@ export function TestWebhook200ResponseFromJSONTyped(json: any, ignoreDiscriminat
     }
     return {
         
-        'ok': json['ok'],
+        'sent': json['sent'],
     };
 }
 
@@ -58,7 +58,7 @@ export function TestWebhook200ResponseToJSONTyped(value?: TestWebhook200Response
 
     return {
         
-        'ok': value['ok'],
+        'sent': value['sent'],
     };
 }
 
