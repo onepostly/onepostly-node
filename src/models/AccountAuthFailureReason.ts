@@ -14,7 +14,7 @@
 
 import { mapValues } from '../runtime.js';
 /**
- * Why the account stopped working. expired and refresh_failed come with account.expired, token_invalid and refresh_revoked with account.revoked. Reconnect the account in every case. New values can be added, so handle a value you do not know.
+ * Why the account stopped working. expired and refresh_failed come with account.expired, token_invalid, refresh_revoked and authorization_removed with account.revoked. Reconnect the account in every case. New values can be added, so handle a value you do not know.
  * @export
  * @interface AccountAuthFailureReason
  */
