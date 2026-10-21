@@ -28,7 +28,7 @@ import {
  */
 export interface SyncAccountPosts200Response {
     /**
-     * The account's recent posts, or the one post that was found. Empty when a url or platformPostId matched nothing among the 20 most recent posts.
+     * The account's recent posts, or the one post that was found. Empty when the url or platformPostId names no post of this account. An Instagram or Threads link, or a Facebook pfbid link, is only found among the 20 most recent posts.
      */
     data: Array<Post>;
     /**

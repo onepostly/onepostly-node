@@ -253,7 +253,7 @@ export class PostsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Cancels a post that has not been published yet, or deletes a published post from the platform, all posts of its thread included. The post stays in Onepostly with status cancelled or deleted. Deleting an X post is charged to the wallet.
+     * Cancels a post that has not been published yet, or deletes a published post from the platform, all posts of its thread included. A post made outside Onepostly is deleted from the platform the same way. The post stays in Onepostly with status cancelled or deleted. Deleting an X post is charged to the wallet.
      * Delete post
      */
     async deletePostRaw(requestParameters: DeletePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Post>> {
@@ -264,7 +264,7 @@ export class PostsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Cancels a post that has not been published yet, or deletes a published post from the platform, all posts of its thread included. The post stays in Onepostly with status cancelled or deleted. Deleting an X post is charged to the wallet.
+     * Cancels a post that has not been published yet, or deletes a published post from the platform, all posts of its thread included. A post made outside Onepostly is deleted from the platform the same way. The post stays in Onepostly with status cancelled or deleted. Deleting an X post is charged to the wallet.
      * Delete post
      */
     async deletePost(requestParameters: DeletePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Post> {
@@ -463,7 +463,7 @@ export class PostsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Finds posts the account published on the platform, outside Onepostly, and adds them to your posts with source external. Send url or platformPostId to find one post, or neither to sync the account\'s 20 most recent posts.
+     * Finds posts the account published on the platform, outside Onepostly, and adds them to your posts with source external. Send url or platformPostId to find one post, or neither to sync the account\'s 20 most recent posts. A post published through Onepostly comes back as itself.
      * Sync account posts
      */
     async syncAccountPostsRaw(requestParameters: SyncAccountPostsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SyncAccountPosts200Response>> {
@@ -474,7 +474,7 @@ export class PostsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Finds posts the account published on the platform, outside Onepostly, and adds them to your posts with source external. Send url or platformPostId to find one post, or neither to sync the account\'s 20 most recent posts.
+     * Finds posts the account published on the platform, outside Onepostly, and adds them to your posts with source external. Send url or platformPostId to find one post, or neither to sync the account\'s 20 most recent posts. A post published through Onepostly comes back as itself.
      * Sync account posts
      */
     async syncAccountPosts(requestParameters: SyncAccountPostsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SyncAccountPosts200Response> {

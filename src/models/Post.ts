@@ -101,7 +101,7 @@ export interface Post {
      */
     status: PostStatus;
     /**
-     * The post's text. Null for posts published outside Onepostly.
+     * The post's text. On a post made outside Onepostly it is the text the platform reports, or null when there is none.
      */
     text: string | null;
     /**
